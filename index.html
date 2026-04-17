@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Supriya Nagesh — Salesforce Professional</title>
+  <meta name="description" content="Supriya Nagesh — Salesforce professional specializing in CRM architecture, automation, and integrations." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #0f1b2d;
+      --navy-mid: #1a2e47;
+      --navy-soft: #243b55;
+      --accent: #3b9eff;
+      --accent-light: #e8f3ff;
+      --text: #1a1a2e;
+      --text-muted: #5a6a7e;
+      --border: #e2e8f0;
+      --surface: #f8fafc;
+      --white: #ffffff;
+      --radius: 10px;
+      --radius-lg: 16px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      background: var(--white);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2.5rem;
+      height: 60px;
+    }
+    .nav-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 18px;
+      color: var(--navy);
+      text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--navy); }
+    .nav-resume {
+      font-size: 13px;
+      font-weight: 500;
+      padding: 7px 16px;
+      border-radius: 6px;
+      background: var(--navy);
+      color: white;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .nav-resume:hover { background: var(--navy-mid); }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--navy);
+      color: white;
+      padding: 6rem 2.5rem 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(59,158,255,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; left: -60px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(59,158,255,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .hero-inner { position: relative; z-index: 1; max-width: 760px; }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(59,158,255,0.12);
+      border: 1px solid rgba(59,158,255,0.25);
+      padding: 5px 12px;
+      border-radius: 20px;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(36px, 6vw, 56px);
+      font-weight: 400;
+      line-height: 1.1;
+      margin-bottom: 1.25rem;
+      color: white;
+    }
+    .hero-sub {
+      font-size: 17px;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.65);
+      max-width: 560px;
+      margin-bottom: 2.5rem;
+    }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-hero {
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .btn-hero-primary { background: var(--accent); color: white; border: none; }
+    .btn-hero-primary:hover { background: #2a8ef0; }
+    .btn-hero-ghost {
+      background: transparent;
+      color: rgba(255,255,255,0.8);
+      border: 1px solid rgba(255,255,255,0.25);
+    }
+    .btn-hero-ghost:hover { background: rgba(255,255,255,0.08); color: white; }
+
+    /* ── SECTIONS ── */
+    section { padding: 5rem 2.5rem; }
+    section:nth-child(even) { background: var(--surface); }
+    .section-eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .section-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(24px, 4vw, 32px);
+      font-weight: 400;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+    .section-subtitle {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 520px;
+      margin-bottom: 2.5rem;
+    }
+
+    /* ── ABOUT ── */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; max-width: 900px; }
+    .about-text p { font-size: 15px; color: #374151; line-height: 1.8; margin-bottom: 1rem; }
+    .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .stat-box {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      text-align: center;
+    }
+    .stat-num { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--navy); }
+    .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+    /* ── SKILLS ── */
+    .skills-wrapper { max-width: 900px; }
+    .skills-group { margin-bottom: 2rem; }
+    .skills-group-label {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+    .skills-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+    .skill-pill {
+      padding: 7px 14px;
+      font-size: 13px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text);
+      font-weight: 400;
+      transition: all 0.15s;
+    }
+    .skill-pill:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+
+    /* ── PROJECTS ── */
+    .projects-wrapper { max-width: 900px; }
+    .project-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .project-card:hover { box-shadow: 0 4px 24px rgba(0,0,0,0.08); border-color: #c7d8ec; }
+    .project-card-header {
+      background: var(--navy);
+      padding: 1.5rem 1.75rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .project-num { font-family: 'DM Serif Display', serif; font-size: 13px; color: rgba(255,255,255,0.4); margin-bottom: 4px; }
+    .project-name { font-family: 'DM Serif Display', serif; font-size: 22px; color: white; font-weight: 400; }
+    .project-cloud-badge {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 5px 12px;
+      border-radius: 20px;
+      background: rgba(59,158,255,0.18);
+      color: #7dc4ff;
+      border: 1px solid rgba(59,158,255,0.3);
+      white-space: nowrap;
+      align-self: flex-start;
+      margin-top: 4px;
+    }
+    .project-card-body { padding: 1.5rem 1.75rem; }
+    .project-section-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .project-text { font-size: 14px; color: #374151; line-height: 1.7; margin-bottom: 1.25rem; }
+    .feature-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.5rem; }
+    .feature-tag {
+      font-size: 12px;
+      padding: 4px 10px;
+      background: var(--accent-light);
+      color: #1a5fa8;
+      border-radius: 6px;
+      border: 1px solid #c3deff;
+    }
+    .project-links { display: flex; gap: 8px; flex-wrap: wrap; padding-top: 1.25rem; border-top: 1px solid var(--border); }
+    .proj-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 14px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .proj-link:hover { background: var(--navy); color: white; border-color: var(--navy); }
+    .proj-link svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+    /* ── SCREENSHOTS placeholder ── */
+    .screenshots-strip { display: flex; gap: 10px; overflow-x: auto; margin-bottom: 1.25rem; padding-bottom: 4px; }
+    .screenshot-thumb {
+      width: 160px;
+      height: 100px;
+      border-radius: 7px;
+      border: 1px dashed var(--border);
+      background: var(--surface);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .screenshot-thumb svg { width: 20px; height: 20px; opacity: 0.3; }
+    .screenshot-thumb span { font-size: 11px; color: var(--text-muted); }
+
+    /* ── BLOG ── */
+    .blog-wrapper { max-width: 900px; }
+    .blog-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; }
+    .blog-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      transition: box-shadow 0.2s, border-color 0.2s;
+      cursor: pointer;
+    }
+    .blog-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.07); border-color: #c7d8ec; }
+    .blog-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 0.75rem; display: flex; gap: 8px; align-items: center; }
+    .blog-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--border); }
+    .blog-tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      background: var(--accent-light);
+      color: #1a5fa8;
+      border-radius: 4px;
+    }
+    .blog-title { font-size: 15px; font-weight: 500; color: var(--navy); line-height: 1.5; margin-bottom: 0.5rem; }
+    .blog-excerpt { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+    /* ── CONTACT ── */
+    .contact-wrapper { display: grid; grid-template-columns: 1fr 1.4fr; gap: 4rem; max-width: 860px; align-items: start; }
+    .contact-info p { font-size: 15px; color: var(--text-muted); line-height: 1.8; margin-bottom: 1.5rem; }
+    .contact-item { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; font-size: 14px; color: var(--text-muted); }
+    .contact-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .contact-item a { color: var(--accent); text-decoration: none; }
+    .contact-item a:hover { text-decoration: underline; }
+    .contact-form { display: grid; gap: 14px; }
+    .field-group label { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 5px; letter-spacing: 0.04em; }
+    .field-group input,
+    .field-group textarea {
+      width: 100%;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: white;
+      color: var(--text);
+      transition: border-color 0.15s;
+      outline: none;
+    }
+    .field-group input:focus,
+    .field-group textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59,158,255,0.1); }
+    .field-group textarea { height: 110px; resize: vertical; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .btn-submit {
+      padding: 11px 24px;
+      font-size: 14px;
+      font-weight: 500;
+      background: var(--navy);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: background 0.2s;
+    }
+    .btn-submit:hover { background: var(--navy-mid); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy);
+      color: rgba(255,255,255,0.5);
+      padding: 2rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    footer a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 13px; transition: color 0.15s; }
+    footer a:hover { color: white; }
+    .footer-links { display: flex; gap: 1.5rem; }
+    footer small { font-size: 13px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      nav { padding: 0 1.25rem; }
+      .nav-links { display: none; }
+      .hero { padding: 4rem 1.25rem 3rem; }
+      section { padding: 3.5rem 1.25rem; }
+      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .contact-wrapper { grid-template-columns: 1fr; gap: 2rem; }
+      .form-row { grid-template-columns: 1fr; }
+      footer { padding: 1.5rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">Supriya Nagesh</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#blog">Blog</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a class="nav-resume" href="resume.pdf" target="_blank" download>Download Resume</a>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="5"/></svg>
+      Salesforce Professional
+    </div>
+    <h1>Supriya Nagesh</h1>
+    <p class="hero-sub">I build scalable Salesforce solutions — CRM architecture, automation, and integrations that move business forward. Based in the Salesforce ecosystem since day one.</p>
+    <div class="hero-actions">
+      <a class="btn-hero btn-hero-primary" href="#projects">View my work</a>
+      <a class="btn-hero btn-hero-ghost" href="#contact">Get in touch</a>
+    </div>
+  </div>
+</header>
+
+<!-- ABOUT -->
+<section id="about">
+  <p class="section-eyebrow">About</p>
+  <h2 class="section-title">A bit about me</h2>
+  <div class="about-grid">
+    <div class="about-text">
+      <p>I'm a Salesforce professional who loves turning complex business problems into clean, automated solutions. From building lead routing engines to designing case escalation dashboards, I focus on work that makes teams faster and data more meaningful.</p>
+      <p>I specialize in Sales Cloud and Service Cloud implementations, with hands-on experience in Apex, Flow Builder, LWC, and integrations across the Salesforce ecosystem.</p>
+      <p>When I'm not building in Salesforce, I'm writing about what I learn — check out the blog below.</p>
+    </div>
+    <div class="about-stats">
+      <div class="stat-box"><div class="stat-num">5+</div><div class="stat-label">Years in Salesforce</div></div>
+      <div class="stat-box"><div class="stat-num">3</div><div class="stat-label">Certifications</div></div>
+      <div class="stat-box"><div class="stat-num">20+</div><div class="stat-label">Projects delivered</div></div>
+      <div class="stat-box"><div class="stat-num">2</div><div class="stat-label">Clouds mastered</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <p class="section-eyebrow">Expertise</p>
+  <h2 class="section-title">Skills &amp; tools</h2>
+  <p class="section-subtitle">Technologies and Salesforce features I work with regularly.</p>
+  <div class="skills-wrapper">
+    <div class="skills-group">
+      <p class="skills-group-label">Salesforce Platform</p>
+      <div class="skills-pills">
+        <span class="skill-pill">Sales Cloud</span>
+        <span class="skill-pill">Service Cloud</span>
+        <span class="skill-pill">Experience Cloud</span>
+        <span class="skill-pill">Salesforce CRM</span>
+        <span class="skill-pill">AppExchange</span>
+      </div>
+    </div>
+    <div class="skills-group">
+      <p class="skills-group-label">Automation & Development</p>
+      <div class="skills-pills">
+        <span class="skill-pill">Flow Builder</span>
+        <span class="skill-pill">Process Builder</span>
+        <span class="skill-pill">Apex</span>
+        <span class="skill-pill">Lightning Web Components</span>
+        <span class="skill-pill">Triggers</span>
+        <span class="skill-pill">Validation Rules</span>
+      </div>
+    </div>
+    <div class="skills-group">
+      <p class="skills-group-label">Integration & Data</p>
+      <div class="skills-pills">
+        <span class="skill-pill">REST APIs</span>
+        <span class="skill-pill">SOAP APIs</span>
+        <span class="skill-pill">Data Loader</span>
+        <span class="skill-pill">Workbench</span>
+        <span class="skill-pill">MuleSoft (basics)</span>
+      </div>
+    </div>
+    <div class="skills-group">
+      <p class="skills-group-label">Analytics & Admin</p>
+      <div class="skills-pills">
+        <span class="skill-pill">Reports &amp; Dashboards</span>
+        <span class="skill-pill">Profiles &amp; Permissions</span>
+        <span class="skill-pill">Roles &amp; Hierarchies</span>
+        <span class="skill-pill">Sandboxes &amp; Deployments</span>
+        <span class="skill-pill">Change Sets</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <p class="section-eyebrow">Work</p>
+  <h2 class="section-title">Project case studies</h2>
+  <p class="section-subtitle">One project per page — problem, solution, features, screenshots, and a Loom walkthrough.</p>
+  <div class="projects-wrapper">
+
+    <!-- PROJECT 1 -->
+    <div class="project-card">
+      <div class="project-card-header">
+        <div>
+          <p class="project-num">Project 01</p>
+          <p class="project-name">Lead Routing Automation</p>
+        </div>
+        <span class="project-cloud-badge">Sales Cloud</span>
+      </div>
+      <div class="project-card-body">
+        <div class="project-section-label">Problem statement</div>
+        <p class="project-text">Manual lead assignment was causing 48-hour delays and uneven workloads across the sales team. Reps in high-volume territories were drowning while others sat idle.</p>
+
+        <div class="project-section-label">What I built</div>
+        <p class="project-text">An Apex-based round-robin assignment engine with territory rules and capacity limits. Leads are scored, routed, and assigned in real-time — reducing average response time from 48 hours to under 2 hours.</p>
+
+        <div class="project-section-label">Salesforce features used</div>
+        <div class="feature-tags">
+          <span class="feature-tag">Flow Builder</span>
+          <span class="feature-tag">Apex Triggers</span>
+          <span class="feature-tag">Custom Objects</span>
+          <span class="feature-tag">Assignment Rules</span>
+          <span class="feature-tag">Custom Metadata</span>
+          <span class="feature-tag">Reports</span>
+        </div>
+
+        <div class="project-section-label">Screenshots</div>
+        <div class="screenshots-strip">
+          <div class="screenshot-thumb">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+            <span>Add screenshot</span>
+          </div>
+          <div class="screenshot-thumb">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+            <span>Add screenshot</span>
+          </div>
+          <div class="screenshot-thumb">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+            <span>Add screenshot</span>
+          </div>
+        </div>
+
+        <div class="project-links">
+          <a class="proj-link" href="#" title="Watch Loom walkthrough">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+            Watch walkthrough (Loom)
+          </a>
+          <a class="proj-link" href="project1.pdf" target="_blank">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            View PDF
+          </a>
+          <a class="proj-link" href="https://github.com/supriyajnagesh" target="_blank">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.167 6.839 9.49.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.607.069-.607 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.268 2.75 1.026A9.578 9.578 0 0 1 12 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.026 2.747-1.026.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.417 22 12c0-5.523-4.477-10-10-10z"/></svg>
+            GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT 2 -->
+    <div class="project-card">
+      <div class="project-card-header">
+        <div>
+          <p class="project-num">Project 02</p>
+          <p class="project-name">Case Escalation Dashboard</p>
+        </div>
+        <span class="project-cloud-badge">Service Cloud</span>
+      </div>
+      <div class="project-card-body">
+        <div class="project-section-label">Problem statement</div>
+        <p class="project-text">High-priority support cases were being missed with no visibility into SLA breach risk. Teams had no early warning system, leading to missed SLAs and frustrated customers.</p>
+
+        <div class="project-section-label">What I built</div>
+        <p class="project-text">A real-time dashboard with milestone tracking, automated alerts triggered at 75% SLA usage, and escalation flows that notify managers instantly. SLA breach rate dropped by 60%.</p>
+
+        <div class="project-section-label">Salesforce features used</div>
+        <div class="feature-tags">
+          <span class="feature-tag">Entitlements</span>
+          <span class="feature-tag">Milestones</span>
+          <span class="feature-tag">Reports &amp; Dashboards</span>
+          <span class="feature-tag">Email Alerts</span>
+          <span class="feature-tag">Escalation Rules</span>
+          <span class="feature-tag">Flow Builder</span>
+        </div>
+
+        <div class="project-section-label">Screenshots</div>
+        <div class="screenshots-strip">
+          <div class="screenshot-thumb">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+            <span>Add screenshot</span>
+          </div>
+          <div class="screenshot-thumb">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+            <span>Add screenshot</span>
+          </div>
+        </div>
+
+        <div class="project-links">
+          <a class="proj-link" href="#" title="Watch Loom walkthrough">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+            Watch walkthrough (Loom)
+          </a>
+          <a class="proj-link" href="project2.pdf" target="_blank">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            View PDF
+          </a>
+          <a class="proj-link" href="https://github.com/supriyajnagesh" target="_blank">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.167 6.839 9.49.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.607.069-.607 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.268 2.75 1.026A9.578 9.578 0 0 1 12 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.026 2.747-1.026.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.417 22 12c0-5.523-4.477-10-10-10z"/></svg>
+            GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- BLOG -->
+<section id="blog">
+  <p class="section-eyebrow">Writing</p>
+  <h2 class="section-title">Blog</h2>
+  <p class="section-subtitle">Notes, guides, and lessons from working inside the Salesforce ecosystem.</p>
+  <div class="blog-wrapper">
+    <div class="blog-grid">
+      <div class="blog-card">
+        <div class="blog-meta">
+          <span>April 2026</span>
+          <span class="blog-dot"></span>
+          <span class="blog-tag">Automation</span>
+        </div>
+        <p class="blog-title">5 Flow Builder patterns every Salesforce admin should know</p>
+        <p class="blog-excerpt">A walkthrough of the most reusable automation patterns I reach for again and again on every project...</p>
+      </div>
+      <div class="blog-card">
+        <div class="blog-meta">
+          <span>March 2026</span>
+          <span class="blog-dot"></span>
+          <span class="blog-tag">Career</span>
+        </div>
+        <p class="blog-title">How I passed my Salesforce Admin cert in 6 weeks</p>
+        <p class="blog-excerpt">My study schedule, free resources, and the three topics that almost tripped me up on exam day...</p>
+      </div>
+      <div class="blog-card">
+        <div class="blog-meta">
+          <span>February 2026</span>
+          <span class="blog-dot"></span>
+          <span class="blog-tag">Dev</span>
+        </div>
+        <p class="blog-title">Apex vs Flow: when to use which (and when to combine both)</p>
+        <p class="blog-excerpt">A practical framework for deciding when declarative tools are enough and when you need code...</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <p class="section-eyebrow">Get in touch</p>
+  <h2 class="section-title">Contact</h2>
+  <div class="contact-wrapper">
+    <div class="contact-info">
+      <p>Whether you're looking to collaborate, have a Salesforce question, or just want to connect — my inbox is open.</p>
+      <div class="contact-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <a href="mailto:hello@supriyajnagesh.com">hello@supriyajnagesh.com</a>
+      </div>
+      <div class="contact-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        <a href="https://linkedin.com/in/supriyajnagesh" target="_blank">linkedin.com/in/supriyajnagesh</a>
+      </div>
+      <div class="contact-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.167 6.839 9.49.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.607.069-.607 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.268 2.75 1.026A9.578 9.578 0 0 1 12 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.026 2.747-1.026.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.417 22 12c0-5.523-4.477-10-10-10z"/></svg>
+        <a href="https://github.com/supriyajnagesh" target="_blank">github.com/supriyajnagesh</a>
+      </div>
+    </div>
+    <form class="contact-form" onsubmit="handleSubmit(event)">
+      <div class="form-row">
+        <div class="field-group">
+          <label for="fname">First name</label>
+          <input type="text" id="fname" placeholder="Jane" />
+        </div>
+        <div class="field-group">
+          <label for="lname">Last name</label>
+          <input type="text" id="lname" placeholder="Doe" />
+        </div>
+      </div>
+      <div class="field-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="jane@company.com" />
+      </div>
+      <div class="field-group">
+        <label for="message">Message</label>
+        <textarea id="message" placeholder="What would you like to discuss?"></textarea>
+      </div>
+      <button type="submit" class="btn-submit">Send message</button>
+      <p id="form-msg" style="font-size:13px;color:#1a5fa8;display:none;">Thanks! I'll get back to you soon.</p>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <small>© 2026 Supriya Nagesh · supriyajnagesh.com</small>
+  <div class="footer-links">
+    <a href="https://linkedin.com/in/supriyajnagesh" target="_blank">LinkedIn</a>
+    <a href="https://github.com/supriyajnagesh" target="_blank">GitHub</a>
+    <a href="https://trailblazer.salesforce.com" target="_blank">Trailhead</a>
+    <a href="resume.pdf" download>Resume</a>
+  </div>
+</footer>
+
+<script>
+function handleSubmit(e) {
+  e.preventDefault();
+  var msg = document.getElementById('form-msg');
+  msg.style.display = 'block';
+  e.target.reset();
+  setTimeout(function(){ msg.style.display = 'none'; }, 5000);
+}
+</script>
+</body>
+</html>
