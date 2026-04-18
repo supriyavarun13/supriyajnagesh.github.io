@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What I've Learned Hiring Managers Look For in a Salesforce Professional — Supriya Nagesh</title>
+  <meta name="description" content="While preparing for my own next role and mentoring others, I kept coming back to one question: what actually helps someone stand out as a Salesforce professional?" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #0f1b2d;
+      --accent: #3b9eff;
+      --accent-light: #e8f3ff;
+      --text: #1a1a2e;
+      --text-muted: #5a6a7e;
+      --border: #e2e8f0;
+      --surface: #f8fafc;
+      --white: #ffffff;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      background: var(--white);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    nav {
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 2.5rem; height: 60px;
+    }
+    .nav-logo { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--navy); text-decoration: none; }
+    .nav-back { font-size: 13px; font-weight: 500; color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .nav-back:hover { color: var(--navy); }
+
+    .article-hero {
+      background: var(--navy);
+      padding: 4rem 2.5rem 3.5rem;
+      position: relative; overflow: hidden;
+    }
+    .article-hero::before {
+      content: ''; position: absolute; top: -80px; right: -80px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(59,158,255,0.12) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .hero-inner { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; }
+    .article-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+    .article-tag {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--accent); background: rgba(59,158,255,0.12);
+      border: 1px solid rgba(59,158,255,0.25); padding: 4px 10px; border-radius: 20px;
+    }
+    .article-date { font-size: 13px; color: rgba(255,255,255,0.4); }
+    .meta-dot { width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.2); }
+    .article-hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(22px, 4vw, 36px); font-weight: 400; line-height: 1.25;
+      color: white; margin-bottom: 1rem;
+    }
+    .article-subtitle { font-size: 16px; color: rgba(255,255,255,0.6); line-height: 1.7; max-width: 600px; }
+    .author-row {
+      display: flex; align-items: center; gap: 10px;
+      margin-top: 2rem; padding-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .author-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #1a5fa8);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'DM Serif Display', serif; font-size: 14px; color: white; flex-shrink: 0;
+    }
+    .author-name { font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.85); }
+    .author-title { font-size: 12px; color: rgba(255,255,255,0.4); }
+
+    .article-body { max-width: 720px; margin: 0 auto; padding: 3.5rem 2.5rem 5rem; }
+    .article-body p { font-size: 16px; line-height: 1.85; color: #2d3748; margin-bottom: 1.5rem; }
+    .article-body h2 {
+      font-family: 'DM Serif Display', serif; font-size: 22px; font-weight: 400;
+      color: var(--navy); margin: 2.75rem 0 0.75rem;
+    }
+    .article-body strong { color: var(--navy); font-weight: 500; }
+    .article-body em { color: #4a5568; }
+
+    .question-list { margin: 0.75rem 0 1.25rem 0; padding: 0; list-style: none; }
+    .question-list li {
+      font-size: 15px; color: #4a5568; line-height: 1.7;
+      padding: 5px 0 5px 1.25rem; position: relative;
+    }
+    .question-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-size: 13px; }
+
+    .callout {
+      background: var(--accent-light); border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0; padding: 1.25rem 1.5rem; margin: 1.25rem 0 2rem;
+    }
+    .callout p { font-size: 15px !important; color: #1a3a5c !important; margin: 0 !important; line-height: 1.7 !important; font-style: italic; }
+
+    .pullquote {
+      border-top: 2px solid var(--border); border-bottom: 2px solid var(--border);
+      padding: 1.75rem 0; margin: 2.5rem 0; text-align: center;
+    }
+    .pullquote p {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px !important; color: var(--navy) !important;
+      line-height: 1.55 !important; margin: 0 !important;
+      max-width: 580px; margin-left: auto !important; margin-right: auto !important;
+    }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+    .article-footer {
+      max-width: 720px; margin: 0 auto; padding: 0 2.5rem 4rem;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+    }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 14px; font-weight: 500; color: var(--text-muted); text-decoration: none;
+      padding: 9px 16px; border-radius: 8px; border: 1px solid var(--border); transition: all 0.15s;
+    }
+    .back-link:hover { background: var(--navy); color: white; border-color: var(--navy); }
+    .share-row { display: flex; align-items: center; gap: 10px; }
+    .share-label { font-size: 13px; color: var(--text-muted); }
+    .share-btn {
+      font-size: 13px; font-weight: 500; padding: 9px 16px; border-radius: 8px;
+      border: 1px solid var(--border); background: white; color: var(--text-muted);
+      cursor: pointer; text-decoration: none; transition: all 0.15s;
+    }
+    .share-btn:hover { background: var(--navy); color: white; border-color: var(--navy); }
+
+    .more-section { background: var(--surface); padding: 3.5rem 2.5rem; border-top: 1px solid var(--border); }
+    .more-inner { max-width: 720px; margin: 0 auto; }
+    .more-label { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.25rem; }
+    .more-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+    .more-card {
+      background: white; border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.25rem; text-decoration: none; transition: all 0.15s; display: block;
+    }
+    .more-card:hover { border-color: #c7d8ec; box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+    .more-card-tag { font-size: 11px; color: var(--accent); margin-bottom: 0.5rem; }
+    .more-card-title { font-size: 14px; font-weight: 500; color: var(--navy); line-height: 1.5; }
+
+    footer {
+      background: var(--navy); color: rgba(255,255,255,0.5);
+      padding: 1.5rem 2.5rem; display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 1rem;
+    }
+    footer small { font-size: 13px; }
+    footer a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 13px; }
+    footer a:hover { color: white; }
+
+    @media (max-width: 600px) {
+      nav { padding: 0 1.25rem; }
+      .article-hero { padding: 3rem 1.25rem 2.5rem; }
+      .article-body { padding: 2.5rem 1.25rem 3rem; }
+      .article-footer { padding: 0 1.25rem 3rem; }
+      .more-section { padding: 2.5rem 1.25rem; }
+      footer { padding: 1.5rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Supriya Nagesh</a>
+  <a class="nav-back" href="index.html#blog">← Back to blog</a>
+</nav>
+
+<header class="article-hero">
+  <div class="hero-inner">
+    <div class="article-meta">
+      <span class="article-tag">Career</span>
+      <span class="meta-dot"></span>
+      <span class="article-date">April 2026</span>
+      <span class="meta-dot"></span>
+      <span class="article-date">7 min read</span>
+    </div>
+    <h1>What I've Learned Hiring Managers Look For in a Salesforce Professional (While Preparing for My Own Next Role)</h1>
+    <p class="article-subtitle">This isn't written from a hiring panel. It comes from something more relatable — preparing myself, aligning experience with expectations, and working through these questions alongside mentees entering the ecosystem.</p>
+    <div class="author-row">
+      <div class="author-avatar">SN</div>
+      <div>
+        <div class="author-name">Supriya Nagesh</div>
+        <div class="author-title">Salesforce Professional · 7+ years</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<article class="article-body">
+
+  <p>While preparing structured mentoring sessions recently, I kept coming back to one recurring question: <strong>what actually helps someone stand out as a Salesforce professional when applying for roles?</strong></p>
+
+  <p>I'm not writing this from the perspective of someone sitting on hiring panels. Instead, this comes from something more relatable — preparing myself for roles, aligning experience with expectations, and working through these same questions alongside mentees who are entering the ecosystem.</p>
+
+  <p>Here are a few patterns I've personally found useful while getting "interview-ready" in a practical way.</p>
+
+  <hr class="divider" />
+
+  <h2>1. Being clear about the role you're positioning for</h2>
+
+  <p>One realization that shaped my preparation early on: <strong>Salesforce is not one role.</strong></p>
+
+  <p>When I started organizing mentoring sessions around career direction, I noticed how much clarity improves confidence. Even simple questions like these change how you talk about your experience:</p>
+
+  <ul class="question-list">
+    <li>Am I positioning myself as an Admin?</li>
+    <li>Automation-focused builder?</li>
+    <li>Support analyst?</li>
+    <li>Entry-level consultant profile?</li>
+  </ul>
+
+  <p>Instead of saying "I work on Salesforce," it becomes easier to say:</p>
+
+  <div class="callout">
+    <p>"I focus on improving data quality and building Flow-based automation."</p>
+  </div>
+
+  <p>That shift alone makes conversations more structured — and more memorable.</p>
+
+  <h2>2. Showing real examples instead of only learning progress</h2>
+
+  <p>Trailhead is incredibly helpful (and I still use it regularly). But while preparing my own portfolio-style practice org work, I noticed something important: <strong>projects make conversations easier.</strong></p>
+
+  <p>For example, building something like a small membership or event tracking setup helps practice object relationships, Flows, validation rules, and access setup decisions. More importantly, it helps in explaining <em>why</em> you chose those configurations.</p>
+
+  <p>Even simple examples become useful talking points in interviews. The goal isn't a perfect, polished project — it's having something concrete to point to.</p>
+
+  <h2>3. Getting comfortable explaining decisions</h2>
+
+  <p>One habit I've been building deliberately while preparing for roles is this: <strong>always ask myself why I configured something a certain way.</strong></p>
+
+  <ul class="question-list">
+    <li>Why use Flow here instead of a trigger?</li>
+    <li>Why add a validation rule instead of making a field required?</li>
+    <li>Why assign access through permission sets vs. profiles?</li>
+  </ul>
+
+  <p>Practicing these explanations builds confidence when describing your approach — even for smaller configurations. Interviewers aren't always looking for the "right" answer. They're listening to how you think.</p>
+
+  <h2>4. Paying attention to data quality thinking</h2>
+
+  <p>Something that started standing out to me while preparing scenario-based exercises: <strong>admins play a big role in protecting data quality.</strong></p>
+
+  <p>Even small logic examples — preventing incomplete opportunity records, adding validation checks, thinking about duplicate prevention — start showing how someone approaches the platform beyond just configuration steps. It's a mindset shift I'm consciously trying to build into my own work as well.</p>
+
+  <h2>5. Strengthening access & security fundamentals</h2>
+
+  <p>While preparing teaching sessions around profiles and permission sets, I realized how valuable access troubleshooting skills are — even at an early stage. Practicing questions like these helped me think more like an admin supporting real users, not just building features:</p>
+
+  <ul class="question-list">
+    <li>Why can one user edit this record but another cannot?</li>
+    <li>When should access be profile-based vs. permission-set based?</li>
+  </ul>
+
+  <p>That perspective changes how you approach the platform — and how you explain your decisions in interviews.</p>
+
+  <h2>6. Communicating the "story" behind your work</h2>
+
+  <p>One technique that's helped me during preparation is structuring explanations with a simple framework:</p>
+
+  <ul class="question-list">
+    <li>Here was the requirement</li>
+    <li>Here's the constraint I was working within</li>
+    <li>Here's the approach I selected</li>
+    <li>Here's what I might improve next time</li>
+  </ul>
+
+  <p>Even simple practice projects become stronger when explained this way. It also makes conversations feel more natural instead of technical-only — and signals that you reflect on your work, which is something people notice.</p>
+
+  <h2>7. Showing that learning is ongoing</h2>
+
+  <p>Something I've noticed while preparing my own learning roadmap and encouraging mentees to do the same: <strong>momentum matters.</strong></p>
+
+  <p>Building sandbox projects, practicing Flow patterns, writing short learning notes, reviewing security scenarios — all of these help keep skills active and easier to discuss confidently. And more importantly, they make preparation feel continuous instead of exam-focused.</p>
+
+  <hr class="divider" />
+
+  <div class="pullquote">
+    <p>"Being 'ready' as a Salesforce professional isn't about knowing everything on the platform. It's about being able to explain your thinking, show how you solve problems, and keep building confidence through small but consistent practice."</p>
+  </div>
+
+  <p>That approach has shaped how I prepare for roles — and how I now structure mentoring sessions as well.</p>
+
+  <p>— Supriya</p>
+
+</article>
+
+<div class="article-footer">
+  <a class="back-link" href="index.html#blog">← Back to all posts</a>
+  <div class="share-row">
+    <span class="share-label">Share:</span>
+    <a class="share-btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https://supriyajnagesh.com/blog-what-hiring-managers-look-for.html" target="_blank">LinkedIn</a>
+  </div>
+</div>
+
+<div class="more-section">
+  <div class="more-inner">
+    <p class="more-label">More from the blog</p>
+    <div class="more-grid">
+      <a class="more-card" href="#">
+        <p class="more-card-tag">Automation</p>
+        <p class="more-card-title">5 Flow Builder patterns every Salesforce admin should know</p>
+      </a>
+      <a class="more-card" href="#">
+        <p class="more-card-tag">Career</p>
+        <p class="more-card-title">How I passed my Salesforce Admin cert in 6 weeks</p>
+      </a>
+      <a class="more-card" href="#">
+        <p class="more-card-tag">Dev</p>
+        <p class="more-card-title">Apex vs Flow: when to use which</p>
+      </a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <small>© 2026 Supriya Nagesh · supriyajnagesh.com</small>
+  <a href="https://www.linkedin.com/in/supriya-nagesh" target="_blank">LinkedIn</a>
+</footer>
+
+</body>
+</html>
