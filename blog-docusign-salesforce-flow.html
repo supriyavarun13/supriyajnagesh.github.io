@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Automating Contract Sending with Salesforce Flow & DocuSign — Supriya Nagesh</title>
+  <meta name="description" content="A step-by-step walkthrough of building a zero-code Salesforce + DocuSign integration — what I built, what broke, and the undocumented gotchas I found along the way." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #0f1b2d;
+      --accent: #3b9eff;
+      --accent-light: #e8f3ff;
+      --text: #1a1a2e;
+      --text-muted: #5a6a7e;
+      --border: #e2e8f0;
+      --surface: #f8fafc;
+      --white: #ffffff;
+      --green: #059669;
+      --green-light: #ecfdf5;
+      --yellow: #d97706;
+      --yellow-light: #fffbeb;
+      --red: #dc2626;
+      --red-light: #fef2f2;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(--white); font-size: 16px; line-height: 1.7; }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 2.5rem; height: 60px;
+    }
+    .nav-logo { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--navy); text-decoration: none; }
+    .nav-back { font-size: 13px; font-weight: 500; color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .nav-back:hover { color: var(--navy); }
+
+    /* HERO */
+    .article-hero { background: var(--navy); padding: 4rem 2.5rem 3.5rem; position: relative; overflow: hidden; }
+    .article-hero::before {
+      content: ''; position: absolute; top: -80px; right: -80px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(59,158,255,0.12) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .hero-inner { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; }
+    .article-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+    .article-tag {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--accent); background: rgba(59,158,255,0.12);
+      border: 1px solid rgba(59,158,255,0.25); padding: 4px 10px; border-radius: 20px;
+    }
+    .article-tag-green {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+      color: #34d399; background: rgba(52,211,153,0.12);
+      border: 1px solid rgba(52,211,153,0.25); padding: 4px 10px; border-radius: 20px;
+    }
+    .article-date { font-size: 13px; color: rgba(255,255,255,0.4); }
+    .meta-dot { width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.2); }
+    .article-hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(22px, 4vw, 36px); font-weight: 400; line-height: 1.25;
+      color: white; margin-bottom: 1rem;
+    }
+    .article-subtitle { font-size: 16px; color: rgba(255,255,255,0.6); line-height: 1.7; max-width: 640px; }
+
+    /* Stack badges */
+    .stack-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1.75rem; }
+    .stack-badge {
+      font-size: 12px; padding: 5px 12px; border-radius: 20px;
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7);
+    }
+
+    .author-row {
+      display: flex; align-items: center; gap: 10px;
+      margin-top: 2rem; padding-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .author-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #1a5fa8);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'DM Serif Display', serif; font-size: 14px; color: white; flex-shrink: 0;
+    }
+    .author-name { font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.85); }
+    .author-title { font-size: 12px; color: rgba(255,255,255,0.4); }
+
+    /* ARTICLE BODY */
+    .article-body { max-width: 760px; margin: 0 auto; padding: 3.5rem 2.5rem 5rem; }
+    .article-body p { font-size: 16px; line-height: 1.85; color: #2d3748; margin-bottom: 1.5rem; }
+    .article-body h2 {
+      font-family: 'DM Serif Display', serif; font-size: 24px; font-weight: 400;
+      color: var(--navy); margin: 3rem 0 0.75rem; padding-top: 0.5rem;
+    }
+    .article-body h3 { font-size: 15px; font-weight: 500; color: var(--navy); margin: 1.75rem 0 0.5rem; }
+    .article-body strong { color: var(--navy); font-weight: 500; }
+    .article-body em { color: #4a5568; }
+    .article-body a { color: var(--accent); text-decoration: none; }
+    .article-body a:hover { text-decoration: underline; }
+
+    /* Step header */
+    .step-header {
+      display: flex; align-items: flex-start; gap: 1rem;
+      margin: 3rem 0 1rem;
+    }
+    .step-num {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--navy); color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 500; flex-shrink: 0; margin-top: 4px;
+    }
+    .step-title-wrap {}
+    .step-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 3px; }
+    .step-title { font-family: 'DM Serif Display', serif; font-size: 22px; font-weight: 400; color: var(--navy); line-height: 1.3; }
+
+    /* Callouts */
+    .callout {
+      border-radius: 8px; padding: 1.1rem 1.4rem; margin: 1.25rem 0 1.75rem;
+    }
+    .callout p { font-size: 14px !important; margin: 0 !important; line-height: 1.7 !important; }
+    .callout-blue { background: var(--accent-light); border-left: 3px solid var(--accent); }
+    .callout-blue p { color: #1a3a5c !important; }
+    .callout-yellow { background: var(--yellow-light); border-left: 3px solid var(--yellow); }
+    .callout-yellow p { color: #78350f !important; }
+    .callout-red { background: var(--red-light); border-left: 3px solid var(--red); }
+    .callout-red p { color: #7f1d1d !important; }
+    .callout-green { background: var(--green-light); border-left: 3px solid var(--green); }
+    .callout-green p { color: #064e3b !important; }
+
+    .callout-label {
+      font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    /* Code / error block */
+    .code-block {
+      background: #1e293b; border-radius: 8px; padding: 1rem 1.25rem;
+      margin: 1rem 0 1.5rem; overflow-x: auto;
+    }
+    .code-block code { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; color: #e2e8f0; line-height: 1.6; }
+    .code-block .error { color: #fca5a5; }
+    .code-block .comment { color: #64748b; }
+
+    /* Table */
+    .data-table { width: 100%; border-collapse: collapse; margin: 1.25rem 0 1.75rem; font-size: 14px; }
+    .data-table th {
+      background: var(--navy); color: white; font-weight: 500; font-size: 12px;
+      letter-spacing: 0.04em; padding: 10px 14px; text-align: left;
+    }
+    .data-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: #374151; vertical-align: top; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:nth-child(even) td { background: var(--surface); }
+    .badge-free { font-size: 11px; padding: 2px 8px; background: var(--green-light); color: var(--green); border-radius: 4px; font-weight: 500; }
+    .badge-paid { font-size: 11px; padding: 2px 8px; background: var(--yellow-light); color: var(--yellow); border-radius: 4px; font-weight: 500; }
+
+    /* Numbered steps list */
+    .steps-list { margin: 0.75rem 0 1.5rem 0; padding: 0; counter-reset: steps; list-style: none; }
+    .steps-list li {
+      font-size: 15px; color: #374151; line-height: 1.7;
+      padding: 6px 0 6px 2rem; position: relative; counter-increment: steps;
+    }
+    .steps-list li::before {
+      content: counter(steps);
+      position: absolute; left: 0; top: 7px;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--accent-light); color: var(--accent);
+      font-size: 10px; font-weight: 500; display: flex;
+      align-items: center; justify-content: center;
+    }
+
+    /* Arrow list */
+    .arrow-list { margin: 0.75rem 0 1.5rem 0; padding: 0; list-style: none; }
+    .arrow-list li {
+      font-size: 15px; color: #374151; line-height: 1.7;
+      padding: 4px 0 4px 1.25rem; position: relative;
+    }
+    .arrow-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-size: 13px; }
+
+    /* Flow diagram */
+    .flow-diagram {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 2rem; margin: 1.5rem 0 2rem; font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 13px; color: #374151; line-height: 2;
+    }
+    .flow-diagram .flow-node {
+      display: inline-block; background: var(--navy); color: white;
+      padding: 3px 12px; border-radius: 4px; font-size: 12px; font-weight: 500;
+    }
+    .flow-diagram .flow-yes { color: var(--green); font-weight: 500; }
+    .flow-diagram .flow-no { color: var(--red); font-weight: 500; }
+    .flow-diagram .flow-action { color: var(--accent); font-weight: 500; }
+    .flow-diagram .flow-end { color: var(--green); }
+    .flow-diagram p { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; color: #374151; margin-bottom: 0; line-height: 2; }
+
+    /* Key learnings */
+    .learnings-grid { display: grid; gap: 1rem; margin: 1.5rem 0; }
+    .learning-card {
+      background: white; border: 1px solid var(--border); border-radius: 10px;
+      padding: 1.25rem 1.25rem 1.25rem 1rem;
+      display: grid; grid-template-columns: 28px 1fr; gap: 0.75rem; align-items: start;
+    }
+    .learning-num {
+      width: 28px; height: 28px; border-radius: 50%; background: var(--navy);
+      color: white; font-size: 12px; font-weight: 500;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;
+    }
+    .learning-text strong { display: block; font-size: 14px; font-weight: 500; color: var(--navy); margin-bottom: 4px; }
+    .learning-text p { font-size: 14px !important; color: #4a5568 !important; margin: 0 !important; line-height: 1.65 !important; }
+
+    /* Try it section */
+    .try-it {
+      background: var(--navy); border-radius: 12px; padding: 2rem;
+      margin: 2.5rem 0;
+    }
+    .try-it h3 { font-family: 'DM Serif Display', serif; font-size: 20px; color: white; font-weight: 400; margin-bottom: 1rem; }
+    .try-it-links { display: flex; flex-wrap: wrap; gap: 10px; }
+    .try-link {
+      font-size: 13px; font-weight: 500; padding: 9px 16px; border-radius: 7px;
+      border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.8);
+      text-decoration: none; transition: all 0.15s; background: rgba(255,255,255,0.06);
+    }
+    .try-link:hover { background: rgba(255,255,255,0.15); color: white; border-color: rgba(255,255,255,0.4); }
+    .try-it p { font-size: 14px !important; color: rgba(255,255,255,0.55) !important; margin: 0 0 1.25rem !important; line-height: 1.7 !important; }
+
+    /* Screenshot placeholder */
+    .screenshot-placeholder {
+      background: var(--surface); border: 1.5px dashed var(--border);
+      border-radius: 10px; padding: 2rem; text-align: center;
+      margin: 1rem 0 1.5rem; color: var(--text-muted); font-size: 13px;
+    }
+    .screenshot-placeholder svg { width: 28px; height: 28px; opacity: 0.3; margin: 0 auto 8px; display: block; }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+    /* Footer */
+    .article-footer {
+      max-width: 760px; margin: 0 auto; padding: 0 2.5rem 4rem;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+    }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500;
+      color: var(--text-muted); text-decoration: none; padding: 9px 16px; border-radius: 8px;
+      border: 1px solid var(--border); transition: all 0.15s;
+    }
+    .back-link:hover { background: var(--navy); color: white; border-color: var(--navy); }
+    .share-row { display: flex; align-items: center; gap: 10px; }
+    .share-label { font-size: 13px; color: var(--text-muted); }
+    .share-btn {
+      font-size: 13px; font-weight: 500; padding: 9px 16px; border-radius: 8px;
+      border: 1px solid var(--border); background: white; color: var(--text-muted);
+      cursor: pointer; text-decoration: none; transition: all 0.15s;
+    }
+    .share-btn:hover { background: var(--navy); color: white; border-color: var(--navy); }
+
+    .more-section { background: var(--surface); padding: 3.5rem 2.5rem; border-top: 1px solid var(--border); }
+    .more-inner { max-width: 760px; margin: 0 auto; }
+    .more-label { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.25rem; }
+    .more-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+    .more-card {
+      background: white; border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.25rem; text-decoration: none; transition: all 0.15s; display: block;
+    }
+    .more-card:hover { border-color: #c7d8ec; box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+    .more-card-tag { font-size: 11px; color: var(--accent); margin-bottom: 0.5rem; }
+    .more-card-title { font-size: 14px; font-weight: 500; color: var(--navy); line-height: 1.5; }
+
+    footer {
+      background: var(--navy); color: rgba(255,255,255,0.5);
+      padding: 1.5rem 2.5rem; display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 1rem;
+    }
+    footer small { font-size: 13px; }
+    footer a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 13px; }
+    footer a:hover { color: white; }
+
+    @media (max-width: 640px) {
+      nav { padding: 0 1.25rem; }
+      .article-hero { padding: 3rem 1.25rem 2.5rem; }
+      .article-body { padding: 2.5rem 1.25rem 3rem; }
+      .article-footer { padding: 0 1.25rem 3rem; }
+      .more-section { padding: 2.5rem 1.25rem; }
+      footer { padding: 1.5rem 1.25rem; }
+      .step-header { gap: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Supriya Nagesh</a>
+  <a class="nav-back" href="index.html#blog">← Back to blog</a>
+</nav>
+
+<header class="article-hero">
+  <div class="hero-inner">
+    <div class="article-meta">
+      <span class="article-tag">Project Breakdown</span>
+      <span class="meta-dot"></span>
+      <span class="article-tag-green">No Code</span>
+      <span class="meta-dot"></span>
+      <span class="article-date">May 2026</span>
+      <span class="meta-dot"></span>
+      <span class="article-date">12 min read</span>
+    </div>
+    <h1>Automating Contract Sending in Salesforce with Flow & DocuSign — What I Built, What Broke, and What I Learned</h1>
+    <p class="article-subtitle">When a deal hits Closed Won, the contract should go out automatically. Here's the full walkthrough — including the undocumented gotchas that cost me hours so you don't have to lose yours.</p>
+    <div class="stack-badges">
+      <span class="stack-badge">Salesforce Flow</span>
+      <span class="stack-badge">DocuSign Apps Launcher</span>
+      <span class="stack-badge">Zero Apex</span>
+      <span class="stack-badge">Free to build</span>
+    </div>
+    <div class="author-row">
+      <div class="author-avatar">SN</div>
+      <div>
+        <div class="author-name">Supriya Nagesh</div>
+        <div class="author-title">Salesforce Professional · 7+ years</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<article class="article-body">
+
+  <p>When I started this project, my goal was simple: when a deal is marked <strong>Closed Won</strong> in Salesforce, automatically send the contract to the right person for signing — no manual steps, no chasing emails, no missed documents.</p>
+
+  <p>What I didn't expect was how many undocumented gotchas sat between me and a working integration. This article walks through exactly what I built, what broke, and what I learned — so you don't have to spend hours figuring it out yourself.</p>
+
+  <hr class="divider" />
+
+  <h2>The Stack</h2>
+  <ul class="arrow-list">
+    <li>Salesforce Developer Org (free)</li>
+    <li>DocuSign Developer Account (free)</li>
+    <li>DocuSign Apps Launcher — AppExchange package</li>
+    <li>Salesforce Flow — zero Apex, zero code</li>
+  </ul>
+
+  <hr class="divider" />
+
+  <!-- STEP 1 -->
+  <div class="step-header">
+    <div class="step-num">1</div>
+    <div class="step-title-wrap">
+      <p class="step-eyebrow">First things first</p>
+      <p class="step-title">The DocuSign Developer Account: The Engine, Not the Workshop</p>
+    </div>
+  </div>
+
+  <p>Before touching Salesforce, you need a free DocuSign developer account at <a href="https://developers.docusign.com" target="_blank">developers.docusign.com</a>.</p>
+  <img src="images/doc13.png" alt="DocuSign for Developers website — where you sign up for your free account" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 1.5rem;display:block;" />
+
+  <div class="callout callout-blue">
+    <p class="callout-label" style="color: var(--accent);">⚡ Key insight</p>
+    <p><strong>You don't build anything in your DocuSign developer account.</strong> No templates, no configuration, no setup screens to fill out. Its only job is to be the authorized DocuSign account that Salesforce sends envelopes through. Everything you actually configure — templates, recipients, field mappings — lives entirely inside Salesforce.</p>
+  </div>
+
+  <p>Think of it as the engine under the hood. Once you have it, you'll use it exactly once to authenticate during Salesforce setup. After that, you'll mostly forget it exists — until you check your DocuSign inbox and see every test envelope you sent sitting there, signed and completed.</p>
+  <img src="images/docu7.png" alt="DocuSign developer account inbox showing sent envelopes and completed signatures" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 1.5rem;display:block;" />
+
+  <p>One thing worth knowing: you sign up and manage your developer account at <code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">developers.docusign.com</code> — but the actual sandbox application where envelopes are sent, completed, and stored lives at <code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">demo.docusign.net</code>. They're the same account, two different interfaces. Think of developers.docusign.com as the registration desk and demo.docusign.net as the actual office where the work happens.</p>
+  <img src="images/doc10.png" alt="Templates created in Salesforce automatically appearing in the DocuSign developer account" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 1.5rem;display:block;" />
+
+  <!-- STEP 2 -->
+  <div class="step-header">
+    <div class="step-num">2</div>
+    <div class="step-title-wrap">
+      <p class="step-eyebrow">AppExchange</p>
+      <p class="step-title">The AppExchange Package: It's Free to Install (Let Me Explain the $30)</p>
+    </div>
+  </div>
+
+  <p>Search "DocuSign" on the Salesforce AppExchange and you'll immediately see $30/user/month in the listing. Before you close the tab — here's what that price actually means.</p>
+  <img src="images/doc8.png" alt="DocuSign eSignature listing on Salesforce AppExchange showing $30/user/month price" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 1.5rem;display:block;" />
+
+  <p>The package — called <strong>DocuSign Apps Launcher</strong> — is free to install. It bundles three products together:</p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>What it does</th>
+        <th>Cost for dev/testing</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>DocuSign eSignature for Salesforce</strong></td>
+        <td>Send documents for e-signature</td>
+        <td><span class="badge-free">✅ Free with developer account</span></td>
+      </tr>
+      <tr>
+        <td>DocuSign Gen for Salesforce</td>
+        <td>Auto-generate sales documents</td>
+        <td><span class="badge-paid">⚠️ 30-day trial, then paid</span></td>
+      </tr>
+      <tr>
+        <td>DocuSign Negotiate for Salesforce</td>
+        <td>Contract negotiation workflows</td>
+        <td><span class="badge-paid">⚠️ Paid</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>The $30 is the DocuSign eSignature subscription for <em>production use with real users</em>. For a developer org, your free developer account covers everything you need. The package installs at no charge and eSignature works indefinitely in your sandbox.</p>
+
+  <div class="callout callout-yellow">
+    <p class="callout-label" style="color: var(--yellow);">⚠️ Watch out</p>
+    <p>When connecting for the first time, you'll see two login options. <strong>Do not click the main "Log in to DocuSign" button</strong> — that connects to a production account. Scroll down and use <strong>"Log in to a Demo Account"</strong> instead. This points to demo.docusign.net, which is where your developer account lives. One wrong click here and you'll be trying to authenticate against a production account you don't have.</p>
+  </div>
+
+  <p>The package also handles its own security configuration — trusted URLs, CSP headers, all of it. No manual setup needed. It just works.</p>
+  <img src="images/doc12.png" alt="DocuSign Apps Launcher showing connected account and Document Generation feature locked behind paid tier" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 1.5rem;display:block;" />
+
+  <!-- STEP 3 -->
+  <div class="step-header">
+    <div class="step-num">3</div>
+    <div class="step-title-wrap">
+      <p class="step-eyebrow">Authentication</p>
+      <p class="step-title">Connecting DocuSign to Salesforce</p>
+    </div>
+  </div>
+
+  <p>After installing the package:</p>
+
+  <ol class="steps-list">
+    <li>Open App Launcher → search <strong>DocuSign Apps Launcher</strong></li>
+    <li>Go to the <strong>DocuSign Setup</strong> tab</li>
+    <li>Look for <strong>"Log in to a Demo/Developer Account"</strong> — this is the critical option</li>
+    <li>Log in with your developer account credentials</li>
+    <li>Grant permissions — you'll be redirected back to Salesforce with a green connected status</li>
+    <li>Assign the <strong>DocuSign Sender</strong> and <strong>DocuSign Administrator</strong> permission sets to your user via Setup → Permission Sets</li>
+  </ol>
+
+  <div class="callout callout-green">
+    <p>That's the entire setup. No API keys. No configuration files. No code.</p>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step-header">
+    <div class="step-num">4</div>
+    <div class="step-title-wrap">
+      <p class="step-eyebrow">The trap that catches everyone</p>
+      <p class="step-title">Creating the Envelope Template: Build It Inside Salesforce, Not DocuSign</p>
+    </div>
+  </div>
+
+  <div class="callout callout-red">
+    <p class="callout-label" style="color: var(--red);">🚫 Common mistake</p>
+    <p>When you think "DocuSign template," your instinct is to go to appdemo.docusign.com and build one there. I did exactly that — spent time creating a template, adding signature fields, saving it. <strong>Completely useless for what we're building.</strong> The Envelope Template must be created inside Salesforce, through the DocuSign Apps Launcher.</p>
+  </div>
+
+  <p>Here's why: the Salesforce-side template is stored as a <strong>Salesforce record with its own Salesforce Record ID</strong>. The Flow action requires that Salesforce Record ID — not the DocuSign UUID.</p>
+
+  <p>To create it:</p>
+
+  <ol class="steps-list">
+    <li>In DocuSign Apps Launcher → eSignature tab → DocuSign Envelope Templates → <strong>New</strong></li>
+    <li>Set the related object to <strong>Opportunity</strong></li>
+    <li>Upload your document</li>
+    <li>For the recipient, select <strong>Related List → Contact Roles</strong> — this maps the recipient dynamically from whoever is linked to the Opportunity</li>
+    <li>Place signature fields on the document</li>
+    <li>Save</li>
+  </ol>
+
+  <p>After saving, open the template and look at the browser URL:</p>
+
+  <div class="code-block">
+    <code>.../lightning/r/dfsle__EnvelopeTemplate__c/<span style="color:#7dd3fc;">a0Xxx000000xxxEAA</span>/view</code>
+  </div>
+
+  <p>That <code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">a0Xxx...</code> value is your <strong>Template ID</strong>. Copy it — you'll need it in the Flow.</p>
+  <img src="images/doc9.png" alt="Envelope Templates list inside Salesforce DocuSign Apps Launcher showing the Contract Approval template" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 1.5rem;display:block;" />
+
+  <!-- STEP 5 -->
+  <div class="step-header">
+    <div class="step-num">5</div>
+    <div class="step-title-wrap">
+      <p class="step-eyebrow">Where it all comes together</p>
+      <p class="step-title">The Flow: Automating the Entire Process</p>
+    </div>
+  </div>
+
+  <p>Go to <strong>Setup → Flows → New Flow → Record-Triggered Flow.</strong></p>
+  <img src="images/doc6.png" alt="Complete Salesforce Flow diagram showing the full DocuSign automation — trigger, decision, send action, fault path, and end states" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 1.5rem;display:block;" />
+
+  <h3>Trigger setup</h3>
+  <ul class="arrow-list">
+    <li>Object: <strong>Opportunity</strong></li>
+    <li>Trigger: Record is updated</li>
+    <li>Condition: Stage = Closed Won</li>
+    <li>When to run: Only when updated to meet conditions</li>
+  </ul>
+
+  <h3>Element 1 — Check for Contact Role first</h3>
+
+  <p>Before sending anything, the Flow checks whether a Contact Role exists on the Opportunity. If there's no recipient, there's no point sending.</p>
+
+  <p>Add a <strong>Get Records</strong> element:</p>
+  <ul class="arrow-list">
+    <li>Object: Opportunity Contact Role</li>
+    <li>Filter: Opportunity ID = Triggering Opportunity ID <strong>AND</strong> Role = Decision Maker</li>
+    <li>Return first record only</li>
+  </ul>
+
+  <div class="callout callout-blue">
+    <p class="callout-label" style="color: var(--accent);">💡 Why Decision Maker specifically?</p>
+    <p>Real Salesforce orgs are messy. An Opportunity can have multiple Contact Roles — a Champion, an Evaluator, a Decision Maker. If your Get Records element just returns the "first record," you have no control over who receives the contract. Filtering by Decision Maker means regardless of how many Contact Roles exist, DocuSign always sends to the right person. <strong>Sending a contract to the wrong person is worse than not sending it at all.</strong></p>
+  </div>
+
+  <p>Then add a <strong>Decision</strong> element:</p>
+  <ul class="arrow-list">
+    <li><strong>Yes path:</strong> Contact ID is not null → proceed to send</li>
+    <li><strong>No path (default):</strong> Create a Task on the Opportunity</li>
+  </ul>
+
+  <p>The Task on the No path should say: <em>"No Contact Role found on this Opportunity. Please add a Contact Role and send the DocuSign contract manually."</em> This prevents silent failures and keeps the owner informed.</p>
+  <img src="images/doc16.png" alt="Test Opportunity 2 with no contact — showing the automated task created when no Contact Role exists" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 1.5rem;display:block;" />
+
+  <h3>Element 2 — Send with DocuSign action</h3>
+
+  <p>On the Yes path, add an <strong>Action → search "Send with DocuSign":</strong></p>
+
+  <table class="data-table">
+    <thead><tr><th>Field</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>Template ID</td><td><code style="font-size:13px;">a0Xxx000000xxxEAA</code> (your Salesforce Record ID)</td></tr>
+      <tr><td>Source ID</td><td><code style="font-size:13px;">{!$Record.Id}</code></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-red">
+    <p class="callout-label" style="color: var(--red);">🐛 The gotcha that cost me an hour</p>
+    <p>When I first built this, I pasted the DocuSign UUID from the template URL on appdemo.docusign.com. The Flow threw this error:</p>
+  </div>
+
+  <div class="code-block">
+    <code class="error">System.StringException: Invalid id: e3139436-3f0c-456f-abd9-fe72c44a3f9e</code>
+  </div>
+
+  <p>Salesforce Apex expects an 18-character Salesforce Record ID — not a DocuSign UUID. The fix is using the ID from the Salesforce record URL, as described in Step 4.</p>
+
+  <h3>Element 3 — Fault path</h3>
+
+  <p>Every production-grade Flow should handle failure gracefully. Click the <strong>red Fault connector</strong> on the Send with DocuSign action and add a Create Records element for a Task:</p>
+
+  <table class="data-table">
+    <thead><tr><th>Field</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>Subject</td><td>DocuSign Failed — Send Contract Manually</td></tr>
+      <tr><td>Priority</td><td>High</td></tr>
+      <tr><td>Description</td><td><code style="font-size:13px;">{!$Flow.FaultMessage}</code></td></tr>
+      <tr><td>WhatId</td><td><code style="font-size:13px;">{!$Record.Id}</code></td></tr>
+      <tr><td>OwnerId</td><td><code style="font-size:13px;">{!$Record.OwnerId}</code></td></tr>
+    </tbody>
+  </table>
+
+  <p>Now if DocuSign fails for any reason — connectivity, invalid template, permission issue — the Opportunity owner gets a High Priority task with the exact error message, rather than the failure disappearing silently.</p>
+  <img src="images/doc17.png" alt="Test Opportunity 3 showing DocuSign Failed task created by the fault path" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 0.75rem;display:block;" />
+  <img src="images/doc18.png" alt="Task detail showing the exact Apex error message captured from the fault path" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0 0 1.5rem;display:block;" />
+
+  <!-- STEP 6 -->
+  <div class="step-header">
+    <div class="step-num">6</div>
+    <div class="step-title-wrap">
+      <p class="step-eyebrow">Closing the loop</p>
+      <p class="step-title">Writing Back to Salesforce When the Document is Signed</p>
+    </div>
+  </div>
+
+  <p>At this point the automation only runs in one direction: Salesforce → DocuSign. When the recipient signs, DocuSign knows — but Salesforce has no idea. Here's how to close the loop.</p>
+
+  <ol class="steps-list">
+    <li>Create a custom <strong>Checkbox field</strong> on Opportunity: <em>Contract Signed</em></li>
+    <li>Inside the Envelope Template's <strong>Completed Actions</strong> step, map: Envelope Completed → Contract Signed = True</li>
+  </ol>
+
+  <p>Now when the recipient signs, DocuSign calls back to Salesforce and checks that box automatically.</p>
+  <img src="images/doc11.png" alt="DocuSign template settings showing Field Updates — Envelope Completed mapped to Contract Signed = True" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 0.75rem;display:block;" />
+  <img src="images/doc14.png" alt="DocuSign Status record in Salesforce showing Completed status linked to Test Opportunity 1" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0 0 0.75rem;display:block;" />
+  <img src="images/doc15.png" alt="Salesforce Opportunity record showing Contract Signed checkbox ticked after DocuSign completion" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0 0 1.5rem;display:block;" />
+
+  <div class="callout callout-green">
+    <p>DocuSign signs → <strong>Contract Signed checkbox flips to True.</strong> Salesforce now knows the contract is done — no manual update, no follow-up email needed.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <h2>The Full Picture</h2>
+  <p>Here's the complete end-to-end process that runs without any human intervention:</p>
+
+  <div class="flow-diagram">
+    <p><span class="flow-node">Opportunity → Closed Won</span></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓</p>
+    <p><span class="flow-node">Check: Contact Role (Decision Maker) exists?</span></p>
+    <p>&nbsp;&nbsp;↓ <span class="flow-no">No</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓ <span class="flow-yes">Yes</span></p>
+    <p><span class="flow-action">Create Task</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="flow-action">Send DocuSign Envelope</span></p>
+    <p>(manual follow-up)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓</p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓ <span class="flow-no">Fault Path</span></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="flow-action">Create Task</span> (error details)</p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓</p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="flow-action">Recipient signs document</span></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓</p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="flow-action">DocuSign → Salesforce callback</span></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓</p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="flow-end">Contract Signed = ✅ True</span></p>
+  </div>
+
+  <hr class="divider" />
+
+  <h2>What I Learned</h2>
+  <div class="learnings-grid">
+    <div class="learning-card">
+      <div class="learning-num">1</div>
+      <div class="learning-text">
+        <strong>The template lives in Salesforce, not DocuSign</strong>
+        <p>Everything is configured inside the AppExchange package. Your DocuSign account is just the delivery mechanism.</p>
+      </div>
+    </div>
+    <div class="learning-card">
+      <div class="learning-num">2</div>
+      <div class="learning-text">
+        <strong>Template IDs are Salesforce Record IDs</strong>
+        <p>This single gotcha cost me an hour. Use the ID from the Salesforce URL — not the UUID from appdemo.docusign.com.</p>
+      </div>
+    </div>
+    <div class="learning-card">
+      <div class="learning-num">3</div>
+      <div class="learning-text">
+        <strong>Always add a fault path</strong>
+        <p>Automated flows that fail silently are dangerous in a sales context. A missed contract because of a connectivity error, with no one notified, is a real business problem.</p>
+      </div>
+    </div>
+    <div class="learning-card">
+      <div class="learning-num">4</div>
+      <div class="learning-text">
+        <strong>Check your data before acting</strong>
+        <p>The Contact Role check before sending is the difference between a demo and a production-ready automation. Real Salesforce orgs are messy — not every Opportunity will have a Contact Role.</p>
+      </div>
+    </div>
+    <div class="learning-card">
+      <div class="learning-num">5</div>
+      <div class="learning-text">
+        <strong>The $30 price tag is misleading</strong>
+        <p>For learning, building, and portfolio purposes — this entire integration is completely free.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="try-it">
+    <h3>Try It Yourself</h3>
+    <p>Everything in this article uses free tools. No paid subscriptions. No code. Just configuration, a few custom fields, and two Flows.</p>
+    <div class="try-it-links">
+      <a class="try-link" href="https://developer.salesforce.com" target="_blank">Salesforce Developer Org →</a>
+      <a class="try-link" href="https://developers.docusign.com" target="_blank">DocuSign Developer Account →</a>
+      <a class="try-link" href="https://appexchange.salesforce.com" target="_blank">DocuSign on AppExchange →</a>
+    </div>
+  </div>
+
+  <p>If you build this or run into different gotchas along the way, drop them in the comments — I'd love to know what else is hiding in this integration.</p>
+
+  <p style="font-size:13px;color:var(--text-muted);margin-top:2rem;">Built on Salesforce Developer Org · DocuSign Apps Launcher · Salesforce Flow</p>
+
+</article>
+
+<div class="article-footer">
+  <a class="back-link" href="index.html#blog">← Back to all posts</a>
+  <div class="share-row">
+    <span class="share-label">Share:</span>
+    <a class="share-btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https://supriyajnagesh.com/blog-docusign-salesforce-flow.html" target="_blank">LinkedIn</a>
+  </div>
+</div>
+
+<div class="more-section">
+  <div class="more-inner">
+    <p class="more-label">More from the blog</p>
+    <div class="more-grid">
+      <a class="more-card" href="blog-what-hiring-managers-look-for.html">
+        <p class="more-card-tag">Career</p>
+        <p class="more-card-title">What hiring managers actually look for in a Salesforce professional</p>
+      </a>
+      <a class="more-card" href="#">
+        <p class="more-card-tag">Automation</p>
+        <p class="more-card-title">5 Flow Builder patterns every Salesforce admin should know</p>
+      </a>
+      <a class="more-card" href="#">
+        <p class="more-card-tag">Dev</p>
+        <p class="more-card-title">Apex vs Flow: when to use which</p>
+      </a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <small>© 2026 Supriya Nagesh · supriyajnagesh.com</small>
+  <a href="https://www.linkedin.com/in/supriya-nagesh" target="_blank">LinkedIn</a>
+</footer>
+
+</body>
+</html>
