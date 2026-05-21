@@ -101,7 +101,24 @@
       background: radial-gradient(circle, rgba(59,158,255,0.08) 0%, transparent 70%);
       border-radius: 50%;
     }
-    .hero-inner { position: relative; z-index: 1; max-width: 760px; }
+    .hero-inner { position: relative; z-index: 1; max-width: 760px; display: grid; grid-template-columns: 1fr auto; gap: 3rem; align-items: center; }
+    .hero-content { }
+    .hero-photo-wrap { display: flex; flex-direction: column; align-items: center; gap: 1rem; flex-shrink: 0; }
+    .hero-photo {
+      width: 160px; height: 160px; border-radius: 50%;
+      object-fit: cover; object-position: center top;
+      border: 3px solid rgba(255,255,255,0.15);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .visitor-counter {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12px; color: rgba(255,255,255,0.45);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 5px 12px; border-radius: 20px;
+      white-space: nowrap;
+    }
+    .visitor-counter svg { opacity: 0.5; }
     .hero-badge {
       display: inline-flex;
       align-items: center;
@@ -384,6 +401,68 @@
     .footer-links { display: flex; gap: 1.5rem; }
     footer small { font-size: 13px; }
 
+    /* ── TESTIMONIALS ── */
+    #testimonials { background: var(--navy); }
+    #testimonials .section-eyebrow { color: rgba(255,255,255,0.45); }
+    #testimonials .section-title { color: white; }
+    #testimonials .section-subtitle { color: rgba(255,255,255,0.55); }
+    .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-top: 0; }
+    .testimonial-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      display: flex; flex-direction: column; gap: 1.25rem;
+      transition: background 0.2s;
+    }
+    .testimonial-card:hover { background: rgba(255,255,255,0.09); }
+    .testimonial-quote {
+      font-size: 15px; line-height: 1.75;
+      color: rgba(255,255,255,0.8);
+      font-style: italic;
+      flex: 1;
+      position: relative;
+      padding-top: 0.25rem;
+    }
+    .testimonial-quote::before {
+      content: '\201C';
+      font-family: 'DM Serif Display', serif;
+      font-size: 48px; line-height: 1;
+      color: var(--accent);
+      display: block; margin-bottom: 0.25rem;
+    }
+    .testimonial-author { display: flex; align-items: center; gap: 12px; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
+    .testimonial-avatar {
+      width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--accent), #1a5fa8);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'DM Serif Display', serif; font-size: 14px; color: white;
+    }
+    .testimonial-name { font-size: 14px; font-weight: 500; color: white; }
+    .testimonial-role { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 1px; }
+    .testimonial-relation {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 9px; border-radius: 20px;
+      background: rgba(59,158,255,0.15);
+      color: #7dc4ff;
+      border: 1px solid rgba(59,158,255,0.25);
+      margin-left: auto; align-self: flex-start; white-space: nowrap;
+    }
+    .testimonials-cta {
+      margin-top: 2rem; text-align: center;
+    }
+    .testimonials-cta p { font-size: 14px; color: rgba(255,255,255,0.45); margin-bottom: 0.75rem; }
+    .btn-testimonial {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 13px; font-weight: 500;
+      padding: 10px 20px; border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.8); background: transparent;
+      text-decoration: none; transition: all 0.15s;
+    }
+    .btn-testimonial:hover { background: rgba(255,255,255,0.1); color: white; border-color: rgba(255,255,255,0.4); }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 700px) {
       nav { padding: 0 1.25rem; }
@@ -394,6 +473,9 @@
       .contact-wrapper { grid-template-columns: 1fr; gap: 2rem; }
       .form-row { grid-template-columns: 1fr; }
       footer { padding: 1.5rem 1.25rem; }
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-photo-wrap { flex-direction: row; justify-content: flex-start; margin-bottom: 0.5rem; }
+      .hero-photo { width: 80px; height: 80px; }
     }
   </style>
 </head>
@@ -406,6 +488,7 @@
     <li><a href="#about">About</a></li>
     <li><a href="#skills">Skills</a></li>
     <li><a href="#projects">Projects</a></li>
+    <li><a href="#testimonials">Testimonials</a></li>
     <li><a href="#blog">Blog</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
@@ -415,15 +498,24 @@
 <!-- HERO -->
 <header class="hero">
   <div class="hero-inner">
-    <div class="hero-badge">
-      <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="5"/></svg>
-      Salesforce Professional
+    <div class="hero-content">
+      <div class="hero-badge">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="5"/></svg>
+        Salesforce Professional
+      </div>
+      <h1>Supriya Nagesh</h1>
+      <p class="hero-sub">I build scalable Salesforce solutions — CRM architecture, automation, and integrations that move business forward. Based in the Salesforce ecosystem since day one.</p>
+      <div class="hero-actions">
+        <a class="btn-hero btn-hero-primary" href="#projects">View my work</a>
+        <a class="btn-hero btn-hero-ghost" href="#contact">Get in touch</a>
+      </div>
     </div>
-    <h1>Supriya Nagesh</h1>
-    <p class="hero-sub">I build scalable Salesforce solutions — CRM architecture, automation, and integrations that move business forward. Based in the Salesforce ecosystem since day one.</p>
-    <div class="hero-actions">
-      <a class="btn-hero btn-hero-primary" href="#projects">View my work</a>
-      <a class="btn-hero btn-hero-ghost" href="#contact">Get in touch</a>
+    <div class="hero-photo-wrap">
+      <img class="hero-photo" src="My_photo.jpg" alt="Supriya Nagesh" />
+      <div class="visitor-counter">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span id="visitor-count">—</span> visitors
+      </div>
     </div>
   </div>
 </header>
@@ -568,47 +660,35 @@
       <div class="project-card-header">
         <div>
           <p class="project-num">Project 02</p>
-          <p class="project-name">Case Escalation Dashboard</p>
+          <p class="project-name">SLA Command Centre</p>
         </div>
         <span class="project-cloud-badge">Service Cloud</span>
       </div>
       <div class="project-card-body">
         <div class="project-section-label">Problem statement</div>
-        <p class="project-text">High-priority support cases were being missed with no visibility into SLA breach risk. Teams had no early warning system, leading to missed SLAs and frustrated customers.</p>
+        <p class="project-text">Sai Dance Academy's support team had no early warning system — SLA breaches only surfaced in retrospective reports, after the damage was already done.</p>
 
         <div class="project-section-label">What I built</div>
-        <p class="project-text">A real-time dashboard with milestone tracking, automated alerts triggered at 75% SLA usage, and escalation flows that notify managers instantly. SLA breach rate dropped by 60%.</p>
+        <p class="project-text">A fully declarative SLA monitoring system with real-time case health indicators, automated 75% warning alerts, escalation rules that notify managers instantly, and a live Service Cloud dashboard. SLA breach rate dropped by 60%.</p>
 
         <div class="project-section-label">Salesforce features used</div>
         <div class="feature-tags">
           <span class="feature-tag">Entitlements</span>
           <span class="feature-tag">Milestones</span>
-          <span class="feature-tag">Reports &amp; Dashboards</span>
-          <span class="feature-tag">Email Alerts</span>
-          <span class="feature-tag">Escalation Rules</span>
           <span class="feature-tag">Flow Builder</span>
-        </div>
-
-        <div class="project-section-label">Screenshots</div>
-        <div class="screenshots-strip">
-          <div class="screenshot-thumb">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-            <span>Add screenshot</span>
-          </div>
-          <div class="screenshot-thumb">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-            <span>Add screenshot</span>
-          </div>
+          <span class="feature-tag">Escalation Rules</span>
+          <span class="feature-tag">Reports &amp; Dashboards</span>
+          <span class="feature-tag">Formula Fields</span>
         </div>
 
         <div class="project-links">
+          <a class="proj-link" href="project-sla-command-centre.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            View full case study
+          </a>
           <a class="proj-link" href="#" title="Watch Loom walkthrough">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-            Watch walkthrough (Loom)
-          </a>
-          <a class="proj-link" href="project2.pdf" target="_blank">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            View PDF
+            Watch walkthrough
           </a>
           <a class="proj-link" href="https://github.com/supriyajnagesh" target="_blank">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.167 6.839 9.49.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.607.069-.607 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.268 2.75 1.026A9.578 9.578 0 0 1 12 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.026 2.747-1.026.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.417 22 12c0-5.523-4.477-10-10-10z"/></svg>
@@ -660,6 +740,66 @@
         <p class="blog-excerpt">A practical framework for deciding when declarative tools are enough and when you need code...</p>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <p class="section-eyebrow">What people say</p>
+  <h2 class="section-title">Testimonials</h2>
+  <p class="section-subtitle">From mentees, colleagues, managers, and clients I've worked with across the Salesforce ecosystem.</p>
+  <div class="testimonials-grid">
+
+    <div class="testimonial-card">
+      <div class="testimonial-quote">
+        Supriya has a rare ability to take a complex Salesforce requirement and break it into something clean and explainable. She built our lead routing automation from scratch and walked the whole team through it — no jargon, just clarity.
+      </div>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">JM</div>
+        <div>
+          <div class="testimonial-name">Jamie M.</div>
+          <div class="testimonial-role">Sales Operations Manager</div>
+        </div>
+        <span class="testimonial-relation">Manager</span>
+      </div>
+    </div>
+
+    <div class="testimonial-card">
+      <div class="testimonial-quote">
+        I was completely new to Salesforce when Supriya started mentoring me. Within three months I had my Admin cert and my first real project in a sandbox. She has a way of making even the tricky stuff feel achievable.
+      </div>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">PK</div>
+        <div>
+          <div class="testimonial-name">Priya K.</div>
+          <div class="testimonial-role">Aspiring Salesforce Admin</div>
+        </div>
+        <span class="testimonial-relation">Mentee</span>
+      </div>
+    </div>
+
+    <div class="testimonial-card">
+      <div class="testimonial-quote">
+        What sets Supriya apart is how she documents her decisions. Every build comes with clear reasoning — not just what was configured but why. That kind of thinking makes future maintenance so much easier.
+      </div>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">RC</div>
+        <div>
+          <div class="testimonial-name">Ravi C.</div>
+          <div class="testimonial-role">Salesforce Architect</div>
+        </div>
+        <span class="testimonial-relation">Colleague</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="testimonials-cta">
+    <p>Worked with me? I'd love to hear from you.</p>
+    <a class="btn-testimonial" href="https://docs.google.com/forms/d/e/1FAIpQLScypBuqgr2Aww5xmb7nSR3rD4Qslfj72fLYMonqmHXNQCv4FA/viewform?usp=sf_link" target="_blank">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      Leave a testimonial
+    </a>
   </div>
 </section>
 
@@ -727,6 +867,23 @@ function handleSubmit(e) {
   e.target.reset();
   setTimeout(function(){ msg.style.display = 'none'; }, 5000);
 }
+
+// Unique visitor counter using CountAPI
+(function() {
+  var key = 'supriyajnagesh-portfolio-visitors';
+  var visited = sessionStorage.getItem('sn_visited');
+  var endpoint = visited
+    ? 'https://api.countapi.xyz/get/supriyajnagesh/portfolio'
+    : 'https://api.countapi.xyz/hit/supriyajnagesh/portfolio';
+  if (!visited) sessionStorage.setItem('sn_visited', '1');
+  fetch(endpoint)
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var el = document.getElementById('visitor-count');
+      if (el && d.value) el.textContent = Number(d.value).toLocaleString();
+    })
+    .catch(function(){ /* silently fail if API is down */ });
+})();
 </script>
 </body>
 </html>

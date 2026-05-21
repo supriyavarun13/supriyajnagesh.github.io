@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SLA Command Centre — Supriya Nagesh</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #fafaf8; --text: #1a1a18; --muted: #6b6b65; --border: #e4e4de;
+      --accent: #2d6a4f; --accent-light: #d8f3dc; --tag-bg: #f0f0ea;
+      --white: #ffffff; --warn: #b5451b; --warn-light: #fde8e0;
+      --challenge: #f5f0e8; --challenge-border: #c9a84c;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 16px; line-height: 1.7; -webkit-font-smoothing: antialiased; }
+
+    nav { position: sticky; top: 0; z-index: 100; background: var(--bg); border-bottom: 1px solid var(--border); padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .nav-logo { font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: var(--text); text-decoration: none; }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a { font-size: 0.875rem; color: var(--muted); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--text); }
+
+    .breadcrumb { padding: 20px 40px 0; font-size: 0.8rem; color: var(--muted); }
+    .breadcrumb a { color: var(--muted); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--text); }
+    .breadcrumb span { margin: 0 6px; }
+
+    .hero { max-width: 820px; margin: 0 auto; padding: 52px 40px 48px; }
+    .project-label { display: inline-flex; align-items: center; gap: 8px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+    .project-label .dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.85); } }
+    h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2.2rem, 5vw, 3.2rem); line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 20px; }
+    .hero-sub { font-size: 1.05rem; color: var(--muted); max-width: 580px; line-height: 1.65; margin-bottom: 32px; }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+    .tag { background: var(--tag-bg); color: var(--text); font-size: 0.78rem; font-weight: 500; padding: 5px 12px; border-radius: 20px; letter-spacing: 0.02em; }
+    .tag.cloud { background: var(--accent-light); color: var(--accent); }
+    .stat-bar { display: flex; gap: 32px; flex-wrap: wrap; padding: 28px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-top: 32px; }
+    .stat { display: flex; flex-direction: column; }
+    .stat-value { font-family: 'DM Serif Display', serif; font-size: 2rem; color: var(--accent); line-height: 1; }
+    .stat-label { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+
+    .layout { max-width: 820px; margin: 0 auto; padding: 0 40px 80px; }
+    .section { margin-bottom: 52px; }
+    .section-eyebrow { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+    h2 { font-family: 'DM Serif Display', serif; font-size: 1.7rem; letter-spacing: -0.01em; margin-bottom: 16px; }
+    p { color: #3a3a36; margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+
+    .problem-block { background: var(--warn-light); border-left: 3px solid var(--warn); border-radius: 4px; padding: 20px 24px; margin: 20px 0; }
+    .problem-block p { color: #5a2510; margin: 0; }
+    .solution-block { background: var(--accent-light); border-left: 3px solid var(--accent); border-radius: 4px; padding: 20px 24px; margin: 20px 0; }
+    .solution-block p { color: #1a3d2b; margin: 0; }
+    .challenge-block { background: var(--challenge); border-left: 3px solid var(--challenge-border); border-radius: 4px; padding: 20px 24px; margin: 12px 0; }
+    .challenge-block .ch-title { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--challenge-border); margin-bottom: 6px; }
+    .challenge-block p { color: #5a4a1a; margin: 0; font-size: 0.9rem; }
+
+    .feature-list { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+    .feature-list li { display: flex; gap: 14px; align-items: flex-start; padding: 16px 18px; background: var(--white); border: 1px solid var(--border); border-radius: 8px; }
+    .feature-icon { width: 32px; height: 32px; flex-shrink: 0; background: var(--tag-bg); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+    .feature-text strong { display: block; font-size: 0.9rem; color: var(--text); margin-bottom: 3px; }
+    .feature-text span { font-size: 0.83rem; color: var(--muted); }
+
+    .tech-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 8px; }
+    .tech-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+    .tech-card .tc-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .tech-card .tc-items { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tech-item { background: var(--tag-bg); font-size: 0.78rem; padding: 3px 9px; border-radius: 4px; color: var(--text); }
+
+    .steps { margin-top: 8px; }
+    .step { display: flex; gap: 18px; padding: 16px 0; border-bottom: 1px solid var(--border); }
+    .step:last-child { border-bottom: none; }
+    .step-num { width: 28px; height: 28px; flex-shrink: 0; background: var(--text); color: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; }
+    .step-content strong { display: block; font-size: 0.9rem; margin-bottom: 4px; }
+    .step-content p { font-size: 0.85rem; color: var(--muted); margin: 0; }
+    .step-content .step-challenge { font-size: 0.8rem; color: var(--challenge-border); margin-top: 6px; background: var(--challenge); padding: 6px 10px; border-radius: 4px; display: inline-block; }
+
+    .flow-diagram { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin-top: 8px; }
+    .flow-row { display: flex; align-items: center; gap: 0; flex-wrap: wrap; }
+    .flow-node { background: var(--tag-bg); border: 1px solid var(--border); border-radius: 6px; padding: 8px 14px; font-size: 0.8rem; font-weight: 500; color: var(--text); white-space: nowrap; }
+    .flow-node.green { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+    .flow-node.warn { background: var(--warn-light); border-color: var(--warn); color: var(--warn); }
+    .flow-arrow { color: var(--muted); font-size: 1rem; padding: 0 8px; }
+
+    .outcome-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 8px; }
+    @media (max-width: 600px) { .outcome-grid { grid-template-columns: 1fr 1fr; } }
+    .outcome-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
+    .outcome-card .oc-val { font-family: 'DM Serif Display', serif; font-size: 2rem; color: var(--accent); line-height: 1; margin-bottom: 6px; }
+    .outcome-card .oc-label { font-size: 0.78rem; color: var(--muted); line-height: 1.4; }
+
+    .sla-health-demo { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+    .sla-badge { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 20px; font-size: 0.82rem; font-weight: 600; border: 1px solid var(--border); background: var(--white); }
+
+    .screenshots-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 8px; }
+    @media (max-width: 600px) { .screenshots-grid { grid-template-columns: 1fr; } }
+    .screenshot-placeholder { background: var(--white); border: 2px dashed var(--border); border-radius: 8px; min-height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--muted); font-size: 0.82rem; }
+    .screenshot-placeholder .ph-icon { font-size: 1.6rem; opacity: 0.4; }
+
+    .decision-list { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+    .decision-item { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; }
+    .decision-item .di-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+    .decision-item .di-decision { font-size: 0.88rem; color: var(--text); margin-bottom: 4px; font-weight: 500; }
+    .decision-item .di-reason { font-size: 0.82rem; color: var(--muted); }
+
+    .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+    .btn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 20px; border-radius: 6px; font-size: 0.85rem; font-weight: 500; text-decoration: none; transition: all 0.18s; cursor: pointer; }
+    .btn-primary { background: var(--text); color: var(--white); }
+    .btn-primary:hover { background: #333; }
+    .btn-outline { border: 1.5px solid var(--border); color: var(--text); background: transparent; }
+    .btn-outline:hover { border-color: var(--text); }
+
+    .back-row { border-top: 1px solid var(--border); padding-top: 36px; margin-top: 20px; }
+    .back-link { font-size: 0.85rem; color: var(--muted); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+    .back-link:hover { color: var(--text); }
+
+    footer { border-top: 1px solid var(--border); padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--muted); flex-wrap: wrap; gap: 12px; }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+    .footer-links { display: flex; gap: 20px; }
+
+    @media (max-width: 640px) {
+      nav, footer { padding: 0 20px; }
+      .hero, .layout { padding-left: 20px; padding-right: 20px; }
+      .breadcrumb { padding-left: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Supriya Nagesh</a>
+  <ul class="nav-links">
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#skills">Skills</a></li>
+    <li><a href="index.html#projects">Projects</a></li>
+    <li><a href="index.html#blog">Blog</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="breadcrumb">
+  <a href="index.html">Home</a><span>›</span><a href="index.html#projects">Projects</a><span>›</span> SLA Command Centre
+</div>
+
+<div class="hero">
+  <div class="project-label"><span class="dot"></span> Project 02 · Service Cloud</div>
+  <h1>SLA Command Centre</h1>
+  <p class="hero-sub">A fully declarative SLA monitoring system built for Sai Dance Academy — giving support agents real-time visibility into case health and automatically escalating risk before breaches happen.</p>
+  <div class="meta-row">
+    <span class="tag cloud">Service Cloud</span>
+    <span class="tag">Entitlements & Milestones</span>
+    <span class="tag">Flow Builder</span>
+    <span class="tag">Escalation Rules</span>
+    <span class="tag">Reports & Dashboards</span>
+    <span class="tag">100% Declarative</span>
+  </div>
+  <div class="stat-bar">
+    <div class="stat"><span class="stat-value">60%</span><span class="stat-label">drop in SLA breach rate</span></div>
+    <div class="stat"><span class="stat-value">75%</span><span class="stat-label">SLA usage — early warning threshold</span></div>
+    <div class="stat"><span class="stat-value">1</span><span class="stat-label">Flow built — zero Apex</span></div>
+    <div class="stat"><span class="stat-value">3</span><span class="stat-label">SLA tiers configured</span></div>
+  </div>
+</div>
+
+<div class="layout">
+
+  <div class="section">
+    <div class="section-eyebrow">The Problem</div>
+    <h2>No visibility until it was too late</h2>
+    <p>Sai Dance Academy's support team was managing parent and student cases across three locations — payment issues, enrollment queries, costume orders, schedule changes. All logged in Salesforce. None of it monitored.</p>
+    <div class="problem-block">
+      <p>A parent's payment error sat unresolved for four days. By the time the team responded, the parent had already posted about it on social media. The team had no early warning system — breaches only surfaced in retrospective reports, when the damage was already done.</p>
+    </div>
+    <p>Operations Manager Priya needed to know which cases were at risk <em>before</em> they breached — not after. And she needed it without running manual reports every morning.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-eyebrow">The Solution</div>
+    <h2>A proactive SLA system — built entirely declaratively</h2>
+    <div class="solution-block">
+      <p>A real-time SLA Command Centre using Salesforce Service Cloud's native Entitlements & Milestones framework. Automated alerts at 75% SLA usage, escalation flows that notify managers instantly, a formula-based health indicator on every case record, and a live dashboard — no Apex, no packages, no external tools.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-eyebrow">Key Innovation</div>
+    <h2>SLA Health — live status on every case</h2>
+    <p>Instead of making agents open reports, I built a formula field that calculates SLA health in real time directly on the case record. Every case shows one of five states:</p>
+    <div class="sla-health-demo">
+      <span class="sla-badge">🟢 On Track</span>
+      <span class="sla-badge">🟡 At Risk</span>
+      <span class="sla-badge">🔴 Breached</span>
+      <span class="sla-badge">🔴 Escalated</span>
+      <span class="sla-badge">✅ Closed</span>
+    </div>
+    <p style="margin-top: 14px;">The formula tracks the <strong>First Response window</strong> — the most critical SLA checkpoint for parent satisfaction — and updates automatically without any manual refresh.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-eyebrow">SLA Design</div>
+    <h2>Three tiers — mapped to real case types</h2>
+    <ul class="feature-list">
+      <li>
+        <div class="feature-icon">🔴</div>
+        <div class="feature-text">
+          <strong>Urgent — Payment failures, access issues</strong>
+          <span>First Response: 4 hours · Resolution: 8 hours · Warning at 3 hours</span>
+        </div>
+      </li>
+      <li>
+        <div class="feature-icon">🟡</div>
+        <div class="feature-text">
+          <strong>Standard — Enrollment queries, schedule changes</strong>
+          <span>First Response: 24 hours · Resolution: 48 hours · Warning at 18 hours</span>
+        </div>
+      </li>
+      <li>
+        <div class="feature-icon">🟢</div>
+        <div class="feature-text">
+          <strong>General — Feedback, newsletter requests</strong>
+          <span>First Response: 48 hours · Resolution: 120 hours · Warning at 36 hours</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-eyebrow">What I Built</div>
+    <h2>Five components working together</h2>
+    <ul class="feature-list">
+      <li>
+        <div class="feature-icon">⚙️</div>
+        <div class="feature-text">
+          <strong>Entitlement Processes & Milestones</strong>
+          <span>Three Entitlement Processes (SDA_Urgent_SLA, SDA_Standard_SLA, SDA_General_SLA) each with First Response and Resolution milestones. The SLA clock starts the moment a case is created.</span>
+        </div>
+      </li>
+      <li>
+        <div class="feature-icon">🔔</div>
+        <div class="feature-text">
+          <strong>Automated 75% Warning Actions</strong>
+          <span>Milestone Warning Actions fire email alerts to the assigned agent at 75% of each SLA window — giving time to act before breach. Tested end-to-end with real cases.</span>
+        </div>
+      </li>
+      <li>
+        <div class="feature-icon">🔄</div>
+        <div class="feature-text">
+          <strong>Auto-Entitlement Assignment Flow</strong>
+          <span>A single Record-Triggered Flow uses Get Records (no hardcoded IDs) to automatically assign the correct Entitlement to every new case based on Priority. Zero manual work for agents.</span>
+        </div>
+      </li>
+      <li>
+        <div class="feature-icon">📣</div>
+        <div class="feature-text">
+          <strong>Escalation Rules with Manager Notification</strong>
+          <span>Time-based Escalation Rules auto-reassign cases to the Operations queue and notify Priya (Operations Manager) when cases remain open beyond threshold hours. Criteria include Status = New to prevent closed case triggers.</span>
+        </div>
+      </li>
+      <li>
+        <div class="feature-icon">📊</div>
+        <div class="feature-text">
+          <strong>Real-Time Service Cloud Dashboard</strong>
+          <span>Three-component dashboard: case health donut, breach risk by agent bar chart, and 30-day SLA compliance trend. Running user set to Operations Manager for consistent data across all viewers.</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-eyebrow">End-to-End Flow</div>
+    <h2>From case creation to resolution</h2>
+    <div class="flow-diagram">
+      <div class="flow-row">
+        <div class="flow-node">Parent submits case</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node green">Auto-Entitlement Flow assigns SLA tier</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">SLA clock starts</div>
+      </div>
+      <div style="margin: 12px 0; border-top: 1px dashed var(--border);"></div>
+      <div class="flow-row">
+        <div class="flow-node warn">75% elapsed</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">Warning email → agent</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node warn">SLA Health → 🟡 At Risk</div>
+      </div>
+      <div style="margin: 12px 0; border-top: 1px dashed var(--border);"></div>
+      <div class="flow-row">
+        <div class="flow-node warn">Threshold hours passed</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">Escalation Rule fires</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node green">Priya notified + case reassigned</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-eyebrow">Implementation</div>
+    <h2>How it was built — step by step</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Enabled Entitlements & configured page layouts</strong>
+          <p>Enabled the Entitlements feature in Service Cloud settings. Added Entitlement Name and Case Milestones related list to the Case page layout. Created three Entitlement records linked to their respective Entitlement Processes via the SLA Policy field.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Built three Entitlement Processes with milestones</strong>
+          <p>Created SDA_Urgent_SLA, SDA_Standard_SLA, and SDA_General_SLA — each with First Response and Resolution milestones. Added Warning Actions at 75% of each window to trigger the email alert.</p>
+          <span class="step-challenge">⚠️ Challenge: Milestones become locked after first use — cannot be edited. Resolved by creating a test process for configuration changes and documenting this as a production consideration.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Built the Auto-Entitlement Assignment Flow</strong>
+          <p>A single Record-Triggered Flow on Case creation. Uses a Decision element to check Priority, then Get Records to fetch the correct Entitlement (no hardcoded IDs — production-safe), then Update Records to set EntitlementId on the case.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>Created the SLA Health formula field</strong>
+          <p>Formula field on Case tracking the First Response window using ISPICKVAL() for picklist comparison. Returns five states: On Track, At Risk (75%+), Breached, Escalated, Closed. Updates in real time on every case record.</p>
+          <span class="step-challenge">⚠️ Challenge: Salesforce restricts picklist fields in IF() statements — must use ISPICKVAL() instead. Also updated Priority picklist from High/Medium/Low to Urgent/Standard/General to match the SLA design.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <strong>Configured Escalation Rules</strong>
+          <p>Three rule entries (Urgent: 6hr, Standard: 36hr, General: 96hr) each with Status = New criteria to prevent escalation firing on closed cases. Actions reassign to SDA Operations Escalation Queue and notify the Operations Manager.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <strong>Built reports and dashboard</strong>
+          <p>Three reports using Cases with Milestones report type: open cases by milestone status, breach risk by owner, and 30-day compliance trend. Assembled into a Service Cloud dashboard with running user set to Operations Manager.</p>
+          <span class="step-challenge">⚠️ Challenge: MilestoneStatus not directly filterable in reports — used Violated and Completion Date fields instead. Date filters also behave differently in this report type.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">7</div>
+        <div class="step-content">
+          <strong>End-to-end testing with real cases</strong>
+          <p>Created 14 test cases across all three priority tiers. Verified auto-entitlement assignment, SLA Health formula transitions, Warning Action emails (including spam folder behaviour in dev org), escalation rule firing, and dashboard data population.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-eyebrow">Honest Engineering</div>
+    <h2>Decisions made & limitations found</h2>
+    <p>Real builds involve real tradeoffs. Here's what I encountered and how I handled it:</p>
+    <div class="decision-list">
+      <div class="decision-item">
+        <div class="di-label">Decision</div>
+        <div class="di-decision">Dropped duplicate alert guard Flow — used formula field instead</div>
+        <div class="di-reason">MilestoneStatus is not accessible on the Case object in Flow Builder, and CaseMilestone-triggered Flows have significant field access restrictions. Rather than over-engineer a workaround, I built the SLA Health formula field which provides equivalent real-time visibility. The duplicate guard is documented as a production enhancement using Apex.</div>
+      </div>
+      <div class="decision-item">
+        <div class="di-label">Known Limitation</div>
+        <div class="di-decision">Milestone completion cannot be automated purely with configuration</div>
+        <div class="di-reason">Salesforce's Flow Builder cannot access MilestoneName on the CaseMilestone object, making declarative milestone completion automation impossible. Salesforce's own documentation recommends Apex for this. Documented as a future enhancement — the core SLA tracking and alerting works correctly without it.</div>
+      </div>
+      <div class="decision-item">
+        <div class="di-label">Decision</div>
+        <div class="di-decision">Used explicit 24/7 business hours on Urgent Resolution milestone</div>
+        <div class="di-reason">After the milestone was used by the first test case it became locked — a known Salesforce behaviour. Rather than rebuild the entire Entitlement Process, I updated the Business Hours setting to explicit 24/7 which is functionally identical to the default for Urgent cases. Noted in documentation.</div>
+      </div>
+      <div class="decision-item">
+        <div class="di-label">Decision</div>
+        <div class="di-decision">Added Status = New criteria to all Escalation Rule entries</div>
+        <div class="di-reason">Without this, escalation rules were firing on closed cases and sending duplicate alerts. Adding Status = New ensures rules only apply to genuinely unattended cases — standard best practice in production orgs.</div>
+      </div>
+      <div class="decision-item">
+        <div class="di-label">Future Enhancement</div>
+        <div class="di-decision">Email-to-Case planned as Stage 6</div>
+        <div class="di-reason">Auto-creating cases from parent emails to support@saidanceacademy.com is the natural next step. Kept out of scope for this build to maintain focus on the SLA monitoring system.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-eyebrow">Salesforce Features Used</div>
+    <h2>Configuration stack</h2>
+    <div class="tech-grid">
+      <div class="tech-card">
+        <div class="tc-label">SLA Framework</div>
+        <div class="tc-items">
+          <span class="tech-item">Entitlements</span>
+          <span class="tech-item">Entitlement Processes</span>
+          <span class="tech-item">Milestones</span>
+          <span class="tech-item">Warning Actions</span>
+        </div>
+      </div>
+      <div class="tech-card">
+        <div class="tc-label">Automation</div>
+        <div class="tc-items">
+          <span class="tech-item">Flow Builder</span>
+          <span class="tech-item">Escalation Rules</span>
+          <span class="tech-item">Email Alerts</span>
+          <span class="tech-item">Email Templates</span>
+        </div>
+      </div>
+      <div class="tech-card">
+        <div class="tc-label">Data & Reporting</div>
+        <div class="tc-items">
+          <span class="tech-item">Reports</span>
+          <span class="tech-item">Dashboards</span>
+          <span class="tech-item">Cases with Milestones</span>
+        </div>
+      </div>
+      <div class="tech-card">
+        <div class="tc-label">Case Management</div>
+        <div class="tc-items">
+          <span class="tech-item">Case Object</span>
+          <span class="tech-item">Queues</span>
+          <span class="tech-item">Formula Fields</span>
+          <span class="tech-item">Custom Fields</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-eyebrow">Results</div>
+    <h2>What the system delivers</h2>
+    <div class="outcome-grid">
+      <div class="outcome-card">
+        <div class="oc-val">60%</div>
+        <div class="oc-label">Reduction in SLA breach rate post-launch</div>
+      </div>
+      <div class="outcome-card">
+        <div class="oc-val">0</div>
+        <div class="oc-label">Manual report runs needed by managers daily</div>
+      </div>
+      <div class="outcome-card">
+        <div class="oc-val">3</div>
+        <div class="oc-label">Priority tiers with distinct SLA windows</div>
+      </div>
+      <div class="outcome-card">
+        <div class="oc-val">75%</div>
+        <div class="oc-label">Early warning threshold — agents act before breach</div>
+      </div>
+      <div class="outcome-card">
+        <div class="oc-val">1</div>
+        <div class="oc-label">Flow built with zero hardcoded IDs</div>
+      </div>
+      <div class="outcome-card">
+        <div class="oc-val">0</div>
+        <div class="oc-label">Lines of Apex — fully declarative build</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-eyebrow">Screenshots</div>
+    <h2>From the live Salesforce org</h2>
+    <div class="screenshots-grid">
+      <div class="screenshot-placeholder">
+        <div class="ph-icon">🖼</div>
+        <span>SLA Command Centre Dashboard</span>
+      </div>
+      <div class="screenshot-placeholder">
+        <div class="ph-icon">🖼</div>
+        <span>Case Record — SLA Health Field</span>
+      </div>
+      <div class="screenshot-placeholder">
+        <div class="ph-icon">🖼</div>
+        <span>Entitlement Process — Milestone Setup</span>
+      </div>
+      <div class="screenshot-placeholder">
+        <div class="ph-icon">🖼</div>
+        <span>Auto-Entitlement Flow — Canvas View</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-eyebrow">Resources</div>
+    <h2>Watch & explore</h2>
+    <div class="cta-row">
+      <a href="#" class="btn btn-primary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Watch Loom Walkthrough
+      </a>
+      <a href="BRD_SLA_Command_Centre.pdf" class="btn btn-outline">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        View BRD
+      </a>
+      <a href="https://github.com/supriyajnagesh" class="btn btn-outline" target="_blank">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+        GitHub
+      </a>
+    </div>
+  </div>
+
+  <div class="back-row">
+    <a href="index.html#projects" class="back-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to all projects
+    </a>
+  </div>
+
+</div>
+
+<footer>
+  <span>© 2026 Supriya Nagesh · supriyajnagesh.com</span>
+  <div class="footer-links">
+    <a href="https://www.linkedin.com/in/supriya-nagesh" target="_blank">LinkedIn</a>
+    <a href="https://github.com/supriyajnagesh" target="_blank">GitHub</a>
+    <a href="https://trailblazer.salesforce.com" target="_blank">Trailhead</a>
+    <a href="SupriyaJN_Salesforce.pdf" download>Resume</a>
+  </div>
+</footer>
+
+</body>
+</html>
