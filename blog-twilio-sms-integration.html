@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Building a Twilio SMS Integration in Salesforce From Scratch — Supriya Nagesh</title>
+  <meta name="description" content="No AppExchange package. No pre-built connector. Just Apex, Named Credentials, Custom Metadata, and Flow — wired together from scratch." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy:#0f1b2d;--accent:#3b9eff;--accent-light:#e8f3ff;--text:#1a1a2e;--text-muted:#5a6a7e;
+      --border:#e2e8f0;--surface:#f8fafc;--white:#ffffff;--green:#059669;--green-light:#ecfdf5;
+      --yellow:#d97706;--yellow-light:#fffbeb;--red:#dc2626;--red-light:#fef2f2;
+      --purple:#7c3aed;--purple-light:#f5f3ff;--radius:10px;--radius-lg:16px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);font-size:16px;line-height:1.7;}
+    nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;padding:0 2.5rem;height:60px;}
+    .nav-logo{font-family:'DM Serif Display',serif;font-size:18px;color:var(--navy);text-decoration:none;}
+    .nav-back{font-size:13px;font-weight:500;color:var(--text-muted);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s;}
+    .nav-back:hover{color:var(--navy);}
+    .article-hero{background:var(--navy);padding:4rem 2.5rem 3.5rem;position:relative;overflow:hidden;}
+    .article-hero::before{content:'';position:absolute;top:-80px;right:-80px;width:400px;height:400px;background:radial-gradient(circle,rgba(124,58,237,0.15) 0%,transparent 70%);border-radius:50%;}
+    .article-hero::after{content:'';position:absolute;bottom:-60px;left:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(59,158,255,0.08) 0%,transparent 70%);border-radius:50%;}
+    .hero-inner{position:relative;z-index:1;max-width:760px;margin:0 auto;}
+    .article-meta{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap;}
+    .article-tag{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);background:rgba(59,158,255,0.12);border:1px solid rgba(59,158,255,0.25);padding:4px 10px;border-radius:20px;}
+    .article-tag-purple{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#c4b5fd;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);padding:4px 10px;border-radius:20px;}
+    .article-date{font-size:13px;color:rgba(255,255,255,0.4);}
+    .meta-dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,0.2);}
+    .article-hero h1{font-family:'DM Serif Display',serif;font-size:clamp(22px,4vw,38px);font-weight:400;line-height:1.2;color:white;margin-bottom:1rem;}
+    .article-subtitle{font-size:16px;color:rgba(255,255,255,0.6);line-height:1.7;max-width:640px;}
+    .stack-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:1.75rem;}
+    .stack-badge{font-size:12px;padding:5px 12px;border-radius:20px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);}
+    .author-row{display:flex;align-items:center;gap:10px;margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.1);}
+    .author-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#1a5fa8);display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:14px;color:white;flex-shrink:0;}
+    .author-name{font-size:14px;font-weight:500;color:rgba(255,255,255,0.85);}
+    .author-title{font-size:12px;color:rgba(255,255,255,0.4);}
+    .article-body{max-width:760px;margin:0 auto;padding:3.5rem 2.5rem 5rem;}
+    .article-body p{font-size:16px;line-height:1.85;color:#2d3748;margin-bottom:1.5rem;}
+    .article-body h2{font-family:'DM Serif Display',serif;font-size:24px;font-weight:400;color:var(--navy);margin:3rem 0 0.75rem;}
+    .article-body h3{font-size:15px;font-weight:500;color:var(--navy);margin:1.75rem 0 0.5rem;}
+    .article-body strong{color:var(--navy);font-weight:500;}
+    .article-body em{color:#4a5568;}
+    .article-body a{color:var(--accent);text-decoration:none;}
+    .article-body a:hover{text-decoration:underline;}
+    .step-header{display:flex;align-items:flex-start;gap:1rem;margin:3rem 0 1rem;}
+    .step-num{width:36px;height:36px;border-radius:50%;background:var(--navy);color:white;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex-shrink:0;margin-top:4px;}
+    .step-eyebrow{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:3px;}
+    .step-title{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;color:var(--navy);line-height:1.3;}
+    .callout{border-radius:8px;padding:1.1rem 1.4rem;margin:1.25rem 0 1.75rem;}
+    .callout p{font-size:14px!important;margin:0!important;line-height:1.7!important;}
+    .callout-label{font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px;}
+    .callout-blue{background:var(--accent-light);border-left:3px solid var(--accent);}
+    .callout-blue p{color:#1a3a5c!important;}
+    .callout-yellow{background:var(--yellow-light);border-left:3px solid var(--yellow);}
+    .callout-yellow p{color:#78350f!important;}
+    .callout-red{background:var(--red-light);border-left:3px solid var(--red);}
+    .callout-red p{color:#7f1d1d!important;}
+    .callout-green{background:var(--green-light);border-left:3px solid var(--green);}
+    .callout-green p{color:#064e3b!important;}
+    .code-block{background:#1e293b;border-radius:8px;padding:1.25rem 1.5rem;margin:1rem 0 1.5rem;overflow-x:auto;}
+    .code-block code{font-family:'SF Mono','Fira Code',monospace;font-size:13px;color:#e2e8f0;line-height:1.7;white-space:pre;}
+    .code-comment{color:#64748b;}
+    .code-keyword{color:#93c5fd;}
+    .code-string{color:#86efac;}
+    .code-annotation{color:#fca5a5;}
+    .data-table{width:100%;border-collapse:collapse;margin:1.25rem 0 1.75rem;font-size:14px;}
+    .data-table th{background:var(--navy);color:white;font-weight:500;font-size:12px;letter-spacing:0.04em;padding:10px 14px;text-align:left;}
+    .data-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:#374151;vertical-align:top;}
+    .data-table tr:last-child td{border-bottom:none;}
+    .data-table tr:nth-child(even) td{background:var(--surface);}
+    .badge-free{font-size:11px;padding:2px 8px;background:var(--green-light);color:var(--green);border-radius:4px;font-weight:500;}
+    .badge-apex{font-size:11px;padding:2px 8px;background:var(--purple-light);color:var(--purple);border-radius:4px;font-weight:500;}
+    .badge-pkg{font-size:11px;padding:2px 8px;background:var(--accent-light);color:#1a5fa8;border-radius:4px;font-weight:500;}
+    .arrow-list{margin:0.75rem 0 1.5rem 0;padding:0;list-style:none;}
+    .arrow-list li{font-size:15px;color:#374151;line-height:1.7;padding:4px 0 4px 1.25rem;position:relative;}
+    .arrow-list li::before{content:'→';position:absolute;left:0;color:var(--accent);font-size:13px;}
+    .check-list{margin:0.75rem 0 1.5rem 0;padding:0;list-style:none;}
+    .check-list li{font-size:15px;color:#374151;line-height:1.7;padding:4px 0 4px 1.5rem;position:relative;}
+    .check-list li::before{content:'✅';position:absolute;left:0;font-size:13px;}
+    .gotcha-grid{display:grid;gap:1rem;margin:1.25rem 0;}
+    .gotcha-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;border-left:3px solid var(--yellow);}
+    .gotcha-num{font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--yellow);margin-bottom:6px;}
+    .gotcha-title{font-size:15px;font-weight:500;color:var(--navy);margin-bottom:6px;}
+    .gotcha-body{font-size:14px;color:#4a5568;line-height:1.7;}
+    .gotcha-body strong{color:var(--navy);}
+    .flow-diagram{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem;margin:1.25rem 0 1.75rem;font-family:'SF Mono','Fira Code',monospace;font-size:13px;color:#374151;line-height:2;}
+    .flow-diagram p{font-family:'SF Mono','Fira Code',monospace;font-size:13px;color:#374151;margin-bottom:0;line-height:2;}
+    .flow-yes{color:var(--green);font-weight:600;}
+    .flow-no{color:var(--red);font-weight:600;}
+    .flow-action{color:var(--accent);font-weight:600;}
+    .flow-end{color:var(--green);font-weight:600;}
+    .screenshot-wrap{margin:1.25rem 0 1.75rem;}
+    .screenshot-img{width:100%;border-radius:var(--radius);border:1px solid var(--border);display:block;}
+    .screenshot-caption{font-size:12px;color:var(--text-muted);margin-top:6px;text-align:center;font-style:italic;}
+    .screenshot-placeholder{background:var(--surface);border:1.5px dashed var(--border);border-radius:var(--radius);padding:2rem;text-align:center;color:var(--text-muted);font-size:13px;}
+    .screenshot-placeholder svg{width:24px;height:24px;opacity:0.3;margin:0 auto 8px;display:block;}
+    .ai-section{background:linear-gradient(135deg,#1e1b4b 0%,#0f1b2d 100%);border-radius:var(--radius-lg);padding:2rem;margin:2rem 0;border:1px solid rgba(124,58,237,0.3);}
+    .ai-section h2{color:white;margin-top:0;margin-bottom:0.75rem;}
+    .ai-section p{color:rgba(255,255,255,0.7)!important;font-size:15px!important;}
+    .ai-section p:last-child{margin-bottom:0!important;}
+    .try-it{background:var(--navy);border-radius:var(--radius-lg);padding:2rem;margin:2.5rem 0;}
+    .try-it h3{font-family:'DM Serif Display',serif;font-size:20px;color:white;font-weight:400;margin-bottom:0.75rem;}
+    .try-it p{font-size:14px!important;color:rgba(255,255,255,0.55)!important;margin:0 0 1.25rem!important;}
+    .try-it-links{display:flex;flex-wrap:wrap;gap:10px;}
+    .try-link{font-size:13px;font-weight:500;padding:9px 16px;border-radius:7px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);text-decoration:none;transition:all 0.15s;background:rgba(255,255,255,0.06);}
+    .try-link:hover{background:rgba(255,255,255,0.15);color:white;border-color:rgba(255,255,255,0.4);}
+    .divider{border:none;border-top:1px solid var(--border);margin:2.5rem 0;}
+    .article-footer{max-width:760px;margin:0 auto;padding:0 2.5rem 4rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+    .back-link{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--text-muted);text-decoration:none;padding:9px 16px;border-radius:8px;border:1px solid var(--border);transition:all 0.15s;}
+    .back-link:hover{background:var(--navy);color:white;border-color:var(--navy);}
+    .share-row{display:flex;align-items:center;gap:10px;}
+    .share-label{font-size:13px;color:var(--text-muted);}
+    .share-btn{font-size:13px;font-weight:500;padding:9px 16px;border-radius:8px;border:1px solid var(--border);background:white;color:var(--text-muted);cursor:pointer;text-decoration:none;transition:all 0.15s;}
+    .share-btn:hover{background:var(--navy);color:white;border-color:var(--navy);}
+    .more-section{background:var(--surface);padding:3.5rem 2.5rem;border-top:1px solid var(--border);}
+    .more-inner{max-width:760px;margin:0 auto;}
+    .more-label{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:1.25rem;}
+    .more-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;}
+    .more-card{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;text-decoration:none;transition:all 0.15s;display:block;}
+    .more-card:hover{border-color:#c7d8ec;box-shadow:0 4px 16px rgba(0,0,0,0.06);}
+    .more-card-tag{font-size:11px;color:var(--accent);margin-bottom:0.5rem;}
+    .more-card-title{font-size:14px;font-weight:500;color:var(--navy);line-height:1.5;}
+    footer{background:var(--navy);color:rgba(255,255,255,0.5);padding:1.5rem 2.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+    footer small{font-size:13px;}
+    footer a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;}
+    footer a:hover{color:white;}
+    @media(max-width:640px){
+      nav,footer{padding:0 1.25rem;}
+      .article-hero{padding:3rem 1.25rem 2.5rem;}
+      .article-body{padding:2.5rem 1.25rem 3rem;}
+      .article-footer{padding:0 1.25rem 3rem;}
+      .more-section{padding:2.5rem 1.25rem;}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Supriya Nagesh</a>
+  <a class="nav-back" href="index.html#blog">← Back to blog</a>
+</nav>
+
+<header class="article-hero">
+  <div class="hero-inner">
+    <div class="article-meta">
+      <span class="article-tag">Project Breakdown</span>
+      <span class="article-tag-purple">Technical Deep-dive</span>
+      <span class="meta-dot"></span>
+      <span class="article-date">May 2026</span>
+      <span class="meta-dot"></span>
+      <span class="article-date">15 min read</span>
+    </div>
+    <h1>Building a Twilio SMS Integration in Salesforce — No Package, No Shortcuts, Every Layer From Scratch</h1>
+    <p class="article-subtitle">After DocuSign, I wanted to own the full stack. Apex, Named Credentials, Custom Metadata, Flow — and an honest conversation about using AI as a coding partner.</p>
+    <div class="stack-badges">
+      <span class="stack-badge">Apex</span>
+      <span class="stack-badge">Named Credentials</span>
+      <span class="stack-badge">Custom Metadata</span>
+      <span class="stack-badge">Salesforce Flow</span>
+      <span class="stack-badge">Twilio REST API</span>
+      <span class="stack-badge">No AppExchange</span>
+    </div>
+    <div class="author-row">
+      <div class="author-avatar">SN</div>
+      <div>
+        <div class="author-name">Supriya Nagesh</div>
+        <div class="author-title">Salesforce Professional · 7+ years</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<article class="article-body">
+
+  <p>When I finished my DocuSign + Salesforce Flow project, I wanted to go further. DocuSign was powerful, but it was mostly declarative — an AppExchange package did the heavy lifting. I wanted to build something where I <strong>owned every layer of the integration.</strong></p>
+
+  <p>So I built a Twilio SMS integration in Salesforce. No AppExchange package. No pre-built connector. Just Apex, Named Credentials, Custom Metadata, and Flow — wired together from scratch.</p>
+
+  <p>And yes, I used AI as a coding partner for the Apex parts. I'll explain exactly what that meant and why I think it's worth being open about.</p>
+
+  <hr class="divider" />
+
+  <h2>What It Does</h2>
+  <p>When an Opportunity is marked <strong>Closed Won</strong> in Salesforce, the automation:</p>
+  <ul class="arrow-list">
+    <li>Checks whether the Opportunity Owner has a phone number — Phone first, Mobile as fallback</li>
+    <li>If neither exists — creates a High Priority Task alerting the owner</li>
+    <li>If a number is found — calls an Apex method that fires a Twilio SMS</li>
+    <li>On success — updates a custom <em>SMS Sent</em> checkbox on the Opportunity</li>
+    <li>Posts a Chatter message confirming who was messaged and which Opportunity triggered it</li>
+    <li>On failure — creates a Task with the exact error message for the owner to investigate</li>
+  </ul>
+
+  <div class="callout callout-green">
+    <p>Everything automated. Everything traceable. Nothing silent.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <h2>Why This Project Is Different From DocuSign</h2>
+  <p>My previous project used the DocuSign Apps Launcher — an AppExchange package that handled authentication, templates, and Flow actions out of the box. Powerful, but declarative. This project has no package.</p>
+
+  <table class="data-table">
+    <thead><tr><th>Layer</th><th>DocuSign Project</th><th>Twilio Project</th></tr></thead>
+    <tbody>
+      <tr><td>Authentication</td><td><span class="badge-pkg">Package handled OAuth</span></td><td><span class="badge-apex">Named Credentials — built manually</span></td></tr>
+      <tr><td>API calls</td><td><span class="badge-pkg">Pre-built Flow action</span></td><td><span class="badge-apex">Custom Apex callout</span></td></tr>
+      <tr><td>Configuration</td><td><span class="badge-pkg">Package settings UI</span></td><td><span class="badge-apex">Custom Metadata Type</span></td></tr>
+      <tr><td>Flow action</td><td><span class="badge-pkg">Installed with package</span></td><td><span class="badge-apex">Built as Invocable Apex Method</span></td></tr>
+      <tr><td>Code required</td><td><span class="badge-free">Zero</span></td><td><span class="badge-apex">Apex class + Test class</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-blue">
+    <p class="callout-label" style="color:var(--accent);">💡 The real value</p>
+    <p>The Twilio project forced me to understand what the DocuSign package was doing silently. That understanding is the real portfolio value here.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <h2>The Stack — All Free to Start</h2>
+  <table class="data-table">
+    <thead><tr><th>Tool</th><th>Purpose</th><th>Cost</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Salesforce Developer Org</strong></td><td>Flow, Apex, Named Credentials</td><td><span class="badge-free">Free</span></td></tr>
+      <tr><td><strong>Twilio Trial Account</strong></td><td>SMS delivery via REST API</td><td><span class="badge-free">Free trial credit (~$15)</span></td></tr>
+      <tr><td><strong>Custom Metadata</strong></td><td>Secure config storage</td><td><span class="badge-free">Free — native Salesforce</span></td></tr>
+      <tr><td><strong>Named Credentials</strong></td><td>Secure API authentication</td><td><span class="badge-free">Free — native Salesforce</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-yellow">
+    <p class="callout-label" style="color:var(--yellow);">💳 Twilio trial note</p>
+    <p>Trial accounts come with free credit to purchase a sending number and make real API calls — no credit card required. Buy the number using trial credit, and <strong>release it once testing is done</strong> to preserve your remaining balance.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="step-header">
+    <div class="step-num">1</div>
+    <div>
+      <p class="step-eyebrow">Configuration</p>
+      <p class="step-title">Custom Metadata: Config Without Hardcoding</p>
+    </div>
+  </div>
+
+  <p>The first decision was where to store Twilio credentials and phone numbers. Three options exist:</p>
+  <ul class="arrow-list">
+    <li><strong>Hardcode in Apex</strong> — never do this. Credentials in code is a security risk and a deployment nightmare</li>
+    <li><strong>Custom Settings</strong> — works, but less flexible for deployment</li>
+    <li><strong>Custom Metadata</strong> — deployable between orgs, no hardcoding, queryable without SOQL governor limits</li>
+  </ul>
+
+  <p>Custom Metadata won. I created a <code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">Twilio_Config__mdt</code> type with three fields:</p>
+
+  <table class="data-table">
+    <thead><tr><th>Field</th><th>What it stores</th></tr></thead>
+    <tbody>
+      <tr><td><code style="font-size:13px;">Account_SID__c</code></td><td>Twilio Account SID</td></tr>
+      <tr><td><code style="font-size:13px;">Twilio_Phone_Number__c</code></td><td>The number SMS is sent from</td></tr>
+      <tr><td><code style="font-size:13px;">Fallback_Phone_Number__c</code></td><td>Backup number if owner has none</td></tr>
+    </tbody>
+  </table>
+
+  <p>In Apex, retrieving this requires no SOQL — one line, no governor limit impact:</p>
+  <div class="code-block"><code><span class="code-keyword">Twilio_Config__mdt</span> config = Twilio_Config__mdt.getInstance(<span class="code-string">'Default'</span>);</code></div>
+
+  <div class="screenshot-wrap">
+    <div class="screenshot-placeholder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Screenshot: Custom Metadata — Twilio_Config__mdt setup
+    </div>
+  </div>
+
+  <div class="step-header">
+    <div class="step-num">2</div>
+    <div>
+      <p class="step-eyebrow">Authentication</p>
+      <p class="step-title">Named Credentials: Keeping Auth Token Out of Code</p>
+    </div>
+  </div>
+
+  <p>The Twilio Auth Token is essentially a password — it should never appear in Apex code, Custom Fields, or debug logs. Named Credentials solve this.</p>
+
+  <h3>External Credential setup</h3>
+  <ul class="arrow-list">
+    <li>Authentication Protocol: <strong>Password Authentication</strong></li>
+    <li>Identity Type: <strong>Named Principal</strong> — one set of credentials for the whole org</li>
+    <li>Username: Twilio Account SID · Password: Twilio Auth Token</li>
+  </ul>
+
+  <h3>Named Credential setup</h3>
+  <ul class="arrow-list">
+    <li>URL: <code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">https://api.twilio.com</code> — linked to the External Credential above</li>
+  </ul>
+
+  <p>In Apex, Salesforce injects the authentication header automatically — the Auth Token never appears in code:</p>
+  <div class="code-block"><code>req.setEndpoint(<span class="code-string">'callout:Twilio/2010-04-01/Accounts/'</span> + accountSid + <span class="code-string">'/Messages.json'</span>);
+<span class="code-comment">// Auth Token never touches the code. Salesforce handles it.</span></code></div>
+
+  <div class="callout callout-red">
+    <p class="callout-label" style="color:var(--red);">🐛 Undocumented gotcha</p>
+    <p>Permission Set Mappings for External Credentials are <strong>no longer configured on the External Credential page.</strong> Go to Permission Set or Profile → External Credential Principal Access and enable it from there. This is completely undocumented and cost me real time.</p>
+  </div>
+
+  <div class="screenshot-wrap">
+    <div class="screenshot-placeholder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Screenshot: Named Credential → External Credential → Principals
+    </div>
+  </div>
+
+  <div class="screenshot-wrap">
+    <div class="screenshot-placeholder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Screenshot: Permission Set — External Credential Principal Access
+    </div>
+  </div>
+
+  <div class="step-header">
+    <div class="step-num">3</div>
+    <div>
+      <p class="step-eyebrow">Development</p>
+      <p class="step-title">The Apex Class: Where AI Came In</p>
+    </div>
+  </div>
+
+  <p>I used AI as a coding partner. In a real project, speed and accuracy matter as much as authorship. I reviewed every line, understood every decision, and debugged every error myself. Here's what each part does and why it matters:</p>
+
+  <h3>@InvocableMethod — makes it callable from Flow</h3>
+  <div class="code-block"><code><span class="code-annotation">@InvocableMethod</span>(label=<span class="code-string">'Send Twilio SMS'</span>)
+<span class="code-keyword">public static void</span> sendSMS(List&lt;SMSRequest&gt; requests) { ... }
+<span class="code-comment">// Without this annotation, Flow cannot see the class at all.</span></code></div>
+
+  <h3>SMSRequest inner class — the input contract</h3>
+  <p>Defines what data Flow passes into Apex. Each <code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">@InvocableVariable</code> becomes a mappable field in the Flow action — the contract between Flow and Apex.</p>
+
+  <h3>@future(callout=true) — the most important thing I learned</h3>
+  <div class="code-block"><code><span class="code-annotation">@future</span>(callout=<span class="code-keyword">true</span>)
+<span class="code-keyword">private static void</span> sendSMSAsync(String toNumber, String oppName) { ... }</code></div>
+
+  <div class="callout callout-blue">
+    <p class="callout-label" style="color:var(--accent);">⚡ Non-negotiable</p>
+    <p>Flow-triggered Apex cannot make HTTP callouts in the same transaction. The <code>@future</code> annotation runs the callout asynchronously. This is the standard Salesforce pattern — skip it and the class throws an error every time.</p>
+  </div>
+
+  <h3>Phone number fallback logic</h3>
+  <div class="code-block"><code>String toNumber = (req.ownerPhone != <span class="code-keyword">null</span> &amp;&amp; req.ownerPhone != <span class="code-string">''</span>)
+                  ? req.ownerPhone
+                  : fallbackNumber;
+<span class="code-comment">// Ternary operator: one-line if/else. Owner phone or Custom Metadata fallback.</span></code></div>
+
+  <div class="step-header">
+    <div class="step-num">4</div>
+    <div>
+      <p class="step-eyebrow">Testing</p>
+      <p class="step-title">Apex Test Class: 100% Coverage</p>
+    </div>
+  </div>
+
+  <p>Every Apex class needs a test class with at least 75% coverage to deploy. I hit 100%. The key pattern for testing HTTP callouts is <strong>HttpCalloutMock</strong> — Salesforce blocks real HTTP calls in test context:</p>
+
+  <div class="code-block"><code><span class="code-keyword">private class</span> TwilioMockResponse <span class="code-keyword">implements</span> HttpCalloutMock {
+    <span class="code-keyword">public</span> HTTPResponse respond(HTTPRequest req) {
+        HttpResponse res = <span class="code-keyword">new</span> HttpResponse();
+        res.setStatusCode(<span class="code-string">201</span>);
+        res.setBody(<span class="code-string">'{"sid": "SM123", "status": "queued"}'</span>);
+        <span class="code-keyword">return</span> res;
+    }
+}</code></div>
+
+  <p>Four test methods covered:</p>
+  <ul class="check-list">
+    <li>SMS sent successfully with owner phone</li>
+    <li>Fallback number used when owner has no phone</li>
+    <li>API failure handled gracefully</li>
+    <li>Null amount handled without crashing</li>
+  </ul>
+
+  <div class="step-header">
+    <div class="step-num">5</div>
+    <div>
+      <p class="step-eyebrow">Automation</p>
+      <p class="step-title">The Flow: Orchestrating Everything</p>
+    </div>
+  </div>
+
+  <p>Record-Triggered Flow on Opportunity, firing when Stage = Closed Won. The phone number logic was an interesting design decision — a single Decision element with three outcomes, both paths feeding one variable:</p>
+
+  <table class="data-table">
+    <thead><tr><th>Outcome</th><th>Condition</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Has Phone</strong></td><td>Owner.Phone is not null</td><td>Assign to varRecipientPhone</td></tr>
+      <tr><td><strong>Has Mobile</strong></td><td>Owner.MobilePhone is not null</td><td>Assign to varRecipientPhone</td></tr>
+      <tr><td><strong>Default</strong></td><td>Neither field has a value</td><td>Create High Priority Task</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-blue">
+    <p>One variable, one Apex call — regardless of which path was taken. Cleaner than two nested Decision elements.</p>
+  </div>
+
+  <div class="flow-diagram">
+    <p><strong>Opportunity → Closed Won</strong></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;↓</p>
+    <p><strong>Check Owner phone (Phone → Mobile fallback)</strong></p>
+    <p>&nbsp;&nbsp;↓ <span class="flow-no">Neither found</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓ <span class="flow-yes">Number found</span></p>
+    <p><span class="flow-action">Create Task</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="flow-action">Call Apex → Twilio SMS</span></p>
+    <p>(no number)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓ Success&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓ <span class="flow-no">Fault</span></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="flow-end">SMS_Sent__c = ✅</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="flow-action">Task (error msg)</span></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chatter post on Opportunity</p>
+  </div>
+
+  <div class="screenshot-wrap">
+    <div class="screenshot-placeholder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Screenshot: Flow canvas — Send SMS on Closed Won
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <h2>The Gotchas — What No Tutorial Will Tell You</h2>
+
+  <div class="gotcha-grid">
+    <div class="gotcha-card">
+      <div class="gotcha-num">Gotcha 01</div>
+      <div class="gotcha-title">A2P 10DLC blocks US trial numbers</div>
+      <div class="gotcha-body">Since 2023, US carriers require all application-to-person SMS traffic to be registered. Twilio trial accounts cannot complete this registration. <strong>Workaround: buy a Canadian Twilio number</strong> — no A2P registration required. In production, registration happens entirely on the Twilio side — the Salesforce code doesn't change at all.</div>
+    </div>
+    <div class="gotcha-card">
+      <div class="gotcha-num">Gotcha 02</div>
+      <div class="gotcha-title">Geo Permissions are off by default</div>
+      <div class="gotcha-body">Even with a non-US sending number, Twilio blocks delivery to regions not explicitly enabled. Go to <strong>Messaging → Geographic Permissions</strong> in the Twilio console and enable the countries you need. Completely invisible until you hit the error — applies to all numbers.</div>
+    </div>
+    <div class="gotcha-card">
+      <div class="gotcha-num">Gotcha 03</div>
+      <div class="gotcha-title">Named Credential setup has changed</div>
+      <div class="gotcha-body">Permission Set Mappings used to live on the External Credential page. They don't anymore. Configure from <strong>Permission Set or Profile → External Credential Principal Access.</strong> The old UI is gone and the documentation hasn't caught up.</div>
+    </div>
+    <div class="gotcha-card">
+      <div class="gotcha-num">Gotcha 04</div>
+      <div class="gotcha-title">@future is mandatory for Flow callouts</div>
+      <div class="gotcha-body">Flow-triggered Apex runs synchronously. HTTP callouts from synchronous Apex triggered by Flow throw an error. <strong>Always wrap your callout in a @future method.</strong> Always.</div>
+    </div>
+  </div>
+
+  <div class="screenshot-wrap">
+    <div class="screenshot-placeholder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Screenshot: Twilio trial account with free credit
+    </div>
+  </div>
+
+  <div class="screenshot-wrap">
+    <div class="screenshot-placeholder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Screenshot: Release phone number to save credit
+    </div>
+  </div>
+
+  <div class="screenshot-wrap">
+    <div class="screenshot-placeholder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Screenshot: Receiving number must be verified to receive SMS
+    </div>
+  </div>
+
+  <div class="screenshot-wrap">
+    <div class="screenshot-placeholder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Screenshot: Geo Permissions — enable destination countries
+    </div>
+  </div>
+
+  <div class="screenshot-wrap">
+    <div class="screenshot-placeholder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Screenshot: Salesforce debug logs showing successful callout
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <h2>End-to-End Results</h2>
+
+  <div class="screenshot-wrap">
+    <div class="screenshot-placeholder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Screenshot: Opportunity — SMS Sent checkbox updated to True
+    </div>
+  </div>
+
+  <div class="screenshot-wrap">
+    <div class="screenshot-placeholder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Screenshot: SMS received on mobile
+    </div>
+  </div>
+
+  <div class="screenshot-wrap">
+    <div class="screenshot-placeholder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Screenshot: Chatter post on Opportunity confirming SMS sent
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="ai-section">
+    <h2>On Using AI as a Coding Partner</h2>
+    <p>I used AI to help write the Apex class. I did not use it to think through the architecture, design the edge cases, debug the errors, or make the decisions about how pieces connected.</p>
+    <p>If you're a Salesforce Admin thinking about crossing into development — AI makes that crossing more accessible than ever. But understanding what you build still matters.</p>
+    <p><strong style="color:white;">Understanding the code matters more than writing it.</strong> In a real team, you'll review others' Apex constantly. Being able to read, explain, and debug Apex is the skill. It always will be.</p>
+  </div>
+
+  <div class="try-it">
+    <h3>Try It Yourself</h3>
+    <p>Everything here uses free tools. The full build — Custom Metadata, Named Credentials, Apex class, Test class, and Flow — takes about a day if you follow this guide and know where the gotchas are. Now you do.</p>
+    <div class="try-it-links">
+      <a class="try-link" href="https://developer.salesforce.com" target="_blank">Salesforce Developer Org →</a>
+      <a class="try-link" href="https://www.twilio.com" target="_blank">Twilio Trial Account →</a>
+    </div>
+  </div>
+
+  <p style="font-size:13px;color:var(--text-muted);margin-top:2rem;">Built on Salesforce Developer Org · Twilio REST API · Apex · Salesforce Flow · Named Credentials · Custom Metadata</p>
+
+</article>
+
+<div class="article-footer">
+  <a class="back-link" href="index.html#blog">← Back to all posts</a>
+  <div class="share-row">
+    <span class="share-label">Share:</span>
+    <a class="share-btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https://supriyajnagesh.com/blog-twilio-sms-integration.html" target="_blank">LinkedIn</a>
+  </div>
+</div>
+
+<div class="more-section">
+  <div class="more-inner">
+    <p class="more-label">More from the blog</p>
+    <div class="more-grid">
+      <a class="more-card" href="blog-docusign-salesforce-flow.html">
+        <p class="more-card-tag">Project Breakdown</p>
+        <p class="more-card-title">Automating contract sending with Salesforce Flow & DocuSign</p>
+      </a>
+      <a class="more-card" href="blog-what-hiring-managers-look-for.html">
+        <p class="more-card-tag">Career</p>
+        <p class="more-card-title">What hiring managers actually look for in a Salesforce professional</p>
+      </a>
+      <a class="more-card" href="#">
+        <p class="more-card-tag">Automation</p>
+        <p class="more-card-title">5 Flow Builder patterns every Salesforce admin should know</p>
+      </a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <small>© 2026 Supriya Nagesh · supriyajnagesh.com</small>
+  <a href="https://www.linkedin.com/in/supriya-nagesh" target="_blank">LinkedIn</a>
+</footer>
+
+</body>
+</html>
