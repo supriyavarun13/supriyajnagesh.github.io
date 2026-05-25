@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Professional Experience — Supriya Nagesh</title>
+  <meta name="description" content="7+ years of Salesforce professional experience across integrations, administration, DevOps, and delivery — grouped by theme." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy:#0f1b2d;--accent:#3b9eff;--accent-light:#e8f3ff;--text:#1a1a2e;
+      --text-muted:#5a6a7e;--border:#e2e8f0;--surface:#f8fafc;--white:#ffffff;
+      --green:#059669;--green-light:#ecfdf5;--yellow:#d97706;--yellow-light:#fffbeb;
+      --purple:#7c3aed;--purple-light:#f5f3ff;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);font-size:16px;line-height:1.7;}
+
+    nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;padding:0 2.5rem;height:60px;}
+    .nav-logo{font-family:'DM Serif Display',serif;font-size:18px;color:var(--navy);text-decoration:none;}
+    .nav-links{display:flex;gap:1.5rem;list-style:none;}
+    .nav-links a{font-size:13px;font-weight:500;color:var(--text-muted);text-decoration:none;transition:color 0.2s;}
+    .nav-links a:hover,.nav-links a.active{color:var(--navy);}
+    .nav-resume{font-size:13px;font-weight:500;padding:7px 16px;border-radius:6px;background:var(--navy);color:white;text-decoration:none;}
+
+    /* HERO */
+    .page-hero{background:var(--navy);padding:4rem 2.5rem 3.5rem;position:relative;overflow:hidden;}
+    .page-hero::before{content:'';position:absolute;top:-80px;right:-80px;width:400px;height:400px;background:radial-gradient(circle,rgba(59,158,255,0.12) 0%,transparent 70%);border-radius:50%;}
+    .hero-inner{position:relative;z-index:1;max-width:800px;margin:0 auto;}
+    .hero-eyebrow{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;}
+    .page-hero h1{font-family:'DM Serif Display',serif;font-size:clamp(28px,5vw,44px);font-weight:400;color:white;margin-bottom:1rem;line-height:1.2;}
+    .hero-sub{font-size:16px;color:rgba(255,255,255,0.6);line-height:1.7;max-width:580px;margin-bottom:2rem;}
+    .nda-note{display:inline-flex;align-items:flex-start;gap:10px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:1rem 1.25rem;max-width:580px;}
+    .nda-note svg{flex-shrink:0;margin-top:2px;}
+    .nda-note p{font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;margin:0;}
+    .nda-note strong{color:rgba(255,255,255,0.85);}
+
+    /* THEME TABS */
+    .theme-nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2.5rem;display:flex;gap:0;overflow-x:auto;}
+    .theme-tab{font-size:13px;font-weight:500;color:var(--text-muted);padding:1rem 1.25rem;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.15s;background:none;border-left:none;border-right:none;border-top:none;}
+    .theme-tab:hover{color:var(--navy);}
+    .theme-tab.active{color:var(--navy);border-bottom-color:var(--accent);}
+
+    /* BODY */
+    .page-body{max-width:800px;margin:0 auto;padding:3rem 2.5rem 5rem;}
+
+    /* THEME SECTION */
+    .theme-section{display:none;animation:fadeIn 0.2s ease;}
+    .theme-section.active{display:block;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+    .theme-intro{margin-bottom:2.5rem;}
+    .theme-intro h2{font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;color:var(--navy);margin-bottom:0.5rem;}
+    .theme-intro p{font-size:15px;color:var(--text-muted);line-height:1.7;max-width:580px;}
+
+    /* WORK CARDS */
+    .work-cards{display:flex;flex-direction:column;gap:1.25rem;}
+    .work-card{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:box-shadow 0.2s;}
+    .work-card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.07);}
+    .work-card-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;}
+    .work-org{font-size:14px;font-weight:500;color:var(--navy);}
+    .work-context{font-size:12px;color:var(--text-muted);margin-top:2px;}
+    .work-badge{font-size:11px;font-weight:500;padding:4px 10px;border-radius:20px;white-space:nowrap;align-self:flex-start;}
+    .badge-blue{background:var(--accent-light);color:#1a5fa8;border:1px solid #c3deff;}
+    .badge-green{background:var(--green-light);color:var(--green);border:1px solid #a7f3d0;}
+    .badge-purple{background:var(--purple-light);color:var(--purple);border:1px solid #ddd6fe;}
+    .badge-yellow{background:var(--yellow-light);color:var(--yellow);border:1px solid #fde68a;}
+    .work-card-body{padding:1.25rem 1.5rem;}
+
+    /* CONTRIBUTIONS */
+    .contributions{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;}
+    .contributions li{font-size:14px;color:#374151;line-height:1.7;padding-left:1.25rem;position:relative;}
+    .contributions li::before{content:'';position:absolute;left:0;top:10px;width:6px;height:6px;border-radius:50%;background:var(--accent);}
+    .contributions li strong{color:var(--navy);font-weight:500;}
+
+    /* TECH PILLS */
+    .work-tech{display:flex;flex-wrap:wrap;gap:6px;padding:1rem 1.5rem;border-top:1px solid var(--border);background:var(--surface);}
+    .tech-pill{font-size:11px;padding:3px 9px;background:white;border:1px solid var(--border);border-radius:4px;color:var(--text-muted);}
+
+    /* BLOG CONNECTION */
+    .blog-link-card{background:linear-gradient(135deg,#0f1b2d,#1a2e47);border-radius:12px;padding:1.5rem;margin-top:1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+    .blog-link-card p{font-size:14px;color:rgba(255,255,255,0.7);margin:0;line-height:1.6;max-width:480px;}
+    .blog-link-card strong{color:white;}
+    .blog-link-btn{font-size:13px;font-weight:500;padding:9px 16px;border-radius:7px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.85);text-decoration:none;background:rgba(255,255,255,0.08);white-space:nowrap;transition:all 0.15s;}
+    .blog-link-btn:hover{background:rgba(255,255,255,0.15);color:white;}
+
+    /* SUMMARY STRIP */
+    .summary-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:3rem;padding:1.5rem;background:var(--surface);border-radius:12px;border:1px solid var(--border);}
+    .summary-item{text-align:center;}
+    .summary-val{font-family:'DM Serif Display',serif;font-size:28px;color:var(--navy);}
+    .summary-label{font-size:12px;color:var(--text-muted);margin-top:2px;}
+
+    footer{background:var(--navy);color:rgba(255,255,255,0.5);padding:1.5rem 2.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+    footer small{font-size:13px;}
+    footer a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;}
+    footer a:hover{color:white;}
+
+    @media(max-width:640px){
+      nav{padding:0 1.25rem;}
+      .nav-links{display:none;}
+      .page-hero{padding:3rem 1.25rem 2.5rem;}
+      .page-body{padding:2rem 1.25rem 3rem;}
+      .theme-nav{padding:0 1.25rem;}
+      footer{padding:1.5rem 1.25rem;}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Supriya Nagesh</a>
+  <ul class="nav-links">
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#skills">Skills</a></li>
+    <li><a href="index.html#projects">Projects</a></li>
+    <li><a href="experience.html" class="active">Experience</a></li>
+    <li><a href="index.html#blog">Blog</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+  </ul>
+  <a class="nav-resume" href="SupriyaJN_Salesforce.pdf" target="_blank" download>Download Resume</a>
+</nav>
+
+<header class="page-hero">
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Professional background</p>
+    <h1>7+ Years in the Salesforce Ecosystem</h1>
+    <p class="hero-sub">Delivered across integrations, administration, DevOps, and multi-project support — as a hybrid developer, admin, and production support engineer.</p>
+    <div class="nda-note">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <p><strong>A note on client confidentiality:</strong> Client names are anonymised in line with NDA obligations. The portfolio projects on this site — SLA Command Centre, DocuSign integration, Twilio SMS — are purpose-built to demonstrate the same technical patterns from real professional experience.</p>
+    </div>
+  </div>
+</header>
+
+<div class="theme-nav">
+  <button class="theme-tab active" onclick="showTheme('integration')">Integration Work</button>
+  <button class="theme-tab" onclick="showTheme('admin')">Admin & Development</button>
+  <button class="theme-tab" onclick="showTheme('devops')">DevOps & Release</button>
+  <button class="theme-tab" onclick="showTheme('delivery')">Multi-Project Delivery</button>
+</div>
+
+<div class="page-body">
+
+  <!-- SUMMARY -->
+  <div class="summary-strip">
+    <div class="summary-item"><div class="summary-val">10+</div><div class="summary-label">Projects delivered</div></div>
+    <div class="summary-item"><div class="summary-val">4</div><div class="summary-label">Cloud areas</div></div>
+    <div class="summary-item"><div class="summary-val">7+</div><div class="summary-label">Years experience</div></div>
+    <div class="summary-item"><div class="summary-val">5+</div><div class="summary-label">Integrations built</div></div>
+  </div>
+
+  <!-- INTEGRATION -->
+  <div class="theme-section active" id="theme-integration">
+    <div class="theme-intro">
+      <h2>Integration Work</h2>
+      <p>Connecting Salesforce to external systems — document signing, inbox management, document generation, and custom API callouts. Across multiple client orgs and platforms.</p>
+    </div>
+
+    <div class="work-cards">
+
+      <div class="work-card">
+        <div class="work-card-header">
+          <div>
+            <p class="work-org">Legal tech Salesforce org</p>
+            <p class="work-context">Document signing & generation integration</p>
+          </div>
+          <span class="work-badge badge-blue">DocuSign · AssureSign</span>
+        </div>
+        <div class="work-card-body">
+          <ul class="contributions">
+            <li>Implemented and supported <strong>DocuSign and AssureSign integrations</strong> for contract and document signing workflows within Salesforce</li>
+            <li>Documented integration workflows, field mappings, and troubleshooting steps for recurring issues to support operational continuity</li>
+            <li>Resolved production incidents involving envelope failures, recipient mapping errors, and template ID mismatches</li>
+            <li>Maintained and updated integration configuration as business requirements changed across multiple orgs</li>
+          </ul>
+        </div>
+        <div class="work-tech">
+          <span class="tech-pill">DocuSign</span>
+          <span class="tech-pill">AssureSign</span>
+          <span class="tech-pill">Flow Builder</span>
+          <span class="tech-pill">Apex</span>
+          <span class="tech-pill">Named Credentials</span>
+        </div>
+      </div>
+
+      <div class="work-card">
+        <div class="work-card-header">
+          <div>
+            <p class="work-org">Legal practice management org</p>
+            <p class="work-context">Document management & inbox integration</p>
+          </div>
+          <span class="work-badge badge-purple">Litify Inbox · Docrio</span>
+        </div>
+        <div class="work-card-body">
+          <ul class="contributions">
+            <li>Supported and maintained <strong>Litify Inbox and Docrio</strong> integrations for document management and email handling within legal practice management workflows</li>
+            <li>Diagnosed and resolved integration issues affecting document retrieval, email linkage, and record association</li>
+            <li>Documented recurring error patterns and created internal troubleshooting guides to reduce resolution time</li>
+          </ul>
+        </div>
+        <div class="work-tech">
+          <span class="tech-pill">Litify Inbox</span>
+          <span class="tech-pill">Docrio</span>
+          <span class="tech-pill">Salesforce Files</span>
+          <span class="tech-pill">Email-to-Case</span>
+        </div>
+      </div>
+
+      <div class="work-card">
+        <div class="work-card-header">
+          <div>
+            <p class="work-org">Non-profit directory org</p>
+            <p class="work-context">Custom Apex REST integration</p>
+          </div>
+          <span class="work-badge badge-green">Invocable Apex · REST API</span>
+        </div>
+        <div class="work-card-body">
+          <ul class="contributions">
+            <li>Built <strong>Invocable Apex methods</strong> to improve data retrieval and processing efficiency across directory and account records</li>
+            <li>Developed automation to update contact records with categorised data pulled from external sources, improving data consistency and reporting accuracy</li>
+            <li>Designed the integration to be reusable and callable from Flow — no hardcoded IDs, production-safe from day one</li>
+          </ul>
+        </div>
+        <div class="work-tech">
+          <span class="tech-pill">Invocable Apex</span>
+          <span class="tech-pill">REST API</span>
+          <span class="tech-pill">Flow Builder</span>
+          <span class="tech-pill">SOQL</span>
+          <span class="tech-pill">Custom Metadata</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="blog-link-card">
+      <p><strong>See it in practice:</strong> The DocuSign and Twilio integration articles on this site document the same patterns — envelope templates, Named Credentials, @future callouts — built from scratch to demonstrate what I've supported professionally.</p>
+      <a class="blog-link-btn" href="blog-docusign-salesforce-flow.html">Read DocuSign article →</a>
+    </div>
+  </div>
+
+  <!-- ADMIN & DEV -->
+  <div class="theme-section" id="theme-admin">
+    <div class="theme-intro">
+      <h2>Admin & Development</h2>
+      <p>Hands-on Salesforce administration and development across Sales Cloud, Service Cloud, and Experience Cloud — from org stabilisation to UI customisation and automation builds.</p>
+    </div>
+
+    <div class="work-cards">
+
+      <div class="work-card">
+        <div class="work-card-header">
+          <div>
+            <p class="work-org">Under-transition Salesforce org</p>
+            <p class="work-context">Ownership transfer · active development in progress</p>
+          </div>
+          <span class="work-badge badge-yellow">Org stabilisation</span>
+        </div>
+        <div class="work-card-body">
+          <ul class="contributions">
+            <li>Took <strong>full ownership of an under-transition org</strong> with incomplete documentation and active development in progress — minimal knowledge transfer</li>
+            <li>Diagnosed and delivered multiple <strong>wizard-based automation solutions</strong>, stabilising partially built requirements left by the previous owner</li>
+            <li>Completed SSD Wizard implementation with near-zero post-delivery defects, earning stakeholder recognition</li>
+            <li>Established documentation standards and handoff processes to prevent recurrence of the knowledge gap</li>
+          </ul>
+        </div>
+        <div class="work-tech">
+          <span class="tech-pill">Sales Cloud</span>
+          <span class="tech-pill">Flow Builder</span>
+          <span class="tech-pill">Apex</span>
+          <span class="tech-pill">Visualforce</span>
+          <span class="tech-pill">Technical Documentation</span>
+        </div>
+      </div>
+
+      <div class="work-card">
+        <div class="work-card-header">
+          <div>
+            <p class="work-org">Non-profit directory org</p>
+            <p class="work-context">Experience Cloud · ongoing enhancements</p>
+          </div>
+          <span class="work-badge badge-blue">Experience Cloud</span>
+        </div>
+        <div class="work-card-body">
+          <ul class="contributions">
+            <li>Implemented and enhanced <strong>Salesforce Experience Cloud</strong> for business users and external-facing workflows</li>
+            <li>Built <strong>Data Grid and UI enhancements</strong> using Aura components, improving user interaction and usability for business requirements</li>
+            <li>Led <strong>data cleanup initiatives</strong> — phone number formatting, data standardisation — improving org-wide data quality across thousands of records</li>
+            <li>Acted as primary support for ongoing enhancements, troubleshooting, and production issue resolution</li>
+          </ul>
+        </div>
+        <div class="work-tech">
+          <span class="tech-pill">Experience Cloud</span>
+          <span class="tech-pill">Aura Components</span>
+          <span class="tech-pill">Data Loader</span>
+          <span class="tech-pill">Data Cleanup</span>
+          <span class="tech-pill">SOQL</span>
+        </div>
+      </div>
+
+      <div class="work-card">
+        <div class="work-card-header">
+          <div>
+            <p class="work-org">Legal services Salesforce org</p>
+            <p class="work-context">Custom UI · inline editing solution</p>
+          </div>
+          <span class="work-badge badge-purple">Apex · Visualforce</span>
+        </div>
+        <div class="work-card-body">
+          <ul class="contributions">
+            <li>Built a <strong>custom inline editing solution using Apex and Visualforce</strong>, improving data entry efficiency for end users across multiple Salesforce objects</li>
+            <li>Delivered a reusable UI enhancement that standardised user experience — received positive client feedback for usability and performance</li>
+            <li>Designed the solution to be object-agnostic so it could be deployed across the org without duplication</li>
+          </ul>
+        </div>
+        <div class="work-tech">
+          <span class="tech-pill">Apex</span>
+          <span class="tech-pill">Visualforce</span>
+          <span class="tech-pill">Custom Controllers</span>
+          <span class="tech-pill">Lightning Experience</span>
+        </div>
+      </div>
+
+      <div class="work-card">
+        <div class="work-card-header">
+          <div>
+            <p class="work-org">Legal tech Salesforce org</p>
+            <p class="work-context">Apex issue diagnosis · data processing fix</p>
+          </div>
+          <span class="work-badge badge-yellow">Root cause analysis</span>
+        </div>
+        <div class="work-card-body">
+          <ul class="contributions">
+            <li>Diagnosed and resolved an <strong>Apex-related system issue impacting data processing</strong>, restoring stable functionality to production</li>
+            <li>Collaborated with the data team to identify root cause — traced to an invalid ID being passed to a synchronous callout</li>
+            <li>Implemented corrective fix and added error handling to prevent recurrence</li>
+          </ul>
+        </div>
+        <div class="work-tech">
+          <span class="tech-pill">Apex</span>
+          <span class="tech-pill">Debug Logs</span>
+          <span class="tech-pill">Root Cause Analysis</span>
+          <span class="tech-pill">Error Handling</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DEVOPS -->
+  <div class="theme-section" id="theme-devops">
+    <div class="theme-intro">
+      <h2>DevOps & Release Engineering</h2>
+      <p>Supporting safer, faster deployments — CI/CD pipeline contribution, release cycle management, security hardening, and post-deployment validation across multiple Salesforce environments.</p>
+    </div>
+
+    <div class="work-cards">
+
+      <div class="work-card">
+        <div class="work-card-header">
+          <div>
+            <p class="work-org">Cross-org CI/CD enablement</p>
+            <p class="work-context">Gearset · deployment pipeline contribution</p>
+          </div>
+          <span class="work-badge badge-green">Gearset · CI/CD</span>
+        </div>
+        <div class="work-card-body">
+          <ul class="contributions">
+            <li>Contributed to <strong>CI/CD pipeline improvements using Gearset</strong>, supporting safer and faster deployments across Salesforce orgs</li>
+            <li>Assisted in production release cycles — deployment validation, conflict resolution, and post-deployment smoke testing</li>
+            <li>Supported rollback procedures and hotfix deployments under time pressure</li>
+            <li>Documented deployment checklists and environment-specific considerations to standardise release processes</li>
+          </ul>
+        </div>
+        <div class="work-tech">
+          <span class="tech-pill">Gearset</span>
+          <span class="tech-pill">CI/CD</span>
+          <span class="tech-pill">Change Sets</span>
+          <span class="tech-pill">Release Management</span>
+          <span class="tech-pill">Sandboxes</span>
+        </div>
+      </div>
+
+      <div class="work-card">
+        <div class="work-card-header">
+          <div>
+            <p class="work-org">Multi-org security hardening</p>
+            <p class="work-context">MFA implementation · access management</p>
+          </div>
+          <span class="work-badge badge-purple">Security · MFA</span>
+        </div>
+        <div class="work-card-body">
+          <ul class="contributions">
+            <li>Supported <strong>MFA implementation and security hardening</strong> across Salesforce environments — profile review, permission set audit, login access policies</li>
+            <li>Configured and validated <strong>Named Credential and External Credential Principal Access</strong> settings for API integrations</li>
+            <li>Assisted in identifying and resolving over-permissioned profiles to align with principle of least privilege</li>
+          </ul>
+        </div>
+        <div class="work-tech">
+          <span class="tech-pill">MFA</span>
+          <span class="tech-pill">Profiles & Permissions</span>
+          <span class="tech-pill">Named Credentials</span>
+          <span class="tech-pill">Security Health Check</span>
+          <span class="tech-pill">User Access Management</span>
+        </div>
+      </div>
+
+      <div class="work-card">
+        <div class="work-card-header">
+          <div>
+            <p class="work-org">Pre-go-live support project</p>
+            <p class="work-context">UAT defect resolution · production fixes</p>
+          </div>
+          <span class="work-badge badge-yellow">UAT · Go-live support</span>
+        </div>
+        <div class="work-card-body">
+          <ul class="contributions">
+            <li>Supported critical <strong>pre-go-live enhancements and UAT defect resolution</strong> under tight deadlines</li>
+            <li>Fixed an <strong>Apex-generated duplicate task issue</strong>, improving system reliability and preventing data duplication in production</li>
+            <li>Delivered production fixes for recurring task automation issues using Apex logic adjustments</li>
+            <li>Collaborated with data and development teams to resolve cross-org technical issues affecting go-live readiness</li>
+          </ul>
+        </div>
+        <div class="work-tech">
+          <span class="tech-pill">Apex</span>
+          <span class="tech-pill">UAT Support</span>
+          <span class="tech-pill">Production Fixes</span>
+          <span class="tech-pill">Cross-org Collaboration</span>
+          <span class="tech-pill">Agile / Jira</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MULTI-PROJECT DELIVERY -->
+  <div class="theme-section" id="theme-delivery">
+    <div class="theme-intro">
+      <h2>Multi-Project Delivery</h2>
+      <p>Simultaneous delivery across multiple client Salesforce orgs — context-switching, agile cycles, and cross-functional collaboration under real delivery pressure.</p>
+    </div>
+
+    <div class="work-cards">
+
+      <div class="work-card">
+        <div class="work-card-header">
+          <div>
+            <p class="work-org">Cross-project support delivery</p>
+            <p class="work-context">Multiple concurrent client orgs</p>
+          </div>
+          <span class="work-badge badge-blue">5 concurrent orgs</span>
+        </div>
+        <div class="work-card-body">
+          <ul class="contributions">
+            <li>Provided <strong>concurrent Salesforce development and support across 5 client orgs</strong> to meet delivery deadlines under agile cycles</li>
+            <li>Resolved enhancement requests, configuration updates, and bug fixes without disrupting other active deliverables</li>
+            <li>Demonstrated ability to <strong>context-switch and deliver across multiple production environments simultaneously</strong> — a skill that takes real discipline to do well</li>
+            <li>Maintained quality and client satisfaction across all engagements without single-project focus</li>
+          </ul>
+        </div>
+        <div class="work-tech">
+          <span class="tech-pill">Sales Cloud</span>
+          <span class="tech-pill">Flow Builder</span>
+          <span class="tech-pill">Apex</span>
+          <span class="tech-pill">Agile / Jira</span>
+          <span class="tech-pill">Production Support</span>
+        </div>
+      </div>
+
+      <div class="work-card">
+        <div class="work-card-header">
+          <div>
+            <p class="work-org">Solution design exposure project</p>
+            <p class="work-context">Technical documentation · architecture input</p>
+          </div>
+          <span class="work-badge badge-purple">Solution Design</span>
+        </div>
+        <div class="work-card-body">
+          <ul class="contributions">
+            <li>Contributed to <strong>technical solution design documentation</strong> for API and Salesforce integration requirements</li>
+            <li>Participated in early-stage architecture discussions under senior guidance — exposure to enterprise-level planning and documentation standards</li>
+            <li>Produced structured technical documentation that fed into the final solution delivery</li>
+          </ul>
+        </div>
+        <div class="work-tech">
+          <span class="tech-pill">Solution Design</span>
+          <span class="tech-pill">Technical Documentation</span>
+          <span class="tech-pill">REST API</span>
+          <span class="tech-pill">Architecture</span>
+        </div>
+      </div>
+
+      <div class="work-card">
+        <div class="work-card-header">
+          <div>
+            <p class="work-org">Platform-wide contribution</p>
+            <p class="work-context">Mentoring · documentation · knowledge sharing</p>
+          </div>
+          <span class="work-badge badge-green">Cross-org impact</span>
+        </div>
+        <div class="work-card-body">
+          <ul class="contributions">
+            <li>Acted as a <strong>hybrid developer + administrator + production support engineer</strong> across all engagements, ensuring system stability and continuous improvement</li>
+            <li>Mentored junior team members and aspiring Salesforce admins — structured sessions on Flow, Apex, and admin fundamentals</li>
+            <li>Created internal documentation and troubleshooting guides that reduced recurring issue resolution time</li>
+            <li>Consistently treated every project as a learning and teaching opportunity — building the team's capability alongside delivery</li>
+          </ul>
+        </div>
+        <div class="work-tech">
+          <span class="tech-pill">Mentoring</span>
+          <span class="tech-pill">Knowledge Sharing</span>
+          <span class="tech-pill">Technical Documentation</span>
+          <span class="tech-pill">Root Cause Analysis</span>
+          <span class="tech-pill">Cross-functional</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="blog-link-card">
+      <p><strong>The portfolio projects on this site</strong> are deliberate recreations of patterns from professional work — built in a dev org to document what I've done, since client systems are confidential.</p>
+      <a class="blog-link-btn" href="index.html#projects">View portfolio projects →</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <small>© 2026 Supriya Nagesh · supriyajnagesh.com</small>
+  <div style="display:flex;gap:1.5rem;">
+    <a href="https://www.linkedin.com/in/supriya-nagesh" target="_blank">LinkedIn</a>
+    <a href="index.html#contact">Contact</a>
+    <a href="SupriyaJN_Salesforce.pdf" download>Resume</a>
+  </div>
+</footer>
+
+<script>
+function showTheme(id) {
+  document.querySelectorAll('.theme-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.theme-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('theme-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
