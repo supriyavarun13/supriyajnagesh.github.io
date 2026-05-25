@@ -355,7 +355,7 @@
   </div>
 
   <p>Before touching Salesforce, you need a free DocuSign developer account at <a href="https://developers.docusign.com" target="_blank">developers.docusign.com</a>.</p>
-  <img src="images/Doc13.png" alt="DocuSign for Developers website — where you sign up for your free account" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 1.5rem;display:block;" />
+  <img src="images/docusign/docusign-developers-site.png" alt="DocuSign for Developers website — where you sign up for your free account" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 1.5rem;display:block;" />
 
   <div class="callout callout-blue">
     <p class="callout-label" style="color: var(--accent);">⚡ Key insight</p>
@@ -363,10 +363,10 @@
   </div>
 
   <p>Think of it as the engine under the hood. Once you have it, you'll use it exactly once to authenticate during Salesforce setup. After that, you'll mostly forget it exists — until you check your DocuSign inbox and see every test envelope you sent sitting there, signed and completed.</p>
-  <img src="images/Docu7.png" alt="DocuSign developer account inbox showing sent envelopes and completed signatures" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 1.5rem;display:block;" />
+  <img src="images/docusign/docusign-inbox-envelopes.png" alt="DocuSign developer account inbox showing sent envelopes and completed signatures" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 1.5rem;display:block;" />
 
   <p>One thing worth knowing: you sign up and manage your developer account at <code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">developers.docusign.com</code> — but the actual sandbox application where envelopes are sent, completed, and stored lives at <code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">demo.docusign.net</code>. They're the same account, two different interfaces. Think of developers.docusign.com as the registration desk and demo.docusign.net as the actual office where the work happens.</p>
-  <img src="images/Doc10.png" alt="Templates created in Salesforce automatically appearing in the DocuSign developer account" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 1.5rem;display:block;" />
+  <img src="images/docusign/docusign-templates-in-account.png" alt="Templates created in Salesforce automatically appearing in the DocuSign developer account" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 1.5rem;display:block;" />
 
   <!-- STEP 2 -->
   <div class="step-header">
@@ -378,7 +378,7 @@
   </div>
 
   <p>Search "DocuSign" on the Salesforce AppExchange and you'll immediately see $30/user/month in the listing. Before you close the tab — here's what that price actually means.</p>
-  <img src="images/Doc8.png" alt="DocuSign eSignature listing on Salesforce AppExchange showing $30/user/month price" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 1.5rem;display:block;" />
+  <img src="images/docusign/appexchange-listing.png" alt="DocuSign eSignature listing on Salesforce AppExchange showing $30/user/month price" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 1.5rem;display:block;" />
 
   <p>The package — called <strong>DocuSign Apps Launcher</strong> — is free to install. It bundles three products together:</p>
 
@@ -417,7 +417,7 @@
   </div>
 
   <p>The package also handles its own security configuration — trusted URLs, CSP headers, all of it. No manual setup needed. It just works.</p>
-  <img src="images/Doc12.png" alt="DocuSign Apps Launcher showing connected account and Document Generation feature locked behind paid tier" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 1.5rem;display:block;" />
+  <img src="images/docusign/apps-launcher-connected.png" alt="DocuSign Apps Launcher showing connected account and Document Generation feature locked behind paid tier" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 1.5rem;display:block;" />
 
   <!-- STEP 3 -->
   <div class="step-header">
@@ -477,7 +477,7 @@
   </div>
 
   <p>That <code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">a0Xxx...</code> value is your <strong>Template ID</strong>. Copy it — you'll need it in the Flow.</p>
-  <img src="images/Doc9.png" alt="Envelope Templates list inside Salesforce DocuSign Apps Launcher showing the Contract Approval template" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 1.5rem;display:block;" />
+  <img src="images/docusign/envelope-templates-salesforce.png" alt="Envelope Templates list inside Salesforce DocuSign Apps Launcher showing the Contract Approval template" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 1.5rem;display:block;" />
 
   <!-- STEP 5 -->
   <div class="step-header">
@@ -489,7 +489,7 @@
   </div>
 
   <p>Go to <strong>Setup → Flows → New Flow → Record-Triggered Flow.</strong></p>
-  <img src="images/Doc6.png" alt="Complete Salesforce Flow diagram showing the full DocuSign automation — trigger, decision, send action, fault path, and end states" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 1.5rem;display:block;" />
+  <img src="images/docusign/flow-docusign-closed-won.png" alt="Complete Salesforce Flow diagram showing the full DocuSign automation — trigger, decision, send action, fault path, and end states" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 1.5rem;display:block;" />
 
   <h3>Trigger setup</h3>
   <ul class="arrow-list">
@@ -522,7 +522,7 @@
   </ul>
 
   <p>The Task on the No path should say: <em>"No Contact Role found on this Opportunity. Please add a Contact Role and send the DocuSign contract manually."</em> This prevents silent failures and keeps the owner informed.</p>
-  <img src="images/Doc16.png" alt="Test Opportunity 2 with no contact — showing the automated task created when no Contact Role exists" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 1.5rem;display:block;" />
+  <img src="images/docusign/no-contact-role-task.png" alt="Test Opportunity 2 with no contact — showing the automated task created when no Contact Role exists" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 1.5rem;display:block;" />
 
   <h3>Element 2 — Send with DocuSign action</h3>
 
@@ -563,8 +563,8 @@
   </table>
 
   <p>Now if DocuSign fails for any reason — connectivity, invalid template, permission issue — the Opportunity owner gets a High Priority task with the exact error message, rather than the failure disappearing silently.</p>
-  <img src="images/Doc17.png" alt="Test Opportunity 3 showing DocuSign Failed task created by the fault path" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 0.75rem;display:block;" />
-  <img src="images/Doc18.png" alt="Task detail showing the exact Apex error message captured from the fault path" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0 0 1.5rem;display:block;" />
+  <img src="images/docusign/fault-path-task.png" alt="Test Opportunity 3 showing DocuSign Failed task created by the fault path" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 0.75rem;display:block;" />
+  <img src="images/docusign/fault-task-error-detail.png" alt="Task detail showing the exact Apex error message captured from the fault path" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0 0 1.5rem;display:block;" />
 
   <!-- STEP 6 -->
   <div class="step-header">
@@ -583,9 +583,9 @@
   </ol>
 
   <p>Now when the recipient signs, DocuSign calls back to Salesforce and checks that box automatically.</p>
-  <img src="images/Doc11.png" alt="DocuSign template settings showing Field Updates — Envelope Completed mapped to Contract Signed = True" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 0.75rem;display:block;" />
-  <img src="images/Doc14.png" alt="DocuSign Status record in Salesforce showing Completed status linked to Test Opportunity 1" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0 0 0.75rem;display:block;" />
-  <img src="images/Doc15.png" alt="Salesforce Opportunity record showing Contract Signed checkbox ticked after DocuSign completion" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0 0 1.5rem;display:block;" />
+  <img src="images/docusign/field-updates-envelope-completed.png" alt="DocuSign template settings showing Field Updates — Envelope Completed mapped to Contract Signed = True" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0.5rem 0 0.75rem;display:block;" />
+  <img src="images/docusign/docusign-status-completed.png" alt="DocuSign Status record in Salesforce showing Completed status linked to Test Opportunity 1" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0 0 0.75rem;display:block;" />
+  <img src="images/docusign/opportunity-contract-signed.png" alt="Salesforce Opportunity record showing Contract Signed checkbox ticked after DocuSign completion" style="width:100%;border-radius:10px;border:1px solid #e2e8f0;margin:0 0 1.5rem;display:block;" />
 
   <div class="callout callout-green">
     <p>DocuSign signs → <strong>Contract Signed checkbox flips to True.</strong> Salesforce now knows the contract is done — no manual update, no follow-up email needed.</p>
