@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Building a Two-Part Event Registration System in Salesforce with JotForm — Supriya Nagesh</title>
+  <meta name="description" content="Architecture, tradeoffs, and what the documentation doesn't cover — a public registration form and a VIP invitation system, built with Flow, Campaign Hierarchy, and zero Apex." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy:#0f1b2d;--accent:#3b9eff;--accent-light:#e8f3ff;--text:#1a1a2e;
+      --text-muted:#5a6a7e;--border:#e2e8f0;--surface:#f8fafc;--white:#ffffff;
+      --green:#059669;--green-light:#ecfdf5;--yellow:#d97706;--yellow-light:#fffbeb;
+      --red:#dc2626;--red-light:#fef2f2;--purple:#7c3aed;--purple-light:#f5f3ff;
+      --radius:10px;--radius-lg:16px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);font-size:16px;line-height:1.7;}
+    nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;padding:0 2.5rem;height:60px;}
+    .nav-logo{font-family:'DM Serif Display',serif;font-size:18px;color:var(--navy);text-decoration:none;}
+    .nav-back{font-size:13px;font-weight:500;color:var(--text-muted);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s;}
+    .nav-back:hover{color:var(--navy);}
+    .article-hero{background:var(--navy);padding:4rem 2.5rem 3.5rem;position:relative;overflow:hidden;}
+    .article-hero::before{content:'';position:absolute;top:-80px;right:-80px;width:400px;height:400px;background:radial-gradient(circle,rgba(59,158,255,0.12) 0%,transparent 70%);border-radius:50%;}
+    .article-hero::after{content:'';position:absolute;bottom:-60px;left:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(5,150,105,0.08) 0%,transparent 70%);border-radius:50%;}
+    .hero-inner{position:relative;z-index:1;max-width:760px;margin:0 auto;}
+    .article-meta{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap;}
+    .article-tag{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);background:rgba(59,158,255,0.12);border:1px solid rgba(59,158,255,0.25);padding:4px 10px;border-radius:20px;}
+    .article-tag-green{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#34d399;background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.25);padding:4px 10px;border-radius:20px;}
+    .article-date{font-size:13px;color:rgba(255,255,255,0.4);}
+    .meta-dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,0.2);}
+    .article-hero h1{font-family:'DM Serif Display',serif;font-size:clamp(22px,4vw,36px);font-weight:400;line-height:1.2;color:white;margin-bottom:1rem;}
+    .article-subtitle{font-size:16px;color:rgba(255,255,255,0.6);line-height:1.7;max-width:640px;}
+    .stack-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:1.75rem;}
+    .stack-badge{font-size:12px;padding:5px 12px;border-radius:20px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);}
+    .author-row{display:flex;align-items:center;gap:10px;margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.1);}
+    .author-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#1a5fa8);display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:14px;color:white;flex-shrink:0;}
+    .author-name{font-size:14px;font-weight:500;color:rgba(255,255,255,0.85);}
+    .author-title{font-size:12px;color:rgba(255,255,255,0.4);}
+    .article-body{max-width:760px;margin:0 auto;padding:3.5rem 2.5rem 5rem;}
+    .article-body p{font-size:16px;line-height:1.85;color:#2d3748;margin-bottom:1.5rem;}
+    .article-body h2{font-family:'DM Serif Display',serif;font-size:24px;font-weight:400;color:var(--navy);margin:3rem 0 0.75rem;}
+    .article-body h3{font-size:15px;font-weight:500;color:var(--navy);margin:1.75rem 0 0.5rem;}
+    .article-body strong{color:var(--navy);font-weight:500;}
+    .article-body em{color:#4a5568;}
+    .article-body a{color:var(--accent);text-decoration:none;}
+    .article-body a:hover{text-decoration:underline;}
+    .step-header{display:flex;align-items:flex-start;gap:1rem;margin:3rem 0 1rem;}
+    .step-num{width:36px;height:36px;border-radius:50%;background:var(--navy);color:white;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex-shrink:0;margin-top:4px;}
+    .step-eyebrow{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:3px;}
+    .step-title{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;color:var(--navy);line-height:1.3;}
+    .callout{border-radius:8px;padding:1.1rem 1.4rem;margin:1.25rem 0 1.75rem;}
+    .callout p{font-size:14px!important;margin:0!important;line-height:1.7!important;}
+    .callout-label{font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px;}
+    .callout-blue{background:var(--accent-light);border-left:3px solid var(--accent);}
+    .callout-blue p{color:#1a3a5c!important;}
+    .callout-yellow{background:var(--yellow-light);border-left:3px solid var(--yellow);}
+    .callout-yellow p{color:#78350f!important;}
+    .callout-red{background:var(--red-light);border-left:3px solid var(--red);}
+    .callout-red p{color:#7f1d1d!important;}
+    .callout-green{background:var(--green-light);border-left:3px solid var(--green);}
+    .callout-green p{color:#064e3b!important;}
+    .code-block{background:#1e293b;border-radius:8px;padding:1.25rem 1.5rem;margin:1rem 0 1.5rem;overflow-x:auto;}
+    .code-block code{font-family:'SF Mono','Fira Code',monospace;font-size:13px;color:#e2e8f0;line-height:1.7;white-space:pre;}
+    .code-comment{color:#64748b;}
+    .code-string{color:#86efac;}
+    .code-key{color:#93c5fd;}
+    .data-table{width:100%;border-collapse:collapse;margin:1.25rem 0 1.75rem;font-size:14px;}
+    .data-table th{background:var(--navy);color:white;font-weight:500;font-size:12px;letter-spacing:0.04em;padding:10px 14px;text-align:left;}
+    .data-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:#374151;vertical-align:top;}
+    .data-table tr:last-child td{border-bottom:none;}
+    .data-table tr:nth-child(even) td{background:var(--surface);}
+    .arrow-list{margin:0.75rem 0 1.5rem 0;padding:0;list-style:none;}
+    .arrow-list li{font-size:15px;color:#374151;line-height:1.7;padding:4px 0 4px 1.25rem;position:relative;}
+    .arrow-list li::before{content:'→';position:absolute;left:0;color:var(--accent);font-size:13px;}
+    .gotcha-grid{display:grid;gap:1rem;margin:1.25rem 0;}
+    .gotcha-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;border-left:3px solid var(--yellow);}
+    .gotcha-num{font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--yellow);margin-bottom:6px;}
+    .gotcha-title{font-size:15px;font-weight:500;color:var(--navy);margin-bottom:6px;}
+    .gotcha-body{font-size:14px;color:#4a5568;line-height:1.7;}
+    .gotcha-body strong{color:var(--navy);}
+    .prod-path{font-size:12px;margin-top:8px;padding:6px 10px;background:var(--surface);border-radius:6px;color:var(--text-muted);border-left:2px solid var(--accent);}
+    .prod-path strong{color:var(--accent);}
+    .flow-diagram{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem;margin:1.25rem 0 1.75rem;font-family:'SF Mono','Fira Code',monospace;font-size:13px;color:#374151;line-height:2;}
+    .flow-diagram p{font-family:'SF Mono','Fira Code',monospace;font-size:13px;color:#374151;margin-bottom:0;line-height:2;}
+    .flow-yes{color:var(--green);font-weight:600;}
+    .flow-no{color:var(--red);font-weight:600;}
+    .flow-action{color:var(--accent);font-weight:600;}
+    .screenshot-wrap{margin:1.25rem 0 1.75rem;}
+    .screenshot-img{width:100%;border-radius:var(--radius);border:1px solid var(--border);display:block;}
+    .screenshot-caption{font-size:12px;color:var(--text-muted);margin-top:6px;text-align:center;font-style:italic;}
+    .screenshot-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.25rem 0 1.75rem;}
+    .try-it{background:var(--navy);border-radius:var(--radius-lg);padding:2rem;margin:2.5rem 0;}
+    .try-it h3{font-family:'DM Serif Display',serif;font-size:20px;color:white;font-weight:400;margin-bottom:0.75rem;}
+    .try-it p{font-size:14px!important;color:rgba(255,255,255,0.55)!important;margin:0 0 1.25rem!important;}
+    .try-it-links{display:flex;flex-wrap:wrap;gap:10px;}
+    .try-link{font-size:13px;font-weight:500;padding:9px 16px;border-radius:7px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);text-decoration:none;transition:all 0.15s;background:rgba(255,255,255,0.06);}
+    .try-link:hover{background:rgba(255,255,255,0.15);color:white;border-color:rgba(255,255,255,0.4);}
+    .try-link-primary{background:var(--accent);border-color:var(--accent);color:white;}
+    .try-link-primary:hover{background:#2a8ef0;border-color:#2a8ef0;}
+    .divider{border:none;border-top:1px solid var(--border);margin:2.5rem 0;}
+    .article-footer{max-width:760px;margin:0 auto;padding:0 2.5rem 4rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+    .back-link{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--text-muted);text-decoration:none;padding:9px 16px;border-radius:8px;border:1px solid var(--border);transition:all 0.15s;}
+    .back-link:hover{background:var(--navy);color:white;border-color:var(--navy);}
+    .share-row{display:flex;align-items:center;gap:10px;}
+    .share-label{font-size:13px;color:var(--text-muted);}
+    .share-btn{font-size:13px;font-weight:500;padding:9px 16px;border-radius:8px;border:1px solid var(--border);background:white;color:var(--text-muted);cursor:pointer;text-decoration:none;transition:all 0.15s;}
+    .share-btn:hover{background:var(--navy);color:white;border-color:var(--navy);}
+    .more-section{background:var(--surface);padding:3.5rem 2.5rem;border-top:1px solid var(--border);}
+    .more-inner{max-width:760px;margin:0 auto;}
+    .more-label{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:1.25rem;}
+    .more-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;}
+    .more-card{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;text-decoration:none;transition:all 0.15s;display:block;}
+    .more-card:hover{border-color:#c7d8ec;box-shadow:0 4px 16px rgba(0,0,0,0.06);}
+    .more-card-tag{font-size:11px;color:var(--accent);margin-bottom:0.5rem;}
+    .more-card-title{font-size:14px;font-weight:500;color:var(--navy);line-height:1.5;}
+    footer{background:var(--navy);color:rgba(255,255,255,0.5);padding:1.5rem 2.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+    footer small{font-size:13px;}
+    footer a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;}
+    footer a:hover{color:white;}
+    @media(max-width:640px){
+      nav,footer{padding:0 1.25rem;}
+      .article-hero{padding:3rem 1.25rem 2.5rem;}
+      .article-body{padding:2.5rem 1.25rem 3rem;}
+      .article-footer{padding:0 1.25rem 3rem;}
+      .more-section{padding:2.5rem 1.25rem;}
+      .screenshot-grid{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Supriya Nagesh</a>
+  <a class="nav-back" href="index.html#blog">← Back to blog</a>
+</nav>
+
+<header class="article-hero">
+  <div class="hero-inner">
+    <div class="article-meta">
+      <span class="article-tag">Project Breakdown</span>
+      <span class="article-tag-green">No Code</span>
+      <span class="meta-dot"></span>
+      <span class="article-date">June 2026</span>
+      <span class="meta-dot"></span>
+      <span class="article-date">18 min read</span>
+    </div>
+    <h1>Building a Two-Part Event Registration System in Salesforce with JotForm — Architecture, Tradeoffs, and What the Documentation Doesn't Cover</h1>
+    <p class="article-subtitle">A public registration form open to anyone, and a personalised VIP invitation system for existing Contacts. No AppExchange. No Apex. Pure configuration, Flow, and deliberate architectural decisions.</p>
+    <div class="stack-badges">
+      <span class="stack-badge">Salesforce Flow</span>
+      <span class="stack-badge">JotForm</span>
+      <span class="stack-badge">Campaign Hierarchy</span>
+      <span class="stack-badge">Custom Objects</span>
+      <span class="stack-badge">Zero Apex</span>
+      <span class="stack-badge">Zero AppExchange</span>
+    </div>
+    <div class="author-row">
+      <div class="author-avatar">SN</div>
+      <div>
+        <div class="author-name">Supriya Nagesh</div>
+        <div class="author-title">Salesforce Professional · 7+ years</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<article class="article-body">
+
+  <p>Having built event registration workflows in production using FormAssembly, I wanted to document the same architectural patterns using JotForm — a more accessible alternative for teams without enterprise form licensing. The core Salesforce data model is identical. The integration approach is similar. The connector-specific considerations are different enough to be worth documenting in detail.</p>
+
+  <p>This covers a two-part implementation: a public registration form open to anyone, and a personalised VIP invitation system for existing Salesforce Contacts. <strong>No AppExchange package. No Apex. Pure configuration, Flow, and deliberate architectural decisions</strong> about where the native connector's boundaries are and how to work within them.</p>
+
+  <hr class="divider" />
+
+  <h2>The Use Case</h2>
+  <p><strong>Salesforce Integration Summit 2026</strong> — used to demonstrate a production-representative event registration workflow. Two registration scenarios:</p>
+
+  <ul class="arrow-list">
+    <li><strong>Part 1 — Public Registration:</strong> Anyone with the form link can register. Salesforce creates or updates their Contact, matches or creates their Account by company name, and adds them as a Campaign Member linked to the event Campaign</li>
+    <li><strong>Part 2 — VIP Invited Registration:</strong> Existing Salesforce Contacts are personally invited via email. The invitation contains a pre-filled JotForm link — name, email, phone, and company already populated from Salesforce. They complete only the event-specific fields</li>
+  </ul>
+
+  <hr class="divider" />
+
+  <h2>The Data Model</h2>
+  <p>Getting the data model right before touching JotForm is non-negotiable. The integration is only as good as the structure it writes into.</p>
+
+  <h3>Campaign Hierarchy</h3>
+  <div class="code-block"><code>Parent Campaign: Salesforce Integration Summit 2026
+    ├── Child Campaign 1: Summit 2026 — Open Public Registration
+    └── Child Campaign 2: Summit 2026 — VIP Invited Attendees</code></div>
+
+  <p>Campaign hierarchy keeps all event data connected under one parent. Reporting, member counts, and follow-up actions roll up automatically — no manual aggregation, no cross-campaign queries.</p>
+
+  <h3>Event Session — Custom Object, Not Picklist</h3>
+  <p>The session preference field is a <strong>Custom Object (Event_Session__c)</strong>, not a picklist. This is a deliberate scalability decision. Picklist values hardcode session names into the configuration layer — every new event requires a metadata change. With a custom object, sessions are data. Adding a new event means creating new records, not editing picklists or redeploying.</p>
+
+  <div class="callout callout-blue">
+    <p class="callout-label" style="color:var(--accent);">💡 Design principle</p>
+    <p><strong>Sessions as records, not configuration.</strong> Event_Session__c is a child of Campaign. Each event owns its sessions. Sessions carry capacity, speaker, timing, and description fields. The data model scales cleanly across any number of events without touching configuration.</p>
+  </div>
+
+  <h3>Campaign Member Status Values</h3>
+  <table class="data-table">
+    <thead><tr><th>Status</th><th>Responded</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>Sent</td><td>❌</td><td>Invited, not yet registered (VIP path only)</td></tr>
+      <tr><td>Registered</td><td>✅</td><td>Form submitted successfully</td></tr>
+      <tr><td>Attended</td><td>✅</td><td>Present on the day</td></tr>
+      <tr><td>No Show</td><td>❌</td><td>Registered but did not attend</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Custom Fields</h3>
+  <p><strong>On Contact:</strong></p>
+  <ul class="arrow-list">
+    <li><code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">Session_Name_Text__c</code> — temporary bridge field for JotForm → Salesforce lookup resolution</li>
+    <li><code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">VIP_Form_Submitted__c</code> — Flow trigger for VIP registration processing</li>
+    <li><code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">Is_VIP__c</code> — marks a Contact as VIP, triggers invitation Flow</li>
+    <li><code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">VIP_Registration_Link__c</code> — stores the personalised pre-filled JotForm URL</li>
+    <li><code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">Dietary_Requirements__c</code>, <code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">T_Shirt_Size__c</code>, <code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">Event_Source__c</code></li>
+  </ul>
+  <p><strong>On Campaign Member:</strong></p>
+  <ul class="arrow-list">
+    <li><code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">Session_Preference__c</code> — Lookup to Event_Session__c</li>
+  </ul>
+
+  <hr class="divider" />
+
+  <!-- PART 1 -->
+  <div class="step-header">
+    <div class="step-num">1</div>
+    <div>
+      <p class="step-eyebrow">Part 1</p>
+      <p class="step-title">Public Registration — JotForm Integration Architecture</p>
+    </div>
+  </div>
+
+  <p>The public form collects: Full Name, Email, Phone, Company, Session Preference, T-Shirt Size, Dietary Requirements, and How Did You Hear About Us. The native Salesforce connector creates records in a dependency chain — each step passes its record ID to the next:</p>
+
+  <div class="code-block"><code>Step 1 — Account (Create or Update, match by Name)
+    └── Company → Account Name
+
+Step 2 — Contact (Create or Update, match by Email)
+    ├── Name, Email, Phone
+    ├── AccountId → from Step 1
+    ├── Dietary, T-Shirt, Event Source
+    └── Session_Name_Text__c → Session Preference
+
+Step 3 — Campaign Member (Create or Update)
+    ├── CampaignId → Child Campaign 1
+    ├── ContactId → from Step 2
+    └── Status → Registered</code></div>
+
+  <div class="callout callout-yellow">
+    <p class="callout-label" style="color:var(--yellow);">⚠️ Step ordering is load-bearing</p>
+    <p>Account must exist before Contact can be linked. Contact must exist before Campaign Member can be created. JotForm handles the ID chaining automatically between steps — this is one area where the native connector works well.</p>
+  </div>
+
+  <div class="screenshot-grid">
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/jotform/connect-salesforce-jotform.png" alt="Connect Salesforce Org to JotForm" />
+      <p class="screenshot-caption">Connect Salesforce Org to JotForm</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/jotform/set-actions.png" alt="Set Actions in JotForm Salesforce connector" />
+      <p class="screenshot-caption">Set Actions</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/jotform/field-mapping.png" alt="Map JotForm fields to Salesforce fields" />
+      <p class="screenshot-caption">Map JotForm fields to Salesforce fields</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/jotform/settings-integrations.png" alt="Actions found in Settings → Integrations" />
+      <p class="screenshot-caption">Actions in Settings → Integrations</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/jotform/publish-link.png" alt="Publish the form link" />
+      <p class="screenshot-caption">Publish the link</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/jotform/thankyou-page.png" alt="Setup a Thank You page" />
+      <p class="screenshot-caption">Setup a Thank You page</p>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step-header">
+    <div class="step-num">2</div>
+    <div>
+      <p class="step-eyebrow">The Bridge Pattern</p>
+      <p class="step-title">Lookup Field Resolution — Text to ID</p>
+    </div>
+  </div>
+
+  <p>Session Preference on Campaign Member is a Lookup field to <code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">Event_Session__c</code>. JotForm dropdown fields pass text values. Salesforce lookup fields expect Record IDs. These are fundamentally incompatible at the connector level.</p>
+
+  <div class="callout callout-blue">
+    <p class="callout-label" style="color:var(--accent);">🔁 The standard bridge pattern</p>
+    <p>A temporary text field (<code>Session_Name_Text__c</code>) on Contact acts as a bridge. JotForm writes the text value there. A Flow reads it, queries the matching Event Session record, updates the lookup field with the correct ID, and clears the temp field. <strong>This pattern generalises</strong> — applicable anywhere a form tool needs to populate a Salesforce lookup.</p>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step-header">
+    <div class="step-num">3</div>
+    <div>
+      <p class="step-eyebrow">Part 1 Automation</p>
+      <p class="step-title">Flow 1 — Public Registration Flow</p>
+    </div>
+  </div>
+
+  <p>Trigger: Campaign Member created, CampaignId matches Child Campaign 1.</p>
+
+  <div class="flow-diagram">
+    <p><strong>Campaign Member created</strong></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;↓</p>
+    <p><span class="flow-action">Get Contact record</span></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;↓</p>
+    <p><span class="flow-action">Get Event Session (match Name to Session_Name_Text__c)</span></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;↓</p>
+    <p><strong>Session found?</strong></p>
+    <p>&nbsp;&nbsp;↓ <span class="flow-yes">Yes</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓ <span class="flow-no">No</span></p>
+    <p><span class="flow-action">Update Campaign Member</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="flow-action">Create Task (session not found)</span></p>
+    <p>Session_Preference__c</p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;↓</p>
+    <p><span class="flow-action">Send confirmation email</span></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;↓</p>
+    <p><span class="flow-action">Clear Contact.Session_Name_Text__c</span></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;↓ <span class="flow-no">Fault Path → High Priority Task with error detail</span></p>
+  </div>
+
+  <div class="screenshot-grid">
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/jotform/flow-public-registration.png" alt="General Event Registration Flow canvas" />
+      <p class="screenshot-caption">Flow 1 — Public Registration Flow</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/jotform/form-public.png" alt="Public registration form for general attendees" />
+      <p class="screenshot-caption">Public registration form</p>
+    </div>
+  </div>
+
+  <div class="screenshot-wrap">
+    <img class="screenshot-img" src="images/jotform/confirmation-email-public.png" alt="Confirmation email sent to public registrant" />
+    <p class="screenshot-caption">Confirmation email — public registration</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- PART 2 -->
+  <div class="step-header">
+    <div class="step-num">4</div>
+    <div>
+      <p class="step-eyebrow">Part 2</p>
+      <p class="step-title">VIP Invited Registration — Architecture Decision</p>
+    </div>
+  </div>
+
+  <p>A checkbox on Contact (<code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">Is_VIP__c</code>) is the integration trigger. When checked — by an admin, a Flow, or any process — the VIP invitation Flow fires automatically. The trigger is deliberately simple: <strong>one field, one clear intent.</strong> Integration logic stays in Flow, not embedded in data entry processes.</p>
+
+  <p>When <code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">Is_VIP__c</code> is checked, three things happen automatically:</p>
+
+  <ul class="arrow-list">
+    <li>The Contact is added to Child Campaign 2 with Status = <strong>Sent</strong></li>
+    <li>A personalised pre-filled JotForm URL is built from Contact field values</li>
+    <li>An invitation email is sent containing the personalised link</li>
+  </ul>
+
+  <p>The pre-filled URL format:</p>
+  <div class="code-block"><code>https://form.jotform.com/[formid]
+?name[first]=<span class="code-string">John</span>
+&name[last]=<span class="code-string">Smith</span>
+&email=<span class="code-string">john@smith.com</span>
+&phoneNumber=<span class="code-string">+12015550101</span>
+&company=<span class="code-string">Acme Corp</span></code></div>
+
+  <div class="callout callout-yellow">
+    <p class="callout-label" style="color:var(--yellow);">⚠️ Field unique names matter</p>
+    <p>Each parameter must exactly match the JotForm field's <strong>unique name</strong> — not the label. System-generated unique names don't always match field labels. One field in this build had a generated name of <code>typeA</code> rather than <code>company</code>. Always verify unique names explicitly in JotForm field properties before building pre-fill URLs.</p>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step-header">
+    <div class="step-num">5</div>
+    <div>
+      <p class="step-eyebrow">Part 2 Automation</p>
+      <p class="step-title">Flow 2 — VIP Invitation Flow & Flow 3 — VIP Update Flow</p>
+    </div>
+  </div>
+
+  <h3>Flow 2 — VIP Invitation Flow</h3>
+  <p>Trigger: Contact updated, Is_VIP__c transitions to True.</p>
+
+  <div class="flow-diagram">
+    <p><strong>Is_VIP__c = True</strong></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;↓</p>
+    <p><span class="flow-action">Get VIP Campaign (by Campaign Name)</span></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;↓</p>
+    <p><strong>Campaign found?</strong></p>
+    <p>&nbsp;&nbsp;↓ <span class="flow-yes">Yes</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓ <span class="flow-no">No</span></p>
+    <p><strong>Email check</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="flow-action">Create Task (no campaign)</span></p>
+    <p>↓ Has Email&nbsp;&nbsp;↓ No Email</p>
+    <p><span class="flow-action">Add to VIP</span>&nbsp;&nbsp;<span class="flow-action">Create Task</span></p>
+    <p>Campaign&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(no email)</p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;↓</p>
+    <p><span class="flow-action">Save VIP link on Contact</span></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;↓</p>
+    <p><span class="flow-action">Send invitation email</span></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;↓ <span class="flow-no">Fault → Task</span></p>
+  </div>
+
+  <h3>Flow 3 — VIP Update Flow</h3>
+  <p>Trigger: Contact updated, VIP_Form_Submitted__c = True. The <strong>Status = Sent filter</strong> is the key identifier — public registration members always have Status = Registered, VIP members waiting to register always have Status = Sent. This combination uniquely identifies the correct Campaign Member without hardcoded IDs.</p>
+
+  <div class="flow-diagram">
+    <p><strong>VIP_Form_Submitted__c = True</strong></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;↓</p>
+    <p><span class="flow-action">Get Campaign (VIP Campaign Name)</span></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;↓</p>
+    <p><span class="flow-action">Get Campaign Member (ContactId + CampaignId + Status = Sent)</span></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;↓</p>
+    <p><strong>Member found?</strong></p>
+    <p>&nbsp;&nbsp;↓ <span class="flow-yes">Yes</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓ <span class="flow-no">No</span></p>
+    <p><span class="flow-action">Get Event Session</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="flow-action">Create Task (no member)</span></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;↓</p>
+    <p><span class="flow-action">Update Campaign Member:</span></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;Status = Registered</p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;Session_Preference__c = lookup ID</p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;↓</p>
+    <p><span class="flow-action">Clear temp fields + Send VIP confirmation</span></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;↓ <span class="flow-no">Fault → Task</span></p>
+  </div>
+
+  <div class="screenshot-grid">
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/jotform/flow-vip-invitation.png" alt="VIP Invitation Flow canvas" />
+      <p class="screenshot-caption">Flow 2 — VIP Invitation Flow</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/jotform/vip-invitation-email.png" alt="Personalised invitation email with pre-populated link" />
+      <p class="screenshot-caption">Personalised invitation email</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/jotform/vip-prepopulated-form.png" alt="Pre-populated JotForm with Contact details filled in" />
+      <p class="screenshot-caption">Pre-populated VIP form</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/jotform/flow-vip-registration.png" alt="VIP Registration Flow canvas" />
+      <p class="screenshot-caption">Flow 3 — VIP Registration Flow</p>
+    </div>
+  </div>
+
+  <div class="screenshot-wrap">
+    <img class="screenshot-img" src="images/jotform/confirmation-email-vip.png" alt="VIP confirmation email after form submission" />
+    <p class="screenshot-caption">VIP confirmation email</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- GOTCHAS -->
+  <div class="step-header">
+    <div class="step-num">6</div>
+    <div>
+      <p class="step-eyebrow">Connector considerations</p>
+      <p class="step-title">Six Architectural Tradeoffs — and Production Paths</p>
+    </div>
+  </div>
+
+  <div class="gotcha-grid">
+    <div class="gotcha-card">
+      <div class="gotcha-num">Consideration 01</div>
+      <div class="gotcha-title">Native connector can't match Campaign Members by custom keys</div>
+      <div class="gotcha-body">The JotForm native connector matches records using Salesforce's standard matching rules. It <strong>cannot match a Campaign Member by ContactId + CampaignId</strong> — the only reliable way to identify a specific member for update. This directly informed the Part 2 architecture — the VIP form updates the Contact with a trigger field, and Flow handles the Campaign Member update using the full query flexibility of Get Records.</div>
+      <div class="prod-path"><strong>Production path:</strong> Replace the native connector with a JotForm webhook to a custom Apex REST endpoint. Full control over matching logic, no connector constraints.</div>
+    </div>
+    <div class="gotcha-card">
+      <div class="gotcha-num">Consideration 02</div>
+      <div class="gotcha-title">Lookup field resolution requires a bridge</div>
+      <div class="gotcha-body">JotForm sends text. Salesforce lookups expect IDs. The <strong>Session_Name_Text__c bridge pattern</strong> is the standard approach — temporary field, Flow resolves to ID, clear the field. It introduces a temp field and a Flow step but keeps the JotForm configuration simple and the data model clean. The pattern generalises to any form tool integration needing to populate lookup fields.</div>
+    </div>
+    <div class="gotcha-card">
+      <div class="gotcha-num">Consideration 03</div>
+      <div class="gotcha-title">Two Flows don't scale beyond a small number of child Campaigns</div>
+      <div class="gotcha-body">Flow 1 triggers on Campaign Member creation. Flow 3 triggers on Contact update. This split exists because the native connector can't update an existing Campaign Member. For this implementation it's manageable. Across ten events with multiple child Campaigns each, it becomes a maintenance consideration.</div>
+      <div class="prod-path"><strong>Production path:</strong> A webhook-based integration eliminates the split entirely. One endpoint processes all registration types, one Flow handles all outcomes.</div>
+    </div>
+    <div class="gotcha-card">
+      <div class="gotcha-num">Consideration 04</div>
+      <div class="gotcha-title">JotForm field unique names require explicit verification</div>
+      <div class="gotcha-body">When building pre-filled URLs, each parameter must exactly match the JotForm field's <strong>unique name</strong> — not the label. System-generated unique names don't always match field labels. One field had a generated name of <code>typeA</code> rather than <code>company</code>. Always check unique names in JotForm field properties before building pre-fill URLs.</div>
+    </div>
+    <div class="gotcha-card">
+      <div class="gotcha-num">Consideration 05</div>
+      <div class="gotcha-title">Email deliverability — dev org considerations</div>
+      <div class="gotcha-body">Dev orgs send from auto-generated addresses with no DKIM, SPF, or domain authentication. Gmail applies rate limiting on repeated unauthenticated emails. <strong>Use Outlook or Yahoo for reliable dev org testing.</strong> Space out test emails, set Sender Type to Org Wide Email Address in Flow Send Email actions, and check Email Log Files under Setup → Email → Email Log Files for delivery status. In production with proper DKIM/SPF, these considerations don't apply.</div>
+    </div>
+    <div class="gotcha-card">
+      <div class="gotcha-num">Consideration 06</div>
+      <div class="gotcha-title">Duplicate Campaign Member errors cascade upstream</div>
+      <div class="gotcha-body">A duplicate Campaign Member error in JotForm Step 3 doesn't just fail that step — it prevents the session name from being written to the Contact, which means Flow 1 finds no session name to resolve, which means <strong>no confirmation email sends</strong>. The root cause is several steps removed from the visible symptom. When a confirmation email fails, check the JotForm action log for Step 3 errors before investigating email deliverability.</div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <h2>Key Design Decisions</h2>
+
+  <table class="data-table">
+    <thead><tr><th>Decision</th><th>Rationale</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Event Session as custom object</strong></td><td>Sessions are data, not configuration. New events need new records, not metadata changes or deployments.</td></tr>
+      <tr><td><strong>Campaign Hierarchy</strong></td><td>All event data rolls up to one parent. Cross-type reporting and follow-up Flows operate at parent level without cross-campaign queries.</td></tr>
+      <tr><td><strong>Session_Name_Text__c as reusable pattern</strong></td><td>A pattern, not a workaround. Applicable across any form tool integration needing to populate lookup fields.</td></tr>
+      <tr><td><strong>Is_VIP__c as integration trigger</strong></td><td>Any process that checks the box triggers the invitation — manual entry, import, another Flow, an API call. Integration logic in one place, decoupled from data entry.</td></tr>
+      <tr><td><strong>Status = Sent as VIP identifier</strong></td><td>Uniquely identifies the correct Campaign Member without hardcoded IDs. Public members always have Status = Registered.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="try-it">
+    <h3>Try the live form</h3>
+    <p>The public registration form is connected to a live Salesforce dev org. Submit with test data to see the full chain: form submission → Salesforce record creation → confirmation email. Use a real email address. Gmail users: confirmation may land in spam due to dev org sending — Outlook or Yahoo is more reliable. The form has a 100 submission limit.</p>
+    <div class="try-it-links">
+      <a class="try-link try-link-primary" href="#" target="_blank">Register as a public attendee →</a>
+      <a class="try-link" href="https://developer.salesforce.com" target="_blank">Salesforce Developer Org</a>
+      <a class="try-link" href="https://jotform.com" target="_blank">JotForm (free)</a>
+    </div>
+  </div>
+
+  <p style="font-size:13px;color:var(--text-muted);margin-top:2rem;">Built on Salesforce Developer Org · JotForm · Salesforce Flow · Campaign Hierarchy · Custom Objects</p>
+
+</article>
+
+<div class="article-footer">
+  <a class="back-link" href="index.html#blog">← Back to all posts</a>
+  <div class="share-row">
+    <span class="share-label">Share:</span>
+    <a class="share-btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https://supriyajnagesh.com/blog-jotform-salesforce.html" target="_blank">LinkedIn</a>
+  </div>
+</div>
+
+<div class="more-section">
+  <div class="more-inner">
+    <p class="more-label">More from the blog</p>
+    <div class="more-grid">
+      <a class="more-card" href="blog-docusign-salesforce-flow.html">
+        <p class="more-card-tag">Project Breakdown</p>
+        <p class="more-card-title">Automating contract sending with Salesforce Flow & DocuSign</p>
+      </a>
+      <a class="more-card" href="blog-twilio-sms-integration.html">
+        <p class="more-card-tag">Technical Deep-dive</p>
+        <p class="more-card-title">Building a Twilio SMS integration — no package, no shortcuts</p>
+      </a>
+      <a class="more-card" href="blog-what-hiring-managers-look-for.html">
+        <p class="more-card-tag">Career</p>
+        <p class="more-card-title">What hiring managers actually look for in a Salesforce professional</p>
+      </a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <small>© 2026 Supriya Nagesh · supriyajnagesh.com</small>
+  <a href="https://www.linkedin.com/in/supriya-nagesh" target="_blank">LinkedIn</a>
+</footer>
+
+</body>
+</html>
