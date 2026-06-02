@@ -55,7 +55,7 @@
     .section-inner { max-width: 900px; margin: 0 auto; }
     .section-inner .section-eyebrow { margin-bottom: 0.5rem; }
     .section-inner .about-grid { margin: 0; }
-    .section-inner .skills-wrapper { margin: 0; }
+    .section-inner .skills-wrapper { margin: 0; max-width: 100%; }
     .section-inner .blog-wrapper { margin: 0; }
     .section-inner .contact-wrapper { margin: 0; }
 
@@ -75,13 +75,59 @@
     .stat-num { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--navy); }
     .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 
-    /* SKILLS */
-    .skills-wrapper { max-width: 900px; margin: 0 auto; }
-    .skills-group { margin-bottom: 2rem; }
-    .skills-group-label { font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem; }
-    .skills-pills { display: flex; flex-wrap: wrap; gap: 8px; }
-    .skill-pill { padding: 7px 14px; font-size: 13px; background: white; border: 1px solid var(--border); border-radius: 20px; color: var(--text); font-weight: 400; transition: all 0.15s; }
-    .skill-pill:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+    /* SKILLS — Trailhead hexagon badge style */
+    .skills-wrapper { max-width: 900px; margin: 0; }
+    .skills-group { margin-bottom: 2.5rem; }
+    .skills-group-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #0176d3;
+      margin-bottom: 1.25rem; display: flex; align-items: center; gap: 8px;
+    }
+    .skills-group-label::after { content: ''; flex: 1; height: 1px; background: #e5e5e5; }
+    .skills-pills { display: flex; flex-wrap: wrap; gap: 6px 4px; }
+
+    /* Hexagon badge */
+    .skill-pill {
+      position: relative;
+      width: 96px;
+      height: 108px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: white;
+      line-height: 1.3;
+      padding: 0 10px;
+      cursor: default;
+      transition: transform 0.18s, filter 0.18s;
+      background: transparent;
+      border: none;
+    }
+    .skill-pill::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: #f3f3f3;
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      transition: background 0.18s;
+      z-index: 0;
+    }
+    .skill-pill span {
+      position: relative;
+      z-index: 1;
+      color: #181818;
+    }
+    .skill-pill:hover span { color: white; }
+    .skill-pill:hover { transform: translateY(-3px); filter: drop-shadow(0 4px 8px rgba(1,118,211,0.35)); }
+    .skill-pill:hover::before { background: #0176d3; }
+
+    /* Exploring variant */
+    .skill-pill.exploring::before { background: #fef3c7; }
+    .skill-pill.exploring span { color: #92400e; }
+    .skill-pill.exploring:hover::before { background: #f59e0b; }
+    .skill-pill.exploring:hover span { color: white; }
 
     /* PROJECTS */
     .projects-wrapper { max-width: 900px; margin: 0 auto; }
@@ -250,60 +296,60 @@
     <div class="skills-group">
       <p class="skills-group-label">Salesforce Platform</p>
       <div class="skills-pills">
-        <span class="skill-pill">Salesforce Administration</span>
-        <span class="skill-pill">Sales Cloud</span>
-        <span class="skill-pill">Service Cloud</span>
-        <span class="skill-pill">Experience Cloud</span>
-        <span class="skill-pill">Lightning Experience</span>
-        <span class="skill-pill">Apex</span>
-        <span class="skill-pill">SOQL</span>
-        <span class="skill-pill">SOSL</span>
-        <span class="skill-pill">Invocable Apex</span>
-        <span class="skill-pill">Salesforce Flow</span>
-        <span class="skill-pill">Screen Flow</span>
-        <span class="skill-pill">Record-Triggered Flow</span>
-        <span class="skill-pill">Validation Rules</span>
-        <span class="skill-pill">Aura Components</span>
-        <span class="skill-pill">Visualforce</span>
-        <span class="skill-pill">Security &amp; MFA</span>
-        <span class="skill-pill">User Access Management</span>
-        <span class="skill-pill">Process Optimization</span>
+        <span class="skill-pill"><span>Salesforce Administration</span></span>
+        <span class="skill-pill"><span>Sales Cloud</span></span>
+        <span class="skill-pill"><span>Service Cloud</span></span>
+        <span class="skill-pill"><span>Experience Cloud</span></span>
+        <span class="skill-pill"><span>Lightning Experience</span></span>
+        <span class="skill-pill"><span>Apex</span></span>
+        <span class="skill-pill"><span>SOQL</span></span>
+        <span class="skill-pill"><span>SOSL</span></span>
+        <span class="skill-pill"><span>Invocable Apex</span></span>
+        <span class="skill-pill"><span>Salesforce Flow</span></span>
+        <span class="skill-pill"><span>Screen Flow</span></span>
+        <span class="skill-pill"><span>Record-Triggered Flow</span></span>
+        <span class="skill-pill"><span>Validation Rules</span></span>
+        <span class="skill-pill"><span>Aura Components</span></span>
+        <span class="skill-pill"><span>Visualforce</span></span>
+        <span class="skill-pill"><span>Security &amp; MFA</span></span>
+        <span class="skill-pill"><span>User Access Management</span></span>
+        <span class="skill-pill"><span>Process Optimization</span></span>
       </div>
     </div>
     <div class="skills-group">
       <p class="skills-group-label">Integration / DevOps</p>
       <div class="skills-pills">
-        <span class="skill-pill">REST API</span>
-        <span class="skill-pill">Salesforce Integrations</span>
-        <span class="skill-pill">DocuSign Integration</span>
-        <span class="skill-pill">AssureSign</span>
-        <span class="skill-pill">Litify Inbox</span>
-        <span class="skill-pill">Docrio</span>
-        <span class="skill-pill">CI/CD</span>
-        <span class="skill-pill">Gearset</span>
-        <span class="skill-pill">Release Management</span>
+        <span class="skill-pill"><span>REST API</span></span>
+        <span class="skill-pill"><span>Salesforce Integrations</span></span>
+        <span class="skill-pill"><span>DocuSign Integration</span></span>
+        <span class="skill-pill"><span>AssureSign</span></span>
+        <span class="skill-pill"><span>Litify Inbox</span></span>
+        <span class="skill-pill"><span>Docrio</span></span>
+        <span class="skill-pill"><span>CI/CD</span></span>
+        <span class="skill-pill"><span>Gearset</span></span>
+        <span class="skill-pill"><span>Release Management</span></span>
       </div>
     </div>
     <div class="skills-group">
       <p class="skills-group-label">Data / Delivery</p>
       <div class="skills-pills">
-        <span class="skill-pill">Data Loader</span>
-        <span class="skill-pill">Data Migration</span>
-        <span class="skill-pill">Data Cleanup</span>
-        <span class="skill-pill">UAT Support</span>
-        <span class="skill-pill">Technical Documentation</span>
-        <span class="skill-pill">Troubleshooting</span>
-        <span class="skill-pill">Root Cause Analysis</span>
-        <span class="skill-pill">Solution Design</span>
-        <span class="skill-pill">Cross-functional Collaboration</span>
-        <span class="skill-pill">Agile / Jira</span>
+        <span class="skill-pill"><span>Data Loader</span></span>
+        <span class="skill-pill"><span>Data Migration</span></span>
+        <span class="skill-pill"><span>Data Cleanup</span></span>
+        <span class="skill-pill"><span>UAT Support</span></span>
+        <span class="skill-pill"><span>Technical Documentation</span></span>
+        <span class="skill-pill"><span>Troubleshooting</span></span>
+        <span class="skill-pill"><span>Root Cause Analysis</span></span>
+        <span class="skill-pill"><span>Solution Design</span></span>
+        <span class="skill-pill"><span>Cross-functional Collaboration</span></span>
+        <span class="skill-pill"><span>Agile / Jira</span></span>
       </div>
     </div>
     <div class="skills-group">
       <p class="skills-group-label">Currently Exploring</p>
       <div class="skills-pills">
-        <span class="skill-pill" style="border-color:var(--accent);color:var(--accent);background:var(--accent-light);">Agentforce ✦ In progress</span>
-        <span class="skill-pill" style="border-color:var(--accent);color:var(--accent);background:var(--accent-light);">LWC ✦ In progress</span>
+        <span class="skill-pill exploring"><span>Agentforce ✦ In progress</span></span>
+        <span class="skill-pill exploring"><span>LWC ✦ In progress</span></span>
       </div>
     </div>
   </div>
@@ -314,7 +360,7 @@
   <div class="section-inner">
   <p class="section-eyebrow">Work</p>
   <h2 class="section-title">Project case studies</h2>
-  <p class="section-subtitle">One project per page — problem, solution, features, screenshots, and a walkthrough.</p>
+  <p class="section-subtitle">Production-pattern Salesforce builds, documented so the thinking is visible.</p>
   </div>
   <div class="projects-wrapper">
 
@@ -630,7 +676,7 @@
   <small>© 2026 Supriya Nagesh · supriyajnagesh.com</small>
   <div class="footer-links">
     <a href="https://www.linkedin.com/in/supriya-nagesh" target="_blank">LinkedIn</a>
-    <a href="https://trailblazer.salesforce.com" target="_blank">Trailhead</a>
+    <a href="https://www.salesforce.com/trailblazer/zplt9jh0a0xw7o69e7" target="_blank">Trailhead</a>
     <a href="SupriyaJN_Salesforce.pdf" download>Resume</a>
   </div>
 </footer>
