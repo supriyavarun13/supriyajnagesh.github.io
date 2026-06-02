@@ -52,6 +52,13 @@
     .btn-hero-ghost { background: transparent; color: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.25); }
     .btn-hero-ghost:hover { background: rgba(255,255,255,0.08); color: white; }
 
+    .section-inner { max-width: 900px; margin: 0 auto; }
+    .section-inner .section-eyebrow { margin-bottom: 0.5rem; }
+    .section-inner .about-grid { margin: 0; }
+    .section-inner .skills-wrapper { margin: 0; }
+    .section-inner .blog-wrapper { margin: 0; }
+    .section-inner .contact-wrapper { margin: 0; }
+
     /* SECTIONS */
     section { padding: 5rem 2.5rem; }
     section:nth-child(even) { background: var(--surface); }
@@ -61,8 +68,8 @@
     .section-inner { max-width: 960px; margin: 0 auto; }
 
     /* ABOUT */
-    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; max-width: 900px; margin: 0 auto; }
-    .about-text p { font-size: 15px; color: #374151; line-height: 1.8; margin-bottom: 1rem; }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; max-width: 900px; margin: 0; }
+    .about-text p { font-size: 15px; color: #374151; line-height: 1.8; margin-bottom: 1rem; max-width: 420px; }
     .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
     .stat-box { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; text-align: center; }
     .stat-num { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--navy); }
@@ -195,6 +202,7 @@
 </header>
 
 <section id="about">
+  <div class="section-inner">
   <p class="section-eyebrow">About</p>
   <h2 class="section-title">A bit about me</h2>
   <div class="about-grid">
@@ -210,9 +218,11 @@
       <div class="stat-box"><div class="stat-num">4</div><div class="stat-label">Clouds expertise</div></div>
     </div>
   </div>
+  </div>
 </section>
 
 <section id="skills">
+  <div class="section-inner">
   <p class="section-eyebrow">Expertise</p>
   <h2 class="section-title">Skills &amp; tools</h2>
   <p class="section-subtitle">Technologies and Salesforce features I work with regularly.</p>
@@ -277,12 +287,15 @@
       </div>
     </div>
   </div>
+  </div>
 </section>
 
 <section id="projects">
+  <div class="section-inner">
   <p class="section-eyebrow">Work</p>
   <h2 class="section-title">Project case studies</h2>
   <p class="section-subtitle">One project per page — problem, solution, features, screenshots, and a walkthrough.</p>
+  </div>
   <div class="projects-wrapper">
 
     <div class="project-card">
@@ -382,6 +395,7 @@
 </section>
 
 <section id="blog">
+  <div class="section-inner">
   <p class="section-eyebrow">Writing</p>
   <h2 class="section-title">Blog</h2>
   <p class="section-subtitle">Notes, guides, and lessons from working inside the Salesforce ecosystem.</p>
@@ -433,9 +447,11 @@
       </a>
     </div>
   </div>
+  </div>
 </section>
 
 <section id="testimonials">
+  <div class="section-inner">
   <p class="section-eyebrow">What people say</p>
   <h2 class="section-title">Testimonials</h2>
   <p class="section-subtitle">From mentees, colleagues, managers, and clients I've worked with across the Salesforce ecosystem.</p>
@@ -472,9 +488,11 @@
       Leave a testimonial
     </a>
   </div>
+  </div>
 </section>
 
 <section id="contact">
+  <div class="section-inner">
   <p class="section-eyebrow">Get in touch</p>
   <h2 class="section-title">Contact</h2>
   <div class="contact-wrapper">
@@ -510,6 +528,7 @@
       </div>
       <button type="submit" class="btn-submit">Send message</button>
     </form>
+  </div>
   </div>
 </section>
 
