@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Hard Parts — Stripe Webhooks, Agentforce, and 14 Real Issues Resolved · Part 2 — Supriya Nagesh</title>
+  <meta name="description" content="The real build — 14 issues documented with root causes and fixes, Stripe webhook architecture in depth, Agentforce configuration, and an honest section on AI as a coding partner." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy:#0f1b2d;--accent:#3b9eff;--accent-light:#e8f3ff;--text:#1a1a2e;
+      --text-muted:#5a6a7e;--border:#e2e8f0;--surface:#f8fafc;--white:#ffffff;
+      --green:#059669;--green-light:#ecfdf5;--yellow:#d97706;--yellow-light:#fffbeb;
+      --red:#dc2626;--red-light:#fef2f2;--purple:#7c3aed;--purple-light:#f5f3ff;
+      --radius:10px;--radius-lg:16px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);font-size:16px;line-height:1.7;}
+    nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;padding:0 2.5rem;height:60px;}
+    .nav-logo{font-family:'DM Serif Display',serif;font-size:18px;color:var(--navy);text-decoration:none;}
+    .nav-back{font-size:13px;font-weight:500;color:var(--text-muted);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s;}
+    .nav-back:hover{color:var(--navy);}
+    .article-hero{background:var(--navy);padding:4rem 2.5rem 3.5rem;position:relative;overflow:hidden;}
+    .article-hero::before{content:'';position:absolute;top:-80px;right:-80px;width:400px;height:400px;background:radial-gradient(circle,rgba(220,38,38,0.1) 0%,transparent 70%);border-radius:50%;}
+    .article-hero::after{content:'';position:absolute;bottom:-60px;left:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(59,158,255,0.08) 0%,transparent 70%);border-radius:50%;}
+    .hero-inner{position:relative;z-index:1;max-width:780px;margin:0 auto;}
+    .article-meta{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap;}
+    .article-tag{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);background:rgba(59,158,255,0.12);border:1px solid rgba(59,158,255,0.25);padding:4px 10px;border-radius:20px;}
+    .article-tag-red{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#fca5a5;background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.3);padding:4px 10px;border-radius:20px;}
+    .series-badge{font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#fbbf24;background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.3);padding:4px 12px;border-radius:20px;}
+    .article-date{font-size:13px;color:rgba(255,255,255,0.4);}
+    .meta-dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,0.2);}
+    .article-hero h1{font-family:'DM Serif Display',serif;font-size:clamp(22px,4vw,40px);font-weight:400;line-height:1.2;color:white;margin-bottom:1rem;}
+    .article-subtitle{font-size:16px;color:rgba(255,255,255,0.6);line-height:1.7;max-width:660px;}
+    .stack-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:1.75rem;}
+    .stack-badge{font-size:12px;padding:5px 12px;border-radius:20px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);}
+    .author-row{display:flex;align-items:center;gap:10px;margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.1);}
+    .author-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#1a5fa8);display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:14px;color:white;flex-shrink:0;}
+    .author-name{font-size:14px;font-weight:500;color:rgba(255,255,255,0.85);}
+    .author-title{font-size:12px;color:rgba(255,255,255,0.4);}
+    .part1-banner{background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:2rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .part1-banner p{font-size:14px;color:#92400e;margin:0;flex:1;}
+    .part1-banner a{font-size:13px;font-weight:500;color:#0176d3;text-decoration:none;white-space:nowrap;}
+    .part1-banner a:hover{text-decoration:underline;}
+    .article-body{max-width:780px;margin:0 auto;padding:3.5rem 2.5rem 5rem;}
+    .article-body p{font-size:16px;line-height:1.85;color:#2d3748;margin-bottom:1.5rem;}
+    .article-body h2{font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;color:var(--navy);margin:3rem 0 0.75rem;}
+    .article-body h3{font-size:16px;font-weight:500;color:var(--navy);margin:2rem 0 0.5rem;}
+    .article-body strong{color:var(--navy);font-weight:500;}
+    .article-body em{color:#4a5568;}
+    .article-body a{color:var(--accent);text-decoration:none;}
+    .article-body a:hover{text-decoration:underline;}
+    .section-header{display:flex;align-items:flex-start;gap:1rem;margin:3rem 0 1rem;}
+    .section-num{width:36px;height:36px;border-radius:50%;background:var(--navy);color:white;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex-shrink:0;margin-top:4px;}
+    .section-eyebrow{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:3px;}
+    .section-title-text{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;color:var(--navy);line-height:1.3;}
+    .callout{border-radius:8px;padding:1.1rem 1.4rem;margin:1.25rem 0 1.75rem;}
+    .callout p{font-size:14px!important;margin:0!important;line-height:1.7!important;}
+    .callout-label{font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px;}
+    .callout-blue{background:var(--accent-light);border-left:3px solid var(--accent);}
+    .callout-blue p{color:#1a3a5c!important;}
+    .callout-green{background:var(--green-light);border-left:3px solid var(--green);}
+    .callout-green p{color:#064e3b!important;}
+    .callout-purple{background:var(--purple-light);border-left:3px solid var(--purple);}
+    .callout-purple p{color:#4c1d95!important;}
+    .callout-yellow{background:var(--yellow-light);border-left:3px solid var(--yellow);}
+    .callout-yellow p{color:#78350f!important;}
+    .code-block{background:#1e293b;border-radius:8px;padding:1.25rem 1.5rem;margin:1rem 0 1.5rem;overflow-x:auto;}
+    .code-block code{font-family:'SF Mono','Fira Code',monospace;font-size:13px;color:#e2e8f0;line-height:1.7;white-space:pre;}
+    .code-comment{color:#64748b;}
+    .code-keyword{color:#93c5fd;}
+    .code-string{color:#86efac;}
+    .code-annotation{color:#fca5a5;}
+    .data-table{width:100%;border-collapse:collapse;margin:1.25rem 0 1.75rem;font-size:14px;}
+    .data-table th{background:var(--navy);color:white;font-weight:500;font-size:12px;letter-spacing:0.04em;padding:10px 14px;text-align:left;}
+    .data-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:#374151;vertical-align:top;}
+    .data-table tr:last-child td{border-bottom:none;}
+    .data-table tr:nth-child(even) td{background:var(--surface);}
+    .arrow-list{margin:0.75rem 0 1.5rem 0;padding:0;list-style:none;}
+    .arrow-list li{font-size:15px;color:#374151;line-height:1.7;padding:4px 0 4px 1.25rem;position:relative;}
+    .arrow-list li::before{content:'→';position:absolute;left:0;color:var(--accent);font-size:13px;}
+    .check-list{margin:0.75rem 0 1.5rem 0;padding:0;list-style:none;}
+    .check-list li{font-size:15px;color:#374151;line-height:1.7;padding:4px 0 4px 1.5rem;position:relative;}
+    .check-list li::before{content:'✅';position:absolute;left:0;font-size:13px;}
+    /* Issue cards */
+    .issue-grid{display:flex;flex-direction:column;gap:1.25rem;margin:1.25rem 0 1.75rem;}
+    .issue-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
+    .issue-card-header{padding:1rem 1.5rem;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px;}
+    .issue-num{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--red);background:var(--red-light);padding:3px 8px;border-radius:4px;flex-shrink:0;margin-top:2px;}
+    .issue-title{font-size:15px;font-weight:500;color:var(--navy);line-height:1.4;}
+    .issue-body{padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:0.75rem;}
+    .issue-section-label{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:2px;}
+    .issue-text{font-size:14px;color:#374151;line-height:1.7;}
+    .issue-fix{background:var(--green-light);border-radius:6px;padding:0.75rem 1rem;}
+    .issue-fix .issue-section-label{color:var(--green);}
+    .issue-fix .issue-text{color:#064e3b;}
+    .issue-lesson{background:var(--accent-light);border-radius:6px;padding:0.75rem 1rem;}
+    .issue-lesson .issue-section-label{color:#1a5fa8;}
+    .issue-lesson .issue-text{color:#1a3a5c;}
+    /* Theme summary */
+    .theme-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1rem;border-left:3px solid var(--accent);}
+    .theme-title{font-size:14px;font-weight:500;color:var(--navy);margin-bottom:4px;}
+    .theme-body{font-size:14px;color:#4a5568;line-height:1.7;}
+    /* AI section */
+    .ai-section{background:linear-gradient(135deg,#1e1b4b 0%,#0f1b2d 100%);border-radius:var(--radius-lg);padding:2rem;margin:2rem 0;border:1px solid rgba(124,58,237,0.3);}
+    .ai-section h2{color:white;margin-top:0;margin-bottom:0.75rem;}
+    .ai-section p{color:rgba(255,255,255,0.7)!important;font-size:15px!important;}
+    .ai-section p:last-child{margin-bottom:0!important;}
+    /* Results */
+    .results-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.25rem 0 1.75rem;}
+    .result-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;text-align:center;}
+    .result-val{font-family:'DM Serif Display',serif;font-size:28px;color:var(--green);line-height:1;}
+    .result-label{font-size:12px;color:var(--text-muted);margin-top:4px;line-height:1.4;}
+    /* Roadmap */
+    .roadmap-list{display:flex;flex-direction:column;gap:0.75rem;margin:1.25rem 0 1.75rem;}
+    .roadmap-item{display:flex;gap:12px;align-items:flex-start;padding:1rem 1.25rem;background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);}
+    .roadmap-num{width:24px;height:24px;border-radius:50%;background:var(--navy);color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;margin-top:2px;}
+    .roadmap-title{font-size:14px;font-weight:500;color:var(--navy);margin-bottom:3px;}
+    .roadmap-desc{font-size:13px;color:var(--text-muted);line-height:1.6;}
+    /* Screenshot */
+    .screenshot-wrap{margin:1.25rem 0 1.75rem;}
+    .screenshot-img{width:100%;border-radius:var(--radius);border:1px solid var(--border);display:block;}
+    .screenshot-caption{font-size:12px;color:var(--text-muted);margin-top:6px;text-align:center;font-style:italic;}
+    .screenshot-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.25rem 0 1.75rem;}
+    .screenshot-placeholder{background:var(--surface);border:1.5px dashed var(--border);border-radius:var(--radius);padding:2rem;text-align:center;color:var(--text-muted);font-size:13px;}
+    .screenshot-placeholder svg{width:24px;height:24px;opacity:0.3;margin:0 auto 8px;display:block;}
+    .try-it{background:var(--navy);border-radius:var(--radius-lg);padding:2rem;margin:2.5rem 0;}
+    .try-it h3{font-family:'DM Serif Display',serif;font-size:20px;color:white;font-weight:400;margin-bottom:0.75rem;}
+    .try-it p{font-size:14px!important;color:rgba(255,255,255,0.55)!important;margin:0 0 1.25rem!important;}
+    .try-links{display:flex;flex-wrap:wrap;gap:10px;}
+    .try-link{font-size:13px;font-weight:500;padding:9px 16px;border-radius:7px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);text-decoration:none;transition:all 0.15s;background:rgba(255,255,255,0.06);display:inline-flex;align-items:center;gap:6px;}
+    .try-link:hover{background:rgba(255,255,255,0.15);color:white;}
+    .try-link-primary{background:var(--accent);border-color:var(--accent);color:white;}
+    .try-link-primary:hover{background:#2a8ef0;}
+    .divider{border:none;border-top:1px solid var(--border);margin:2.5rem 0;}
+    .article-footer{max-width:780px;margin:0 auto;padding:0 2.5rem 4rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+    .back-link{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--text-muted);text-decoration:none;padding:9px 16px;border-radius:8px;border:1px solid var(--border);transition:all 0.15s;}
+    .back-link:hover{background:var(--navy);color:white;border-color:var(--navy);}
+    .share-btn{font-size:13px;font-weight:500;padding:9px 16px;border-radius:8px;border:1px solid var(--border);background:white;color:var(--text-muted);text-decoration:none;transition:all 0.15s;}
+    .share-btn:hover{background:var(--navy);color:white;border-color:var(--navy);}
+    .more-section{background:var(--surface);padding:3.5rem 2.5rem;border-top:1px solid var(--border);}
+    .more-inner{max-width:780px;margin:0 auto;}
+    .more-label{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:1.25rem;}
+    .more-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;}
+    .more-card{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;text-decoration:none;transition:all 0.15s;display:block;}
+    .more-card:hover{border-color:#c7d8ec;box-shadow:0 4px 16px rgba(0,0,0,0.06);}
+    .more-card-tag{font-size:11px;color:var(--accent);margin-bottom:0.5rem;}
+    .more-card-title{font-size:14px;font-weight:500;color:var(--navy);line-height:1.5;}
+    footer{background:var(--navy);color:rgba(255,255,255,0.5);padding:1.5rem 2.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+    footer small{font-size:13px;}
+    footer a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;}
+    footer a:hover{color:white;}
+    @media(max-width:640px){
+      nav,footer{padding:0 1.25rem;}
+      .article-hero{padding:3rem 1.25rem 2.5rem;}
+      .article-body{padding:2.5rem 1.25rem 3rem;}
+      .article-footer{padding:0 1.25rem 3rem;}
+      .more-section{padding:2.5rem 1.25rem;}
+      .screenshot-grid{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Supriya Nagesh</a>
+  <a class="nav-back" href="index.html#blog">← Back to blog</a>
+</nav>
+
+<header class="article-hero">
+  <div class="hero-inner">
+    <div class="article-meta">
+      <span class="series-badge">✦ 2-Part Series · Part 2 of 2</span>
+      <span class="meta-dot"></span>
+      <span class="article-tag">Technical Deep-dive</span>
+      <span class="article-tag-red">14 Issues Documented</span>
+      <span class="meta-dot"></span>
+      <span class="article-date">June 2026</span>
+      <span class="meta-dot"></span>
+      <span class="article-date">25 min read</span>
+    </div>
+    <h1>The Hard Parts — Stripe Webhooks, Agentforce, Guest Context, and 14 Real Issues Resolved</h1>
+    <p class="article-subtitle">The architecture is in Part 1. This is the build record — what broke, why it broke, and exactly how each problem was fixed. These are the non-obvious issues that don't appear in tutorials.</p>
+    <div class="stack-badges">
+      <span class="stack-badge">Stripe Webhooks</span>
+      <span class="stack-badge">Guest Context</span>
+      <span class="stack-badge">Named Credentials</span>
+      <span class="stack-badge">Agentforce</span>
+      <span class="stack-badge">Apex Debugging</span>
+      <span class="stack-badge">LWC</span>
+    </div>
+    <div class="author-row">
+      <div class="author-avatar">SN</div>
+      <div>
+        <div class="author-name">Supriya Nagesh</div>
+        <div class="author-title">Salesforce Professional · 7+ years</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<article class="article-body">
+
+  <div class="part1-banner">
+    <p>← This is Part 2 of a 2-part series. <strong>Part 1 covers the architecture, data model, and user journeys.</strong></p>
+    <a href="blog-sai-dance-academy-part1.html">Read Part 1 first →</a>
+  </div>
+
+  <p>Every project has a build record — the real story of what went wrong and what it took to fix it. This is that record for the Sai Dance Academy platform. Fourteen issues, each documented with the symptom, the root cause, the fix, and what it taught me.</p>
+
+  <p>I'm sharing this because this is the work that actually demonstrates platform depth. Anyone can follow a tutorial to completion. The difference shows when the tutorial runs out and you're staring at a cryptic error at 11pm with no Stack Overflow answer that matches exactly.</p>
+
+  <hr class="divider" />
+
+  <!-- STRIPE INTEGRATION -->
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div>
+      <p class="section-eyebrow">The integration deep-dive</p>
+      <p class="section-title-text">The Stripe Webhook Architecture</p>
+    </div>
+  </div>
+
+  <p>The Stripe integration is the technical centrepiece of this project. Understanding how it works — and why it was built this way — is the context for several of the issues below.</p>
+
+  <h3>How the payment flow works</h3>
+  <p>When a visitor enrolls in a class or registers for a paid event, the LWC makes two sequential Apex calls:</p>
+
+  <ul class="arrow-list">
+    <li><strong>Call 1 — DML first:</strong> creates the Enrollment or RSVP record with status Pending Payment, stores the record ID</li>
+    <li><strong>Call 2 — Callout:</strong> creates a Stripe Checkout session, passing the record ID in the session metadata, returns the Stripe URL</li>
+    <li><strong>LWC redirects</strong> the visitor to Stripe Checkout</li>
+    <li><strong>On payment:</strong> Stripe fires a webhook to a public <code style="background:var(--surface);padding:2px 5px;border-radius:3px;font-size:12px;">@RestResource</code> endpoint</li>
+    <li><strong>Webhook reads metadata</strong> to find the record ID, updates status to Confirmed or Payment Failed, creates Payment audit record, triggers confirmation email</li>
+  </ul>
+
+  <div class="callout callout-blue">
+    <p class="callout-label" style="color:var(--accent);">💡 Why DML before callout</p>
+    <p>Salesforce prohibits HTTP callouts after DML in the same transaction — <em>"You have uncommitted work pending."</em> The solution is to sequence DML first, then callout — or split into two transactions. Here it's two sequential LWC→Apex calls, chained by the LWC. This is a fundamental platform rule that shapes the architecture.</p>
+  </div>
+
+  <h3>The webhook endpoint</h3>
+  <p>The webhook is a public Apex REST class — accessible by Stripe's servers without a Salesforce session. It runs <code style="background:var(--surface);padding:2px 5px;border-radius:3px;font-size:12px;">without sharing</code> because it's a trusted server-to-server caller, not an end user, and needs to find and update guest-created records regardless of sharing rules.</p>
+
+  <p>The payload is parsed with <code style="background:var(--surface);padding:2px 5px;border-radius:3px;font-size:12px;">JSON.deserializeUntyped</code> into a <code style="background:var(--surface);padding:2px 5px;border-radius:3px;font-size:12px;">Map&lt;String, Object&gt;</code>. It branches on which metadata key is present — <code style="background:var(--surface);padding:2px 5px;border-radius:3px;font-size:12px;">enrollment_id</code> or <code style="background:var(--surface);padding:2px 5px;border-radius:3px;font-size:12px;">rsvp_id</code> — and handles both record types. Unrecognised event types and missing records return HTTP 200 silently — the webhook never crashes.</p>
+
+  <hr class="divider" />
+
+  <!-- AGENTFORCE -->
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div>
+      <p class="section-eyebrow">The AI layer</p>
+      <p class="section-title-text">Agentforce — Configuration and Responsible Handoff</p>
+    </div>
+  </div>
+
+  <p>The Agentforce agent is deployed to the Experience Cloud site via Omni-Channel and Embedded Messaging. It's grounded in live org data through <code style="background:var(--surface);padding:2px 5px;border-radius:3px;font-size:12px;">@InvocableMethod</code> actions — the same Apex methods that power the class catalogue — so when it answers "what classes do you have?", it's reading real records, not a static prompt.</p>
+
+  <h3>The responsible handoff decision</h3>
+  <p>The agent's scope was deliberately bounded. It recommends, informs, and creates records only where appropriate — leads for enquiries, cases for support issues. It does not attempt to process payments or create enrollments. When someone asks to enroll, it provides the enrollment link.</p>
+
+  <div class="callout callout-purple">
+    <p class="callout-label" style="color:var(--purple);">🤖 Why this matters</p>
+    <p>An agent that attempts payment transactions creates a broken experience when the payment fails. An agent that hands off to the proper paid path creates a trustworthy one. The agent is most useful where it can act fully — discovery, recommendation, enquiry capture — and most responsible where it hands off instead of overreaching.</p>
+  </div>
+
+  <div class="screenshot-grid">
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/sai-dance/agent-recommendation.png" alt="Agentforce agent recommending classes from live data" />
+      <p class="screenshot-caption">Agentforce — live class data, grounded recommendations</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/sai-dance/agent-case-created.png" alt="Agentforce agent creating a support case" />
+      <p class="screenshot-caption">Case created by the agent — verifiable in the org</p>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 14 ISSUES -->
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div>
+      <p class="section-eyebrow">The real build</p>
+      <p class="section-title-text">14 Issues — Documented With Root Causes and Fixes</p>
+    </div>
+  </div>
+
+  <p>These are environment-specific, non-obvious problems that don't appear in tutorials. Each one required diagnosis, research, and a deliberate fix. This is the section I'd ask a candidate to walk me through in an interview — it's where the platform understanding shows.</p>
+
+  <div class="issue-grid">
+
+    <div class="issue-card">
+      <div class="issue-card-header">
+        <span class="issue-num">Issue 01</span>
+        <div class="issue-title">Stripe webhook — "You do not have access to the Apex class" (guest REST)</div>
+      </div>
+      <div class="issue-body">
+        <div>
+          <div class="issue-section-label">Symptom</div>
+          <div class="issue-text">After payment, Stripe called the webhook and got a "no access to the Apex class" error. Enrollments never got confirmed. Stalled for days.</div>
+        </div>
+        <div>
+          <div class="issue-section-label">Root cause</div>
+          <div class="issue-text">The Apex class was enabled on the <em>main</em> site's guest profile, but the org had multiple sites — a default help center and an <code style="background:var(--surface);padding:2px 5px;border-radius:3px;font-size:12px;">esw_*</code> site auto-created by the Agentforce/Embedded Service deployment. The guest REST call resolved against a different site's guest context that didn't have access.</div>
+        </div>
+        <div class="issue-fix">
+          <div class="issue-section-label">Fix</div>
+          <div class="issue-text">Grant the Apex class on the guest profile of <strong>all</strong> sites in the org — each site's Public Access Settings → Apex Class Access.</div>
+        </div>
+        <div class="issue-lesson">
+          <div class="issue-section-label">Lesson</div>
+          <div class="issue-text">In a multi-site org, guest Apex REST access must be granted on every site's guest profile. The Sites guest profile (governing <code>/services/apexrest/</code>) is distinct from the Experience Cloud guest profile (governing pages).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="issue-card">
+      <div class="issue-card-header">
+        <span class="issue-num">Issue 02</span>
+        <div class="issue-title">Stripe webhook — "Internal error logged" on every event</div>
+      </div>
+      <div class="issue-body">
+        <div>
+          <div class="issue-section-label">Symptom</div>
+          <div class="issue-text">Once reachable, the webhook returned HTTP 200 but with "Internal error logged," and nothing updated.</div>
+        </div>
+        <div>
+          <div class="issue-section-label">Root cause</div>
+          <div class="issue-text">The original handler used typed wrapper classes plus a string <code>.replace()</code> trick to dodge Apex reserved words (<code>object</code>, <code>currency</code>). Stripe's newer API version sends a richer, deeply-nested payload — the blunt string replacement corrupted it and broke deserialization entirely.</div>
+        </div>
+        <div class="issue-fix">
+          <div class="issue-section-label">Fix</div>
+          <div class="issue-text">Rewrote the handler to parse with <strong><code>JSON.deserializeUntyped</code></strong> into a <code>Map&lt;String, Object&gt;</code>. Reserved words become harmless map keys and extra fields are simply ignored.</div>
+        </div>
+        <div class="issue-lesson">
+          <div class="issue-section-label">Lesson</div>
+          <div class="issue-text">Parse evolving third-party webhook payloads with untyped JSON, not rigid typed wrappers. The rewrite also surfaced the real error text in the HTTP response, which made the next problem visible.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="issue-card">
+      <div class="issue-card-header">
+        <span class="issue-num">Issue 03</span>
+        <div class="issue-title">Stripe webhook — runs cleanly but nothing updates</div>
+      </div>
+      <div class="issue-body">
+        <div>
+          <div class="issue-section-label">Symptom</div>
+          <div class="issue-text">The rewritten handler returned "OK," but the enrollment still didn't change status.</div>
+        </div>
+        <div>
+          <div class="issue-section-label">Root cause</div>
+          <div class="issue-text">The handler was <code>with sharing</code>, so it ran under the guest user's record visibility and couldn't see the guest-created enrollment in a separate transaction — the query returned zero rows.</div>
+        </div>
+        <div class="issue-fix">
+          <div class="issue-section-label">Fix</div>
+          <div class="issue-text">Changed the handler to <strong><code>without sharing</code></strong> so it runs in system context and can find and update the record regardless of guest sharing rules.</div>
+        </div>
+        <div class="issue-lesson">
+          <div class="issue-section-label">Lesson</div>
+          <div class="issue-text">A webhook is a trusted server-to-server caller, not an end user. <code>without sharing</code> is appropriate — this isn't bypassing security for a person, it's a backend integration operating on records it created.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="issue-card">
+      <div class="issue-card-header">
+        <span class="issue-num">Issue 04</span>
+        <div class="issue-title">Named Credential — the Authorization header merge field</div>
+      </div>
+      <div class="issue-body">
+        <div>
+          <div class="issue-section-label">Symptom</div>
+          <div class="issue-text">Stripe callouts failed auth with "no API key provided," then "Field Stripe_API_Credential.Stripe_Secret_Key does not exist."</div>
+        </div>
+        <div>
+          <div class="issue-section-label">Root cause</div>
+          <div class="issue-text">In the modern Named/External Credential model, the principal's parameter name and the inner <em>authentication parameter name</em> are two different things. The Custom Header merge field needs the inner parameter name — which was <code>Authorization</code> — not the principal label. Also, "Allow Formulas in HTTP Header" must be checked or the merge field is treated as literal text.</div>
+        </div>
+        <div class="issue-fix">
+          <div class="issue-section-label">Fix</div>
+          <div class="issue-text">Set the custom header to <code>{!$Credential.Stripe_API_Credential.Authorization}</code> with "Allow Formulas in HTTP Header" enabled.</div>
+        </div>
+        <div class="issue-lesson">
+          <div class="issue-section-label">Lesson</div>
+          <div class="issue-text">External Credential header references point at the inner auth-parameter name, and formula evaluation must be explicitly enabled. A multi-hour gotcha with no clear error pointing at the real cause.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="issue-card">
+      <div class="issue-card-header">
+        <span class="issue-num">Issue 05</span>
+        <div class="issue-title">Callout after DML — "uncommitted work pending"</div>
+      </div>
+      <div class="issue-body">
+        <div>
+          <div class="issue-section-label">Symptom</div>
+          <div class="issue-text">A single method that created an enrollment and then called Stripe threw "You have uncommitted work pending."</div>
+        </div>
+        <div>
+          <div class="issue-section-label">Root cause</div>
+          <div class="issue-text">Salesforce prohibits an HTTP callout after a DML operation in the same transaction. A fundamental platform rule.</div>
+        </div>
+        <div class="issue-fix">
+          <div class="issue-section-label">Fix</div>
+          <div class="issue-text">Split into two LWC→Apex calls: the first does the DML (creates enrollment, returns ID); the second does the callout (creates Stripe session using that ID). The LWC chains them sequentially.</div>
+        </div>
+        <div class="issue-lesson">
+          <div class="issue-section-label">Lesson</div>
+          <div class="issue-text">Sequence callouts before DML in a single transaction, or split the transaction. This rule shapes the entire enrollment flow architecture.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="issue-card">
+      <div class="issue-card-header">
+        <span class="issue-num">Issue 06</span>
+        <div class="issue-title">Currency mismatch — USD data, GBP charges</div>
+      </div>
+      <div class="issue-body">
+        <div>
+          <div class="issue-section-label">Symptom</div>
+          <div class="issue-text">The org and fees were USD, but the website displayed £ and Stripe charged GBP.</div>
+        </div>
+        <div>
+          <div class="issue-section-label">Root cause</div>
+          <div class="issue-text">The project began with a UK framing while the org was USD — the two drifted. The <code>'gbp'</code> value came from the LWC, and the £ symbol was produced by <em>locale-based JS number formatting</em>, not a literal character — which is why searching the markup found nothing.</div>
+        </div>
+        <div class="issue-fix">
+          <div class="issue-section-label">Fix</div>
+          <div class="issue-text">Standardised on USD: changed <code>'gbp'</code> → <code>'usd'</code> in the LWCs, changed display formatting to <code>$</code>, added USD to the restricted Currency_Code__c picklist.</div>
+        </div>
+        <div class="issue-lesson">
+          <div class="issue-section-label">Lesson</div>
+          <div class="issue-text">Currency must agree across org, data, display, and payment gateway. Currency symbols can be produced by formatting code, not just literal characters — search for the formatter, not the symbol.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="issue-card">
+      <div class="issue-card-header">
+        <span class="issue-num">Issue 07</span>
+        <div class="issue-title">CMS images invisible to guests</div>
+      </div>
+      <div class="issue-body">
+        <div>
+          <div class="issue-section-label">Symptom</div>
+          <div class="issue-text">Images placed via CMS showed in Experience Builder preview but were blank on the published site in incognito.</div>
+        </div>
+        <div>
+          <div class="issue-section-label">Root cause</div>
+          <div class="issue-text">CMS-managed content requires the workspace to be shared to the site's channel/audience and each item published. Preview runs authenticated — guests don't get the content without that setup.</div>
+        </div>
+        <div class="issue-fix">
+          <div class="issue-section-label">Fix</div>
+          <div class="issue-text">Switched to <strong>Static Resources</strong> (Cache Control = Public), referenced as <code>/sfsites/c/resource/NAME</code>. Public by default, no channel/audience configuration required.</div>
+        </div>
+        <div class="issue-lesson">
+          <div class="issue-section-label">Lesson</div>
+          <div class="issue-text">For images in guest-facing custom components, prefer Static Resources over CMS. Diagnostic pattern: "shows in preview, blank in incognito" → almost always a guest permissions issue.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="issue-card">
+      <div class="issue-card-header">
+        <span class="issue-num">Issue 08</span>
+        <div class="issue-title">Paid event RSVPs stuck at "Pending Payment"</div>
+      </div>
+      <div class="issue-body">
+        <div>
+          <div class="issue-section-label">Symptom</div>
+          <div class="issue-text">Paid event payments succeeded at Stripe, but the RSVP never became Confirmed.</div>
+        </div>
+        <div>
+          <div class="issue-section-label">Root cause</div>
+          <div class="issue-text">The webhook only handled class enrollments — it read <code>metadata.enrollment_id</code> and updated <code>Enrollment__c</code>. Event payments carry <code>rsvp_id</code>, so the handler found no enrollment ID and silently returned.</div>
+        </div>
+        <div class="issue-fix">
+          <div class="issue-section-label">Fix</div>
+          <div class="issue-text">Extended the webhook to branch on which ID is present (<code>enrollment_id</code> vs <code>rsvp_id</code>) and confirm the matching record type in both success and failure paths.</div>
+        </div>
+        <div class="issue-lesson">
+          <div class="issue-section-label">Lesson</div>
+          <div class="issue-text">When the same payment pipeline serves two record types, the webhook must handle both. Silent returns are the hardest bugs to find — always log what the handler received and what it matched.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="issue-card">
+      <div class="issue-card-header">
+        <span class="issue-num">Issue 09</span>
+        <div class="issue-title">Restricted picklist rejected the currency value</div>
+      </div>
+      <div class="issue-body">
+        <div>
+          <div class="issue-section-label">Symptom</div>
+          <div class="issue-text">Creating a payment record failed with "bad value for restricted picklist field" on Currency Code.</div>
+        </div>
+        <div>
+          <div class="issue-section-label">Root cause</div>
+          <div class="issue-text"><code>Currency_Code__c</code> was a restricted picklist that didn't include the value the code was writing. Code and metadata drifted apart.</div>
+        </div>
+        <div class="issue-fix">
+          <div class="issue-section-label">Fix</div>
+          <div class="issue-text">Added the correct value to the picklist.</div>
+        </div>
+        <div class="issue-lesson">
+          <div class="issue-section-label">Lesson</div>
+          <div class="issue-text">Restricted picklists must include every value your code writes. When currency changed from GBP to USD, the picklist change was missed. Code and metadata must be kept in sync.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="issue-card">
+      <div class="issue-card-header">
+        <span class="issue-num">Issue 10</span>
+        <div class="issue-title">Flow email failed — unverified sender domain</div>
+      </div>
+      <div class="issue-body">
+        <div>
+          <div class="issue-section-label">Symptom</div>
+          <div class="issue-text"><code>CANNOT_EXECUTE_FLOW_TRIGGER</code> — "we can't send your email because your email address domain isn't verified."</div>
+        </div>
+        <div>
+          <div class="issue-section-label">Root cause</div>
+          <div class="issue-text">The Flow's email action used a sender whose domain wasn't verified in Salesforce.</div>
+        </div>
+        <div class="issue-fix">
+          <div class="issue-section-label">Fix</div>
+          <div class="issue-text">Configured and used a verified <strong>Org-Wide Email Address</strong> as the sender in all automated Flow email actions.</div>
+        </div>
+        <div class="issue-lesson">
+          <div class="issue-section-label">Lesson</div>
+          <div class="issue-text">Automated emails need a verified sender. This root cause recurred across enrollment, RSVP, and case emails — solving it once for the Org-Wide Address fixed the pattern everywhere.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="issue-card">
+      <div class="issue-card-header">
+        <span class="issue-num">Issue 11</span>
+        <div class="issue-title">Lightning email templates couldn't cross-object merge</div>
+      </div>
+      <div class="issue-body">
+        <div>
+          <div class="issue-section-label">Symptom</div>
+          <div class="issue-text">Confirmation emails couldn't merge related Contact and Class fields from the Enrollment record.</div>
+        </div>
+        <div>
+          <div class="issue-section-label">Root cause</div>
+          <div class="issue-text">Lightning email templates can't do cross-object merges or work in Flow email alerts the way needed.</div>
+        </div>
+        <div class="issue-fix">
+          <div class="issue-section-label">Fix</div>
+          <div class="issue-text">Used <strong>Classic email templates</strong> fed by <strong>formula fields</strong> on the Enrollment record that flatten related data — contact name, class name, dates — with picklist/date values wrapped in <code>TEXT()</code>.</div>
+        </div>
+        <div class="issue-lesson">
+          <div class="issue-section-label">Lesson</div>
+          <div class="issue-text">For automated record-based emails with related-object data in Flow, Classic templates + formula fields is the reliable pattern. Not glamorous, but it works consistently.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="issue-card">
+      <div class="issue-card-header">
+        <span class="issue-num">Issue 12</span>
+        <div class="issue-title">Class cards broke after a return-type change</div>
+      </div>
+      <div class="issue-body">
+        <div>
+          <div class="issue-section-label">Symptom</div>
+          <div class="issue-text">After changing <code>getActiveClasses</code> to return a wrapper type (to add capacity data), all class cards stopped rendering on both pages.</div>
+        </div>
+        <div>
+          <div class="issue-section-label">Root cause</div>
+          <div class="issue-text">Changing the return type of a working wired Apex method broke the contract the LWC depended on.</div>
+        </div>
+        <div class="issue-fix">
+          <div class="issue-section-label">Fix</div>
+          <div class="issue-text">Reverted to the original return type. Added capacity as a <strong>separate</strong> Apex method consumed by a second <code>@wire</code>. If the capacity query has any issue, the cards still render.</div>
+        </div>
+        <div class="issue-lesson">
+          <div class="issue-section-label">Lesson</div>
+          <div class="issue-text">Don't change the return type of a working wired method to bolt on new data — add a separate method. Lower blast radius, graceful degradation if one wire fails.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="issue-card">
+      <div class="issue-card-header">
+        <span class="issue-num">Issue 13</span>
+        <div class="issue-title">Stale test class blocked deployment</div>
+      </div>
+      <div class="issue-body">
+        <div>
+          <div class="issue-section-label">Symptom</div>
+          <div class="issue-text">A full deploy failed — a test called <code>createRsvp</code> with 9 parameters but the method had 6, and a webhook class had a typo (<code>requestgitBody</code>).</div>
+        </div>
+        <div>
+          <div class="issue-section-label">Root cause</div>
+          <div class="issue-text">Local files had drifted from the org. The test was written against an old method signature, and an accidental edit introduced a typo in the class name.</div>
+        </div>
+        <div class="issue-fix">
+          <div class="issue-section-label">Fix</div>
+          <div class="issue-text">Aligned the test to the current method signature, added missing required setup data, corrected the typo. Deployed targeted components to isolate the broken classes while fixing them.</div>
+        </div>
+        <div class="issue-lesson">
+          <div class="issue-section-label">Lesson</div>
+          <div class="issue-text">Keep local and org in sync. Deploy targeted components to isolate unrelated failures. Tests must track method signatures — drift is silent until deploy time.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="issue-card">
+      <div class="issue-card-header">
+        <span class="issue-num">Issue 14</span>
+        <div class="issue-title">Invisible text — fee not showing on class cards</div>
+      </div>
+      <div class="issue-body">
+        <div>
+          <div class="issue-section-label">Symptom</div>
+          <div class="issue-text">The class fee was present in the DOM but invisible on the page — until the text was highlighted.</div>
+        </div>
+        <div>
+          <div class="issue-section-label">Root cause</div>
+          <div class="issue-text">Text colour matched the background — a colour/contrast issue, not a data problem. The value was there and correct.</div>
+        </div>
+        <div class="issue-fix">
+          <div class="issue-section-label">Fix</div>
+          <div class="issue-text">Set the fee text colour explicitly in the component CSS.</div>
+        </div>
+        <div class="issue-lesson">
+          <div class="issue-section-label">Lesson</div>
+          <div class="issue-text">"Content is there but not visible" is almost always a colour-matching-background issue. Highlighting the text to reveal it confirms this instantly — saves time chasing a data problem that doesn't exist.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <hr class="divider" />
+
+  <!-- CROSS-CUTTING THEMES -->
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div>
+      <p class="section-eyebrow">What these add up to</p>
+      <p class="section-title-text">Cross-Cutting Themes</p>
+    </div>
+  </div>
+
+  <p>Fourteen separate issues, but they cluster into five platform patterns. Understanding these patterns — not just the individual fixes — is what transfers to the next project.</p>
+
+  <div class="theme-card">
+    <div class="theme-title">Guest context is its own discipline</div>
+    <div class="theme-body">Object permissions, FLS, Apex class access, sharing context, and multi-site guest profiles all matter — and they're independent of each other. Issues 1, 3, and 7 all stem from the same root: preview runs authenticated, production runs as a guest. Always test in incognito.</div>
+  </div>
+  <div class="theme-card">
+    <div class="theme-title">Third-party integrations evolve</div>
+    <div class="theme-body">Parse defensively with untyped JSON, surface real errors in HTTP responses, and use the provider's resend/replay tools to debug without making a new payment every time. Issue 2 cost the most time — the fix took 20 minutes once the root cause was visible.</div>
+  </div>
+  <div class="theme-card">
+    <div class="theme-title">Platform rules shape architecture</div>
+    <div class="theme-body">Callout-after-DML, sharing context, and restricted picklists each forced specific design choices — not just fixes. Issues 3, 5, and 9 aren't bugs to patch around; they're platform rules to design with.</div>
+  </div>
+  <div class="theme-card">
+    <div class="theme-title">Email on the platform has sharp edges</div>
+    <div class="theme-body">Verified senders and Classic-template + formula-field patterns are the reliable path. Issues 10 and 11 both hit the same category — automated email — and the fixes follow the same reliable pattern.</div>
+  </div>
+  <div class="theme-card">
+    <div class="theme-title">Change working contracts carefully</div>
+    <div class="theme-body">Altering a wired method's return type or letting local/org drift apart causes outsized breakage relative to the size of the change. Issues 12 and 13 both come from this — small changes with large blast radius because a working contract was disrupted.</div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- RESULTS -->
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <div>
+      <p class="section-eyebrow">What it delivers</p>
+      <p class="section-title-text">Results</p>
+    </div>
+  </div>
+
+  <div class="results-grid">
+    <div class="result-card">
+      <div class="result-val">6</div>
+      <div class="result-label">End-to-end user journeys working in production</div>
+    </div>
+    <div class="result-card">
+      <div class="result-val">14</div>
+      <div class="result-label">Issues diagnosed, resolved, and documented</div>
+    </div>
+    <div class="result-card">
+      <div class="result-val">2</div>
+      <div class="result-label">Record types handled by one payment pipeline</div>
+    </div>
+    <div class="result-card">
+      <div class="result-val">0</div>
+      <div class="result-label">Code deployments needed to add a new class</div>
+    </div>
+  </div>
+
+  <p>A visitor can discover a class, enroll, pay, and be confirmed automatically — end to end. Full classes are protected from over-enrollment at both UI and server layers. Free and paid events both work through a single consistent confirmation flow. An AI assistant handles discovery, recommendation, and enquiry capture, grounded in real data. Support runs on SLA with automated acknowledgment. Administrators get at-a-glance business and service insight. The catalogue is fully data-driven.</p>
+
+  <div class="screenshot-grid">
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/sai-dance/enrollment-confirmed.png" alt="Enrollment confirmed after webhook fires" />
+      <p class="screenshot-caption">Enrollment confirmed — webhook fired, payment recorded</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/sai-dance/payment-record.png" alt="Payment audit record created by webhook" />
+      <p class="screenshot-caption">Payment audit record — amount, status, Stripe ID</p>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- ROADMAP -->
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <div>
+      <p class="section-eyebrow">What comes next</p>
+      <p class="section-title-text">Roadmap — Deliberately Scoped Out of MVP</p>
+    </div>
+  </div>
+
+  <p>Scoping is a skill. These features were deliberately left out of the MVP — not because they're hard, but because the MVP needed to be complete and demonstrable first. The path to each is documented.</p>
+
+  <div class="roadmap-list">
+    <div class="roadmap-item">
+      <div class="roadmap-num">1</div>
+      <div>
+        <div class="roadmap-title">Admin Assistant agent (Agentforce)</div>
+        <div class="roadmap-desc">An internal-facing agent for operational insight — "what needs attention today?" covering stuck payments, SLA breaches, capacity, and revenue. Later: safe write actions with confirmation and guardrails.</div>
+      </div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-num">2</div>
+      <div>
+        <div class="roadmap-title">Spot reservation during checkout</div>
+        <div class="roadmap-desc">Hold a class spot for "Awaiting Payment" enrollments during checkout with a scheduled release of abandoned reservations — prevents both overselling and ghost-holds.</div>
+      </div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-num">3</div>
+      <div>
+        <div class="roadmap-title">Unified payment audit for events</div>
+        <div class="roadmap-desc">Add an optional RSVP relationship to Payment so event payments also produce audit records — currently only class enrollments generate Payment__c records.</div>
+      </div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-num">4</div>
+      <div>
+        <div class="roadmap-title">Webhook hardening for production</div>
+        <div class="roadmap-desc">Stripe signature verification and idempotency handling. MVP webhook trusts all inbound calls — production requires verification of the Stripe-Signature header.</div>
+      </div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-num">5</div>
+      <div>
+        <div class="roadmap-title">Pre-filled enrollment from catalogue</div>
+        <div class="roadmap-desc">Carry the selected class from the catalogue into the enrollment form via a parameterized link — removes the need to re-select a class the visitor already chose.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- AI TRANSPARENCY -->
+  <div class="ai-section">
+    <h2>On Using AI as a Coding Partner</h2>
+    <p>The Apex and LWC in this project were written with AI as a coding partner — the same way I'd pair with a senior developer on a real engagement. The architecture, the data model, the integration design, the debugging, and every decision about how pieces connect — that work was mine.</p>
+    <p>This project replicates patterns from real professional experience with Experience Cloud, payment integrations, and external systems. I built it to make that experience visible, since the original client work lives behind NDAs. The debugging record in this article is the best evidence of hands-on problem-solving — those fourteen issues required platform knowledge to diagnose, not just code to fix.</p>
+    <p><strong style="color:white;">Understanding the code matters more than writing it.</strong> In a real team, you'll review others' Apex constantly. The ability to read, explain, debug, and make architectural decisions about Apex is the skill. That's what I've documented here.</p>
+  </div>
+
+  <div class="try-it">
+    <h3>Try the live platform</h3>
+    <p>The full platform is live. Use Stripe test card <strong style="color:rgba(255,255,255,0.85);">4242 4242 4242 4242</strong>, any future date, any CVC. Use a real email to receive confirmation emails. Gmail users: check spam — dev org emails may be filtered. Outlook or Yahoo is more reliable for testing.</p>
+    <div class="try-links">
+      <a class="try-link try-link-primary" href="https://saidanceacademy-dev-ed.develop.my.site.com/sda" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        Visit Sai Dance Academy →
+      </a>
+      <a class="try-link" href="blog-sai-dance-academy-part1.html">← Back to Part 1</a>
+    </div>
+  </div>
+
+  <p style="font-size:13px;color:var(--text-muted);margin-top:2rem;">Experience Cloud (LWR) · Lightning Web Components · Apex · Flows · Agentforce · Service Cloud · Stripe · 5 Custom Objects</p>
+
+</article>
+
+<div class="article-footer">
+  <a class="back-link" href="blog-sai-dance-academy-part1.html">← Back to Part 1</a>
+  <a class="share-btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https://supriyajnagesh.com/blog-sai-dance-academy-part2.html" target="_blank">Share on LinkedIn</a>
+</div>
+
+<div class="more-section">
+  <div class="more-inner">
+    <p class="more-label">More from the blog</p>
+    <div class="more-grid">
+      <a class="more-card" href="blog-sai-dance-academy-part1.html" style="border-color:#fbbf24;background:#fffbeb;">
+        <p class="more-card-tag" style="color:#d97706;">← Part 1 of this series</p>
+        <p class="more-card-title" style="color:#92400e;">Architecture, data model, and the six core user journeys</p>
+      </a>
+      <a class="more-card" href="blog-docusign-salesforce-flow.html">
+        <p class="more-card-tag">Project Breakdown</p>
+        <p class="more-card-title">Automating contract sending with Salesforce Flow &amp; DocuSign</p>
+      </a>
+      <a class="more-card" href="blog-twilio-sms-integration.html">
+        <p class="more-card-tag">Technical Deep-dive</p>
+        <p class="more-card-title">Building a Twilio SMS integration — no package, no shortcuts</p>
+      </a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <small>© 2026 Supriya Nagesh · supriyajnagesh.com</small>
+  <a href="https://www.linkedin.com/in/supriya-nagesh" target="_blank">LinkedIn</a>
+</footer>
+
+</body>
+</html>
