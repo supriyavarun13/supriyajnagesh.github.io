@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Building a Full-Stack Dance Academy Platform on Salesforce — Part 1 — Supriya Nagesh</title>
+  <meta name="description" content="Architecture, data model, and the core user journeys behind a full Salesforce platform: Experience Cloud, Stripe, Agentforce, and Service Cloud — built to demonstrate end-to-end delivery." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy:#0f1b2d;--accent:#3b9eff;--accent-light:#e8f3ff;--text:#1a1a2e;
+      --text-muted:#5a6a7e;--border:#e2e8f0;--surface:#f8fafc;--white:#ffffff;
+      --green:#059669;--green-light:#ecfdf5;--yellow:#d97706;--yellow-light:#fffbeb;
+      --red:#dc2626;--red-light:#fef2f2;--purple:#7c3aed;--purple-light:#f5f3ff;
+      --radius:10px;--radius-lg:16px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);font-size:16px;line-height:1.7;}
+    nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;padding:0 2.5rem;height:60px;}
+    .nav-logo{font-family:'DM Serif Display',serif;font-size:18px;color:var(--navy);text-decoration:none;}
+    .nav-back{font-size:13px;font-weight:500;color:var(--text-muted);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s;}
+    .nav-back:hover{color:var(--navy);}
+
+    /* HERO */
+    .article-hero{background:var(--navy);padding:4rem 2.5rem 3.5rem;position:relative;overflow:hidden;}
+    .article-hero::before{content:'';position:absolute;top:-80px;right:-80px;width:400px;height:400px;background:radial-gradient(circle,rgba(59,158,255,0.12) 0%,transparent 70%);border-radius:50%;}
+    .article-hero::after{content:'';position:absolute;bottom:-60px;left:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(124,58,237,0.08) 0%,transparent 70%);border-radius:50%;}
+    .hero-inner{position:relative;z-index:1;max-width:780px;margin:0 auto;}
+    .article-meta{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap;}
+    .article-tag{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);background:rgba(59,158,255,0.12);border:1px solid rgba(59,158,255,0.25);padding:4px 10px;border-radius:20px;}
+    .article-tag-purple{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#c4b5fd;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);padding:4px 10px;border-radius:20px;}
+    .article-tag-green{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#34d399;background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.25);padding:4px 10px;border-radius:20px;}
+    .series-badge{font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#fbbf24;background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.3);padding:4px 12px;border-radius:20px;}
+    .article-date{font-size:13px;color:rgba(255,255,255,0.4);}
+    .meta-dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,0.2);}
+    .article-hero h1{font-family:'DM Serif Display',serif;font-size:clamp(22px,4vw,40px);font-weight:400;line-height:1.2;color:white;margin-bottom:1rem;}
+    .article-subtitle{font-size:16px;color:rgba(255,255,255,0.6);line-height:1.7;max-width:660px;}
+    .stack-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:1.75rem;}
+    .stack-badge{font-size:12px;padding:5px 12px;border-radius:20px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);}
+    .author-row{display:flex;align-items:center;gap:10px;margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.1);}
+    .author-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#1a5fa8);display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:14px;color:white;flex-shrink:0;}
+    .author-name{font-size:14px;font-weight:500;color:rgba(255,255,255,0.85);}
+    .author-title{font-size:12px;color:rgba(255,255,255,0.4);}
+
+    /* BODY */
+    .article-body{max-width:780px;margin:0 auto;padding:3.5rem 2.5rem 5rem;}
+    .article-body p{font-size:16px;line-height:1.85;color:#2d3748;margin-bottom:1.5rem;}
+    .article-body h2{font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;color:var(--navy);margin:3rem 0 0.75rem;}
+    .article-body h3{font-size:16px;font-weight:500;color:var(--navy);margin:2rem 0 0.5rem;}
+    .article-body strong{color:var(--navy);font-weight:500;}
+    .article-body em{color:#4a5568;}
+    .article-body a{color:var(--accent);text-decoration:none;}
+    .article-body a:hover{text-decoration:underline;}
+
+    /* Section headers */
+    .section-header{display:flex;align-items:flex-start;gap:1rem;margin:3rem 0 1rem;}
+    .section-num{width:36px;height:36px;border-radius:50%;background:var(--navy);color:white;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex-shrink:0;margin-top:4px;}
+    .section-eyebrow{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:3px;}
+    .section-title-text{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;color:var(--navy);line-height:1.3;}
+
+    /* Callouts */
+    .callout{border-radius:8px;padding:1.1rem 1.4rem;margin:1.25rem 0 1.75rem;}
+    .callout p{font-size:14px!important;margin:0!important;line-height:1.7!important;}
+    .callout-label{font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px;}
+    .callout-blue{background:var(--accent-light);border-left:3px solid var(--accent);}
+    .callout-blue p{color:#1a3a5c!important;}
+    .callout-green{background:var(--green-light);border-left:3px solid var(--green);}
+    .callout-green p{color:#064e3b!important;}
+    .callout-purple{background:var(--purple-light);border-left:3px solid var(--purple);}
+    .callout-purple p{color:#4c1d95!important;}
+    .callout-yellow{background:var(--yellow-light);border-left:3px solid var(--yellow);}
+    .callout-yellow p{color:#78350f!important;}
+
+    /* Architecture overview grid */
+    .arch-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.25rem 0 1.75rem;}
+    .arch-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;}
+    .arch-card-label{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+    .arch-card-title{font-size:14px;font-weight:500;color:var(--navy);margin-bottom:4px;}
+    .arch-card-desc{font-size:13px;color:var(--text-muted);line-height:1.6;}
+
+    /* Data model table */
+    .data-table{width:100%;border-collapse:collapse;margin:1.25rem 0 1.75rem;font-size:14px;}
+    .data-table th{background:var(--navy);color:white;font-weight:500;font-size:12px;letter-spacing:0.04em;padding:10px 14px;text-align:left;}
+    .data-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:#374151;vertical-align:top;}
+    .data-table tr:last-child td{border-bottom:none;}
+    .data-table tr:nth-child(even) td{background:var(--surface);}
+    .badge-custom{font-size:11px;padding:2px 8px;background:var(--purple-light);color:var(--purple);border-radius:4px;font-weight:500;}
+    .badge-standard{font-size:11px;padding:2px 8px;background:var(--accent-light);color:#1a5fa8;border-radius:4px;font-weight:500;}
+
+    /* Journey cards */
+    .journey-list{display:flex;flex-direction:column;gap:1.25rem;margin:1.25rem 0 1.75rem;}
+    .journey-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
+    .journey-card-header{padding:1rem 1.5rem;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+    .journey-num{width:28px;height:28px;border-radius:50%;background:var(--navy);color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;}
+    .journey-title{font-size:15px;font-weight:500;color:var(--navy);}
+    .journey-tag{font-size:11px;padding:2px 8px;border-radius:20px;margin-left:auto;}
+    .journey-body{padding:1rem 1.5rem;}
+    .journey-body p{font-size:14px!important;color:#374151!important;margin-bottom:0.5rem!important;line-height:1.7!important;}
+    .journey-body p:last-child{margin-bottom:0!important;}
+
+    /* Decision list */
+    .decision-list{display:flex;flex-direction:column;gap:1rem;margin:1.25rem 0 1.75rem;}
+    .decision-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;border-left:3px solid var(--accent);}
+    .decision-label{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:5px;}
+    .decision-title{font-size:15px;font-weight:500;color:var(--navy);margin-bottom:5px;}
+    .decision-body{font-size:14px;color:#4a5568;line-height:1.7;}
+
+    /* Screenshot */
+    .screenshot-wrap{margin:1.25rem 0 1.75rem;}
+    .screenshot-img{width:100%;border-radius:var(--radius);border:1px solid var(--border);display:block;}
+    .screenshot-caption{font-size:12px;color:var(--text-muted);margin-top:6px;text-align:center;font-style:italic;}
+    .screenshot-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.25rem 0 1.75rem;}
+    .screenshot-placeholder{background:var(--surface);border:1.5px dashed var(--border);border-radius:var(--radius);padding:2rem;text-align:center;color:var(--text-muted);font-size:13px;}
+    .screenshot-placeholder svg{width:24px;height:24px;opacity:0.3;margin:0 auto 8px;display:block;}
+
+    /* Flow diagram */
+    .flow-diagram{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem;margin:1.25rem 0 1.75rem;font-family:'SF Mono','Fira Code',monospace;font-size:13px;line-height:2;}
+    .flow-diagram p{font-family:'SF Mono','Fira Code',monospace;font-size:13px;color:#374151;margin-bottom:0;line-height:2;}
+    .flow-yes{color:var(--green);font-weight:600;}
+    .flow-no{color:var(--red);font-weight:600;}
+    .flow-action{color:var(--accent);font-weight:600;}
+
+    /* Arrow list */
+    .arrow-list{margin:0.75rem 0 1.5rem 0;padding:0;list-style:none;}
+    .arrow-list li{font-size:15px;color:#374151;line-height:1.7;padding:4px 0 4px 1.25rem;position:relative;}
+    .arrow-list li::before{content:'→';position:absolute;left:0;color:var(--accent);font-size:13px;}
+
+    .divider{border:none;border-top:1px solid var(--border);margin:2.5rem 0;}
+
+    /* Part 2 CTA */
+    .part2-cta{background:linear-gradient(135deg,#0f1b2d 0%,#1a2e47 100%);border-radius:var(--radius-lg);padding:2.5rem;margin:3rem 0;border:1px solid rgba(59,158,255,0.2);}
+    .part2-cta-label{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#fbbf24;margin-bottom:0.75rem;}
+    .part2-cta h3{font-family:'DM Serif Display',serif;font-size:24px;color:white;font-weight:400;margin-bottom:0.75rem;}
+    .part2-cta p{font-size:15px;color:rgba(255,255,255,0.65);margin-bottom:1.5rem;line-height:1.7;}
+    .part2-topics{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.75rem;}
+    .part2-topic{font-size:12px;padding:4px 12px;border-radius:20px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);}
+    .part2-btn{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:500;padding:11px 22px;border-radius:8px;background:var(--accent);color:white;text-decoration:none;transition:all 0.15s;}
+    .part2-btn:hover{background:#2a8ef0;color:white;}
+
+    /* Try it */
+    .try-it{background:var(--navy);border-radius:var(--radius-lg);padding:2rem;margin:2.5rem 0;}
+    .try-it h3{font-family:'DM Serif Display',serif;font-size:20px;color:white;font-weight:400;margin-bottom:0.75rem;}
+    .try-it p{font-size:14px!important;color:rgba(255,255,255,0.55)!important;margin:0 0 1.25rem!important;}
+    .try-link{font-size:13px;font-weight:500;padding:9px 16px;border-radius:7px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);text-decoration:none;transition:all 0.15s;background:rgba(255,255,255,0.06);display:inline-flex;align-items:center;gap:6px;}
+    .try-link:hover{background:rgba(255,255,255,0.15);color:white;}
+    .try-link-primary{background:var(--accent);border-color:var(--accent);color:white;}
+    .try-link-primary:hover{background:#2a8ef0;}
+    .try-links{display:flex;flex-wrap:wrap;gap:10px;}
+
+    /* Article footer */
+    .article-footer{max-width:780px;margin:0 auto;padding:0 2.5rem 4rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+    .back-link{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--text-muted);text-decoration:none;padding:9px 16px;border-radius:8px;border:1px solid var(--border);transition:all 0.15s;}
+    .back-link:hover{background:var(--navy);color:white;border-color:var(--navy);}
+    .share-btn{font-size:13px;font-weight:500;padding:9px 16px;border-radius:8px;border:1px solid var(--border);background:white;color:var(--text-muted);text-decoration:none;transition:all 0.15s;}
+    .share-btn:hover{background:var(--navy);color:white;border-color:var(--navy);}
+
+    /* More section */
+    .more-section{background:var(--surface);padding:3.5rem 2.5rem;border-top:1px solid var(--border);}
+    .more-inner{max-width:780px;margin:0 auto;}
+    .more-label{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:1.25rem;}
+    .more-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;}
+    .more-card{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;text-decoration:none;transition:all 0.15s;display:block;}
+    .more-card:hover{border-color:#c7d8ec;box-shadow:0 4px 16px rgba(0,0,0,0.06);}
+    .more-card-tag{font-size:11px;color:var(--accent);margin-bottom:0.5rem;}
+    .more-card-title{font-size:14px;font-weight:500;color:var(--navy);line-height:1.5;}
+
+    footer{background:var(--navy);color:rgba(255,255,255,0.5);padding:1.5rem 2.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+    footer small{font-size:13px;}
+    footer a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;}
+    footer a:hover{color:white;}
+
+    @media(max-width:640px){
+      nav,footer{padding:0 1.25rem;}
+      .article-hero{padding:3rem 1.25rem 2.5rem;}
+      .article-body{padding:2.5rem 1.25rem 3rem;}
+      .article-footer{padding:0 1.25rem 3rem;}
+      .more-section{padding:2.5rem 1.25rem;}
+      .arch-grid{grid-template-columns:1fr;}
+      .screenshot-grid{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Supriya Nagesh</a>
+  <a class="nav-back" href="index.html#blog">← Back to blog</a>
+</nav>
+
+<header class="article-hero">
+  <div class="hero-inner">
+    <div class="article-meta">
+      <span class="series-badge">✦ 2-Part Series · Part 1 of 2</span>
+      <span class="meta-dot"></span>
+      <span class="article-tag">Project Breakdown</span>
+      <span class="article-tag-purple">Technical Deep-dive</span>
+      <span class="article-tag-green">Live Site</span>
+      <span class="meta-dot"></span>
+      <span class="article-date">June 2026</span>
+      <span class="meta-dot"></span>
+      <span class="article-date">20 min read</span>
+    </div>
+    <h1>Building a Full-Stack Dance Academy Platform on Salesforce — Architecture, Data Model, and the Core User Journeys</h1>
+    <p class="article-subtitle">Experience Cloud, Stripe payments, Agentforce AI, and Service Cloud — built as a single Salesforce org. Part 1 covers the why, the architecture, the data model, and what the platform does. Part 2 covers what broke and how I fixed it.</p>
+    <div class="stack-badges">
+      <span class="stack-badge">Experience Cloud</span>
+      <span class="stack-badge">Stripe + Webhooks</span>
+      <span class="stack-badge">Agentforce</span>
+      <span class="stack-badge">Service Cloud</span>
+      <span class="stack-badge">Apex · LWC · Flow</span>
+      <span class="stack-badge">5 Custom Objects</span>
+    </div>
+    <div class="author-row">
+      <div class="author-avatar">SN</div>
+      <div>
+        <div class="author-name">Supriya Nagesh</div>
+        <div class="author-title">Salesforce Professional · 7+ years</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<article class="article-body">
+
+  <p>This is the project I'm most proud of in this portfolio — not because it's the most complex thing I've ever built, but because it's the most complete. It's a full digital platform: a public-facing website, a payment pipeline, an AI assistant, a support operation with SLA tracking, and an admin command centre. All on Salesforce. All in one org.</p>
+
+  <p>The idea came from real professional experience. I've worked on Experience Cloud implementations, Stripe-style payment integrations, and external system connectors in production environments. I wanted to build something that demonstrated those same patterns properly — end to end, with the full architecture visible — since the original client work lives behind NDAs. So I built Sai Dance Academy: a fictional dance academy, a real platform.</p>
+
+  <p>Part 1 covers the architecture, data model, and the six core user journeys. <a href="blog-sai-dance-academy-part2.html">Part 2</a> is where it gets honest — 14 real issues, how each was diagnosed and fixed, and what they taught me about the platform.</p>
+
+  <hr class="divider" />
+
+  <h2>The brief</h2>
+
+  <p>Build a complete digital platform for a dance academy. A public website where prospective students can discover classes, enroll and pay, register for events, get AI-assisted support, and make enquiries — backed by an internal operation for managing the business and serving customers. Do it entirely on Salesforce, demonstrating breadth across the platform.</p>
+
+  <div class="callout callout-blue">
+    <p class="callout-label" style="color:var(--accent);">💡 Why this scope</p>
+    <p>I deliberately made the brief ambitious. A simple "display some records on an Experience Cloud page" doesn't demonstrate much. The brief needed a payment pipeline, an AI layer, a support operation, and an admin view — because that's what real platform delivery looks like. Each piece forced a different set of platform decisions.</p>
+  </div>
+
+  <div class="screenshot-wrap">
+    <img class="screenshot-img" src="images/sai-dance/site-homepage.png" alt="Sai Dance Academy public website homepage" />
+    <p class="screenshot-caption">The public-facing Experience Cloud site — no login required</p>
+  </div>
+
+  <hr class="divider" />
+
+  <h2>The solution at a glance</h2>
+
+  <p>A single Salesforce org delivering six capabilities across two surfaces — a public website and an internal admin app:</p>
+
+  <div class="arch-grid">
+    <div class="arch-card">
+      <div class="arch-card-label">Public Site</div>
+      <div class="arch-card-title">Experience Cloud (LWR)</div>
+      <div class="arch-card-desc">Class discovery, enrollment + payment, event registration, AI assistant, Web-to-Case support, Web-to-Lead enquiries. No login required.</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-label">Payments</div>
+      <div class="arch-card-title">Stripe Checkout + Webhooks</div>
+      <div class="arch-card-desc">Stripe Checkout for classes and events. A public Apex REST webhook confirms records automatically on payment success or failure.</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-label">AI Layer</div>
+      <div class="arch-card-title">Agentforce Assistant</div>
+      <div class="arch-card-desc">An AI agent grounded in live org data. Recommends classes, answers questions, captures leads, logs support cases, and hands off responsibly.</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-label">Support</div>
+      <div class="arch-card-title">Service Cloud with SLA</div>
+      <div class="arch-card-desc">Web-to-Case intake, automatic priority assignment, Entitlement/Milestone SLA tracking, and auto-response acknowledgment emails.</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-label">Admin</div>
+      <div class="arch-card-title">Custom App + Dashboards</div>
+      <div class="arch-card-desc">One app, two live dashboards: Business Performance and Service SLA Command Centre. Full record visibility across all objects.</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-label">Catalog</div>
+      <div class="arch-card-title">Fully Data-Driven</div>
+      <div class="arch-card-desc">Classes are records, not code. An admin adds a new class and it flows through the entire site and payment pipeline with zero deployment.</div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- ARCHITECTURE -->
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div>
+      <p class="section-eyebrow">How it connects</p>
+      <p class="section-title-text">Architecture Overview</p>
+    </div>
+  </div>
+
+  <p>The platform has three distinct layers. Understanding how they connect is the foundation for everything else.</p>
+
+  <h3>Front end — Experience Cloud (LWR)</h3>
+  <p>The public site is built on Salesforce Experience Cloud using the LWR (Lightning Web Runtime) framework with custom Lightning Web Components. The hero, the data-driven class catalogue with detail modals and live availability, the enrollment form, the events page, and the support/contact pages are all custom LWC. A test-data notice banner appears on data-entry pages — it's a demo site, and I wanted that visible and honest.</p>
+
+  <h3>Backend — Apex controllers</h3>
+  <p>The LWC components talk to <code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">@AuraEnabled</code> Apex controllers for the catalogue, enrollment, and Stripe checkout. A public <code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">@RestResource</code> webhook handles payment confirmation from Stripe. <code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">@InvocableMethod</code> actions power the Agentforce agent's data access.</p>
+
+  <h3>Automation — Flows</h3>
+  <p>Record-triggered Flows handle confirmation emails for enrollments, RSVPs, and cases. A before-save Flow assigns case priority based on reason. Auto-Response Rules handle case acknowledgment. The automation layer is deliberately declarative where possible — Apex only where the platform requires it.</p>
+
+  <div class="screenshot-wrap">
+    <div class="screenshot-placeholder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Architecture diagram — front end, backend, automation, and integration layers
+    </div>
+  </div>
+
+  <div class="callout callout-purple">
+    <p class="callout-label" style="color:var(--purple);">🏗️ Key architectural principle</p>
+    <p>The payment pipeline is designed as a <strong>single confirmation trigger</strong>. When an enrollment or RSVP "becomes Confirmed" — whether instantly (free) or via webhook (paid) — the same downstream automation fires. One trigger, two paths, consistent behaviour.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- DATA MODEL -->
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div>
+      <p class="section-eyebrow">The foundation</p>
+      <p class="section-title-text">Data Model — Five Custom Objects</p>
+    </div>
+  </div>
+
+  <p>Getting the data model right before writing a line of Apex or touching Experience Builder was non-negotiable. The integration is only as good as the structure it writes into.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>Object</th><th>Type</th><th>Purpose</th><th>Key relationships</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Dance_Class__c</strong></td>
+        <td><span class="badge-custom">Custom</span></td>
+        <td>The catalogue. Every class is a record — name, instructor, schedule, fee, max capacity, age group, description, active flag.</td>
+        <td>Parent of Enrollment__c</td>
+      </tr>
+      <tr>
+        <td><strong>Enrollment__c</strong></td>
+        <td><span class="badge-custom">Custom</span></td>
+        <td>Records a student's enrollment in a class. Status progresses: Pending Payment → Awaiting Payment → Confirmed (or Payment Failed).</td>
+        <td>Lookup to Dance_Class__c, Contact</td>
+      </tr>
+      <tr>
+        <td><strong>Payment__c</strong></td>
+        <td><span class="badge-custom">Custom</span></td>
+        <td>Audit trail for every payment. Created by the webhook on success or failure. Stores Stripe payment ID, amount, currency, status, failure reason.</td>
+        <td>Lookup to Enrollment__c</td>
+      </tr>
+      <tr>
+        <td><strong>Event__c</strong></td>
+        <td><span class="badge-custom">Custom</span></td>
+        <td>Events — free or paid. Carries a free flag; the payment pipeline branches based on this. Same catalog-driven approach as classes.</td>
+        <td>Parent of RSVP__c</td>
+      </tr>
+      <tr>
+        <td><strong>RSVP__c</strong></td>
+        <td><span class="badge-custom">Custom</span></td>
+        <td>Records an attendee's registration for an event. Same status model as Enrollment — free RSVPs confirm instantly, paid RSVPs wait for the webhook.</td>
+        <td>Lookup to Event__c, Contact</td>
+      </tr>
+      <tr>
+        <td><strong>Contact</strong></td>
+        <td><span class="badge-standard">Standard</span></td>
+        <td>The student/attendee record. Created or matched by email on enrollment/RSVP. Deduplication is handled in Apex — no duplicate Contact for the same email.</td>
+        <td>Related to Enrollment__c, RSVP__c, Case</td>
+      </tr>
+      <tr>
+        <td><strong>Lead</strong></td>
+        <td><span class="badge-standard">Standard</span></td>
+        <td>Captured by Web-to-Lead (contact form) and by the Agentforce agent when someone makes an enquiry.</td>
+        <td>Source tracked (Web, Agentforce Assistant)</td>
+      </tr>
+      <tr>
+        <td><strong>Case</strong></td>
+        <td><span class="badge-standard">Standard</span></td>
+        <td>Support requests — via Web-to-Case or Agentforce. Priority assigned automatically. Entitlements and Milestones track SLA.</td>
+        <td>Entitlement, Contact</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="screenshot-wrap">
+    <div class="screenshot-placeholder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Entity Relationship Diagram — all 8 objects and their relationships
+    </div>
+  </div>
+
+  <div class="callout callout-green">
+    <p class="callout-label" style="color:var(--green);">💡 Capacity is computed, not stored</p>
+    <p>Available spots are calculated live from confirmed enrollments rather than stored as a counter field. This avoids counter drift — a confirmed enrollment at any point produces the correct available count automatically. Defense in depth: enforced in the UI <em>and</em> in Apex so it can't be bypassed.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- USER JOURNEYS -->
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div>
+      <p class="section-eyebrow">What it does</p>
+      <p class="section-title-text">The Six Core User Journeys</p>
+    </div>
+  </div>
+
+  <p>Six user journeys cover the full platform. Each one was built and tested end to end — including in incognito to exercise true guest permissions, not just the authenticated preview.</p>
+
+  <div class="journey-list">
+
+    <div class="journey-card">
+      <div class="journey-card-header">
+        <div class="journey-num">1</div>
+        <div class="journey-title">Enroll in a class and pay</div>
+        <span class="journey-tag" style="background:var(--green-light);color:var(--green);font-size:11px;padding:2px 8px;border-radius:20px;">Core revenue flow</span>
+      </div>
+      <div class="journey-body">
+        <p>A visitor browses the class catalogue, opens a detail modal showing instructor, schedule, age group, capacity, and fee, clicks Enroll, completes the form, and is redirected to Stripe Checkout. On payment, Stripe fires a webhook to a public Apex REST endpoint. The endpoint finds the enrollment by the Stripe session ID stored in metadata, flips the status to Confirmed, creates a Payment audit record, and the confirmation Flow sends an email.</p>
+        <p>The entire chain — browse → enroll → pay → confirm → email — runs with no human intervention. The enrollment only becomes Confirmed after the webhook fires. Before that it sits at Awaiting Payment.</p>
+      </div>
+    </div>
+
+    <div class="journey-card">
+      <div class="journey-card-header">
+        <div class="journey-num">2</div>
+        <div class="journey-title">Full class — capacity enforcement</div>
+        <span class="journey-tag" style="background:var(--red-light);color:var(--red);font-size:11px;padding:2px 8px;border-radius:20px;">Defense in depth</span>
+      </div>
+      <div class="journey-body">
+        <p>When confirmed enrollments reach max capacity, the class card shows <em>"Class Full"</em> and the Enroll button disappears — enforced in the LWC by a computed property. If someone attempts to bypass the UI and submit directly, the Apex controller checks capacity server-side and refuses with <em>"Sorry, this class is full."</em> No enrollment is created. Two layers — neither alone is sufficient.</p>
+      </div>
+    </div>
+
+    <div class="journey-card">
+      <div class="journey-card-header">
+        <div class="journey-num">3</div>
+        <div class="journey-title">Event registration — free and paid</div>
+        <span class="journey-tag" style="background:var(--accent-light);color:#1a5fa8;font-size:11px;padding:2px 8px;border-radius:20px;">One flow, two paths</span>
+      </div>
+      <div class="journey-body">
+        <p>Free events confirm instantly on form submit — the RSVP is created as Confirmed and the confirmation email fires immediately. Paid events follow the same Stripe pipeline as class enrollments — the RSVP is created as Pending Payment, the visitor pays on Stripe, and the webhook flips it to Confirmed. The same confirmation email Flow handles both cases, triggered by the status change.</p>
+      </div>
+    </div>
+
+    <div class="journey-card">
+      <div class="journey-card-header">
+        <div class="journey-num">4</div>
+        <div class="journey-title">Agentforce AI assistant — discovery and recommendation</div>
+        <span class="journey-tag" style="background:var(--purple-light);color:var(--purple);font-size:11px;padding:2px 8px;border-radius:20px;">Grounded in live data</span>
+      </div>
+      <div class="journey-body">
+        <p>The chat assistant on the site is a deployed Agentforce agent. It's grounded in real org data via <code style="background:var(--surface);padding:2px 5px;border-radius:3px;font-size:12px;">@InvocableMethod</code> actions — when a visitor asks "what classes do you have?", the agent calls the same Apex method that powers the catalogue and returns live data, not hardcoded responses.</p>
+        <p>When a visitor asks to enroll, the agent provides the enrollment link rather than attempting the transaction itself. This is a deliberate design decision: the agent informs and recommends; transactions happen on the proper paid path. More on this in the design decisions section.</p>
+      </div>
+    </div>
+
+    <div class="journey-card">
+      <div class="journey-card-header">
+        <div class="journey-num">5</div>
+        <div class="journey-title">Agentforce — lead capture and case creation</div>
+        <span class="journey-tag" style="background:var(--purple-light);color:var(--purple);font-size:11px;padding:2px 8px;border-radius:20px;">Record creation</span>
+      </div>
+      <div class="journey-body">
+        <p>When a visitor makes an enquiry in the chat, the agent captures their name and email and creates a Lead with Source = <em>Agentforce Assistant</em>. When a visitor raises a support issue, the agent creates a Case with the correct Reason and Priority. Both records appear in the org immediately — verifiable in real time.</p>
+      </div>
+    </div>
+
+    <div class="journey-card">
+      <div class="journey-card-header">
+        <div class="journey-num">6</div>
+        <div class="journey-title">Support with SLA and auto-response</div>
+        <span class="journey-tag" style="background:var(--yellow-light);color:var(--yellow);font-size:11px;padding:2px 8px;border-radius:20px;">Service Cloud</span>
+      </div>
+      <div class="journey-body">
+        <p>A visitor submits a support request via the Web-to-Case form. A before-save Flow assigns Priority automatically based on Reason — Payment Issues and Complaints become Urgent. The case gets an Entitlement and Milestones are set, so SLA is tracked from the moment of creation. An Auto-Response Rule sends an acknowledgment email immediately. The admin sees the case on the Service SLA dashboard with health status visible.</p>
+        <p style="font-size:14px;color:#374151;line-height:1.7;margin-top:0.75rem;padding:0.75rem 1rem;background:#e8f3ff;border-radius:6px;border-left:3px solid #0176d3;">The full SLA architecture — Entitlement Processes, Milestones, the SLA Health formula field, and the real-time dashboard — is documented in detail in <a href="project-sla-command-centre.html" style="color:#0176d3;font-weight:500;">Project 02: SLA Command Centre</a>, which was built as a dedicated deep-dive into exactly this pattern.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="screenshot-grid">
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/sai-dance/classes-grid.png" alt="Classes page showing card grid with availability" />
+      <p class="screenshot-caption">Classes — live availability, spots remaining</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/sai-dance/class-modal.png" alt="Class detail modal" />
+      <p class="screenshot-caption">Class detail modal — full information before enrolling</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/sai-dance/stripe-checkout.png" alt="Stripe Checkout page" />
+      <p class="screenshot-caption">Stripe Checkout — correct class name and fee in USD</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/sai-dance/enrollment-confirmed.png" alt="Enrollment record showing Confirmed status" />
+      <p class="screenshot-caption">Enrollment confirmed automatically after webhook fires</p>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- DESIGN DECISIONS -->
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div>
+      <p class="section-eyebrow">Why it was built this way</p>
+      <p class="section-title-text">Design Decisions Worth Calling Out</p>
+    </div>
+  </div>
+
+  <p>Every project involves tradeoffs. These are the decisions I made deliberately — and the reasoning behind each one.</p>
+
+  <div class="decision-list">
+
+    <div class="decision-card">
+      <div class="decision-label">Decision 01</div>
+      <div class="decision-title">Data-driven catalogue — classes are records, not code</div>
+      <div class="decision-body">Classes are <code style="background:var(--surface);padding:2px 5px;border-radius:3px;font-size:12px;">Dance_Class__c</code> records. An admin adds a new class, sets it active, and it flows through the entire site and payment pipeline automatically — no code change, no deployment. This is the right pattern for any content that changes more often than the code.</div>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-label">Decision 02</div>
+      <div class="decision-title">Responsible AI handoff — the agent doesn't process payments</div>
+      <div class="decision-body">The Agentforce agent recommends classes and provides enrollment links. It does not attempt to create enrollments or initiate payments. This is intentional: the agent operates responsibly within its appropriate scope. Transactions that involve payment happen on the proper paid path — not inside a chat window. The agent creates records only where there's no downstream page that should do it (leads and cases).</div>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-label">Decision 03</div>
+      <div class="decision-title">Defense in depth on capacity — UI and server</div>
+      <div class="decision-body">Capacity is enforced in both the LWC (computed property hides the button) and in Apex (controller rejects the request). A UI-only check can be bypassed. A server-only check provides no user feedback. Both layers are necessary in a public-facing system where anyone can attempt anything.</div>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-label">Decision 04</div>
+      <div class="decision-title">Live capacity computation — not a stored counter</div>
+      <div class="decision-body">Available spots are computed from a COUNT of confirmed enrollments in real time, not stored as a decremented counter field. Counter fields drift — a failed payment, a manually updated record, or a flow bug can leave the counter wrong with no way to detect it. Computed values are always correct by definition.</div>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-label">Decision 05</div>
+      <div class="decision-title">Static Resources over CMS for guest-visible images</div>
+      <div class="decision-body">Class and event images are stored as Static Resources (Cache Control = Public), referenced as <code style="background:var(--surface);padding:2px 5px;border-radius:3px;font-size:12px;">/sfsites/c/resource/NAME</code>. CMS-managed content requires workspace sharing and per-item publishing to be visible to guests — easy to misconfigure, invisible in preview, broken in incognito. Static Resources are public by default with no extra setup.</div>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-label">Decision 06</div>
+      <div class="decision-title">Dashboards over notification emails for admin awareness</div>
+      <div class="decision-body">Administrators monitor the business through real-time dashboards, not per-record email notifications. Email noise at scale is a known anti-pattern. The planned Admin Agentforce agent will handle proactive awareness further — surfacing what needs attention on demand rather than pushing emails.</div>
+    </div>
+
+  </div>
+
+  <hr class="divider" />
+
+  <div class="screenshot-grid">
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/sai-dance/agent-recommendation.png" alt="Agentforce assistant recommending classes" />
+      <p class="screenshot-caption">Agentforce — live class data, responsible handoff</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/sai-dance/admin-dashboard.png" alt="Admin home page with both dashboards" />
+      <p class="screenshot-caption">Admin home — Business Performance and SLA Command Centre</p>
+    </div>
+  </div>
+
+  <!-- PART 2 CTA -->
+  <div class="part2-cta">
+    <div class="part2-cta-label">✦ Continue reading · Part 2 of 2</div>
+    <h3>The Hard Parts — What Broke and How I Fixed It</h3>
+    <p>Part 2 covers the real build: 14 issues documented with root causes and fixes, the Stripe webhook architecture in depth, the Agentforce configuration, and an honest section on using AI as a coding partner.</p>
+    <div class="part2-topics">
+      <span class="part2-topic">Stripe webhook — multi-site guest context</span>
+      <span class="part2-topic">Named Credentials gotcha</span>
+      <span class="part2-topic">Callout after DML</span>
+      <span class="part2-topic">CMS vs Static Resources</span>
+      <span class="part2-topic">14 real issues documented</span>
+      <span class="part2-topic">On AI as a coding partner</span>
+    </div>
+    <a class="part2-btn" href="blog-sai-dance-academy-part2.html">
+      Read Part 2 — The Hard Parts →
+    </a>
+  </div>
+
+  <div class="try-it">
+    <h3>Try the live site</h3>
+    <p>The platform is live on a Salesforce Developer org in test mode. Use Stripe test card <strong style="color:rgba(255,255,255,0.85);">4242 4242 4242 4242</strong> with any future date and any CVC. All emails go to real inboxes — use a real address to see the confirmation.</p>
+    <div class="try-links">
+      <a class="try-link try-link-primary" href="https://saidanceacademy-dev-ed.develop.my.site.com/sda" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        Visit Sai Dance Academy →
+      </a>
+    </div>
+  </div>
+
+  <p style="font-size:13px;color:var(--text-muted);margin-top:2rem;">Experience Cloud (LWR) · Lightning Web Components · Apex · Flows · Agentforce · Service Cloud · Stripe · 5 Custom Objects</p>
+
+</article>
+
+<div class="article-footer">
+  <a class="back-link" href="index.html#blog">← Back to all posts</a>
+  <a class="share-btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https://supriyajnagesh.com/blog-sai-dance-academy-part1.html" target="_blank">Share on LinkedIn</a>
+</div>
+
+<div class="more-section">
+  <div class="more-inner">
+    <p class="more-label">Continue reading</p>
+    <div class="more-grid">
+      <a class="more-card" href="blog-sai-dance-academy-part2.html" style="border-color:#fbbf24;background:#fffbeb;">
+        <p class="more-card-tag" style="color:#d97706;">✦ Part 2 of this series</p>
+        <p class="more-card-title" style="color:#92400e;">The Hard Parts — 14 real issues, Stripe webhooks, Agentforce, and AI transparency</p>
+      </a>
+      <a class="more-card" href="blog-docusign-salesforce-flow.html">
+        <p class="more-card-tag">Project Breakdown</p>
+        <p class="more-card-title">Automating contract sending with Salesforce Flow &amp; DocuSign</p>
+      </a>
+      <a class="more-card" href="blog-twilio-sms-integration.html">
+        <p class="more-card-tag">Technical Deep-dive</p>
+        <p class="more-card-title">Building a Twilio SMS integration — no package, no shortcuts</p>
+      </a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <small>© 2026 Supriya Nagesh · supriyajnagesh.com</small>
+  <a href="https://www.linkedin.com/in/supriya-nagesh" target="_blank">LinkedIn</a>
+</footer>
+
+</body>
+</html>
