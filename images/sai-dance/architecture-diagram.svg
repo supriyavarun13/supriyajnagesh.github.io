@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 940" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="a" markerWidth="11" markerHeight="11" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L8,5 L0,10 Z" fill="#6b7280"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="940" fill="#ffffff"/>
+  <text x="40" y="46" font-size="26" font-weight="700" fill="#111827">Sai Dance Academy — System Architecture</text>
+  <text x="40" y="72" font-size="14" fill="#6b7280">Layered view: presentation · application · automation · data · integrations</text>
+
+  <!-- ============ USERS ============ -->
+  <g>
+    <rect x="40" y="100" width="520" height="70" rx="12" fill="#fff7ed" stroke="#ea6c00" stroke-width="1.6"/>
+    <text x="60" y="126" font-size="13" font-weight="700" fill="#ea6c00">PUBLIC VISITOR (guest, no login)</text>
+    <text x="60" y="148" font-size="11.5" fill="#6b7280">Browses classes, enrolls &amp; pays, RSVPs, chats with AI, submits</text>
+    <text x="60" y="163" font-size="11.5" fill="#6b7280">support &amp; enquiries</text>
+
+    <rect x="640" y="100" width="520" height="70" rx="12" fill="#f5f3ff" stroke="#5B2C8C" stroke-width="1.6"/>
+    <text x="660" y="126" font-size="13" font-weight="700" fill="#5B2C8C">ADMIN / STAFF (authenticated)</text>
+    <text x="660" y="148" font-size="11.5" fill="#6b7280">Manages classes, enrollments, events, cases; monitors</text>
+    <text x="660" y="163" font-size="11.5" fill="#6b7280">dashboards &amp; SLAs</text>
+  </g>
+
+  <!-- ============ PRESENTATION LAYER ============ -->
+  <g>
+    <rect x="40" y="195" width="1120" height="150" rx="14" fill="#fffdf8" stroke="#ea6c00" stroke-width="2"/>
+    <text x="58" y="220" font-size="14" font-weight="700" fill="#ea6c00" letter-spacing="0.5">PRESENTATION LAYER</text>
+
+    <text x="58" y="244" font-size="11.5" font-weight="700" fill="#9ca3af">EXPERIENCE CLOUD SITE (LWR) — public</text>
+    <g font-size="11.5" fill="#111827">
+      <rect x="58" y="254" width="150" height="30" rx="7" fill="#fff" stroke="#fcd9b0"/><text x="68" y="273">Hero / About (LWC)</text>
+      <rect x="216" y="254" width="170" height="30" rx="7" fill="#fff" stroke="#fcd9b0"/><text x="226" y="273">Class catalog + modal</text>
+      <rect x="394" y="254" width="140" height="30" rx="7" fill="#fff" stroke="#fcd9b0"/><text x="404" y="273">Enroll form (LWC)</text>
+      <rect x="542" y="254" width="120" height="30" rx="7" fill="#fff" stroke="#fcd9b0"/><text x="552" y="273">Events (LWC)</text>
+      <rect x="58" y="294" width="160" height="30" rx="7" fill="#fff" stroke="#fcd9b0"/><text x="68" y="313">Web-to-Case / Lead</text>
+      <rect x="226" y="294" width="180" height="30" rx="7" fill="#fff" stroke="#fcd9b0"/><text x="236" y="313">Gallery (HTML editor)</text>
+      <rect x="414" y="294" width="200" height="30" rx="7" fill="#fff" stroke="#fcd9b0"/><text x="424" y="313">Embedded AI chat (Agent)</text>
+    </g>
+
+    <line x1="690" y1="240" x2="690" y2="332" stroke="#e5e7eb"/>
+    <text x="710" y="244" font-size="11.5" font-weight="700" fill="#9ca3af">ADMIN UI</text>
+    <g font-size="11.5" fill="#111827">
+      <rect x="710" y="254" width="200" height="30" rx="7" fill="#fff" stroke="#ddd6fe"/><text x="720" y="273">Custom Lightning App</text>
+      <rect x="918" y="254" width="220" height="30" rx="7" fill="#fff" stroke="#ddd6fe"/><text x="928" y="273">Home: 2 dashboards side-by-side</text>
+      <rect x="710" y="294" width="200" height="30" rx="7" fill="#fff" stroke="#ddd6fe"/><text x="720" y="313">Object tabs / record pages</text>
+      <rect x="918" y="294" width="220" height="30" rx="7" fill="#fff" stroke="#ddd6fe"/><text x="928" y="313">Reports &amp; Dashboards</text>
+    </g>
+  </g>
+
+  <!-- ============ APPLICATION LAYER ============ -->
+  <g>
+    <rect x="40" y="370" width="1120" height="130" rx="14" fill="#f5f3ff" stroke="#5B2C8C" stroke-width="2"/>
+    <text x="58" y="395" font-size="14" font-weight="700" fill="#5B2C8C" letter-spacing="0.5">APPLICATION LAYER — Apex</text>
+    <g font-size="11.5" fill="#111827">
+      <rect x="58" y="408" width="180" height="34" rx="7" fill="#fff" stroke="#ddd6fe"/><text x="68" y="429">ClassController</text>
+      <rect x="246" y="408" width="200" height="34" rx="7" fill="#fff" stroke="#ddd6fe"/><text x="256" y="429">EnrollmentController</text>
+      <rect x="454" y="408" width="160" height="34" rx="7" fill="#fff" stroke="#ddd6fe"/><text x="464" y="429">RsvpController</text>
+      <rect x="622" y="408" width="230" height="34" rx="7" fill="#fff" stroke="#ddd6fe"/><text x="632" y="429">StripeCheckoutController</text>
+      <rect x="860" y="408" width="280" height="34" rx="7" fill="#fff" stroke="#c4b5fd" stroke-width="1.6"/><text x="870" y="429">StripeWebhookHandler (@RestResource)</text>
+
+      <rect x="58" y="452" width="280" height="34" rx="7" fill="#fff" stroke="#ddd6fe"/><text x="68" y="473">Agent actions (@InvocableMethod):</text>
+      <rect x="346" y="452" width="250" height="34" rx="7" fill="#fff" stroke="#ddd6fe"/><text x="356" y="473">GetDanceClasses / GetUpcomingEvents</text>
+      <text x="610" y="473" font-size="11" fill="#9ca3af" font-style="italic">@AuraEnabled for UI · @RestResource for webhook · @InvocableMethod for agent &amp; flows</text>
+    </g>
+  </g>
+
+  <!-- ============ AUTOMATION LAYER ============ -->
+  <g>
+    <rect x="40" y="525" width="700" height="130" rx="14" fill="#fefce8" stroke="#C9A84C" stroke-width="2"/>
+    <text x="58" y="550" font-size="14" font-weight="700" fill="#a8852e" letter-spacing="0.5">AUTOMATION LAYER</text>
+    <g font-size="11.5" fill="#111827">
+      <rect x="58" y="562" width="300" height="34" rx="7" fill="#fff" stroke="#f0e3b8"/><text x="68" y="583">Record-triggered Flows: confirmation emails</text>
+      <rect x="366" y="562" width="170" height="34" rx="7" fill="#fff" stroke="#f0e3b8"/><text x="376" y="583">Before-save Flow:</text>
+      <rect x="058" y="606" width="300" height="34" rx="7" fill="#fff" stroke="#f0e3b8"/><text x="68" y="627">Auto-Response Rule: case acknowledgment</text>
+      <rect x="366" y="606" width="170" height="34" rx="7" fill="#fff" stroke="#f0e3b8"/><text x="376" y="627">case priority</text>
+      <rect x="546" y="562" width="180" height="78" rx="7" fill="#fff" stroke="#f0e3b8"/><text x="556" y="588">Entitlements +</text><text x="556" y="606">Milestones</text><text x="556" y="624" font-size="10.5" fill="#9ca3af">(SLA tracking)</text>
+    </g>
+  </g>
+
+  <!-- ============ AI LAYER ============ -->
+  <g>
+    <rect x="760" y="525" width="400" height="130" rx="14" fill="#fdf2f8" stroke="#E91E8C" stroke-width="2"/>
+    <text x="778" y="550" font-size="14" font-weight="700" fill="#E91E8C" letter-spacing="0.5">AI LAYER — Agentforce</text>
+    <g font-size="11.5" fill="#111827">
+      <rect x="778" y="562" width="360" height="30" rx="7" fill="#fff" stroke="#fbcfe8"/><text x="788" y="581">Agent + subagents (class, event, enquiry, case, guidance)</text>
+      <rect x="778" y="598" width="175" height="30" rx="7" fill="#fff" stroke="#fbcfe8"/><text x="788" y="617">Grounded in live data</text>
+      <rect x="961" y="598" width="177" height="30" rx="7" fill="#fff" stroke="#fbcfe8"/><text x="971" y="617">Omni-Channel + Messaging</text>
+      <text x="778" y="646" font-size="10.5" fill="#9ca3af" font-style="italic">Creates Leads &amp; Cases via Apex/Flow actions; responsible handoff for transactions</text>
+    </g>
+  </g>
+
+  <!-- ============ DATA LAYER ============ -->
+  <g>
+    <rect x="40" y="680" width="700" height="120" rx="14" fill="#f9fafb" stroke="#6b7280" stroke-width="2"/>
+    <text x="58" y="705" font-size="14" font-weight="700" fill="#374151" letter-spacing="0.5">DATA LAYER</text>
+    <g font-size="11.5" fill="#111827">
+      <rect x="58" y="718" width="130" height="30" rx="7" fill="#fff9f0" stroke="#fcd9b0"/><text x="68" y="737">Dance_Class__c</text>
+      <rect x="196" y="718" width="130" height="30" rx="7" fill="#fff9f0" stroke="#fcd9b0"/><text x="206" y="737">Enrollment__c</text>
+      <rect x="334" y="718" width="110" height="30" rx="7" fill="#fff9f0" stroke="#f0e3b8"/><text x="344" y="737">Payment__c</text>
+      <rect x="452" y="718" width="100" height="30" rx="7" fill="#fdf2f8" stroke="#fbcfe8"/><text x="462" y="737">Event__c</text>
+      <rect x="560" y="718" width="100" height="30" rx="7" fill="#fdf2f8" stroke="#fbcfe8"/><text x="570" y="737">RSVP__c</text>
+      <rect x="58" y="758" width="300" height="30" rx="7" fill="#f5f3ff" stroke="#ddd6fe"/><text x="68" y="777">Standard: Contact · Lead · Case (+ SLA)</text>
+    </g>
+  </g>
+
+  <!-- ============ INTEGRATION LAYER ============ -->
+  <g>
+    <rect x="760" y="680" width="400" height="120" rx="14" fill="#ecfdf5" stroke="#16a34a" stroke-width="2"/>
+    <text x="778" y="705" font-size="14" font-weight="700" fill="#15803d" letter-spacing="0.5">INTEGRATION LAYER</text>
+    <g font-size="11.5" fill="#111827">
+      <rect x="778" y="718" width="360" height="30" rx="7" fill="#fff" stroke="#bbf7d0"/><text x="788" y="737">Stripe (Checkout + webhooks) — test mode</text>
+      <rect x="778" y="754" width="360" height="34" rx="7" fill="#fff" stroke="#bbf7d0"/><text x="788" y="770">Named / External Credentials</text><text x="788" y="784" font-size="10" fill="#9ca3af">secret key stored securely, never in code</text>
+    </g>
+  </g>
+
+  <!-- connectors between layers -->
+  <line x1="600" y1="345" x2="600" y2="370" stroke="#6b7280" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="400" y1="500" x2="400" y2="525" stroke="#6b7280" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="950" y1="500" x2="950" y2="525" stroke="#6b7280" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="400" y1="655" x2="400" y2="680" stroke="#6b7280" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="940" y1="442" x2="940" y2="450" stroke="#6b7280" stroke-width="1"/>
+  <path d="M1080,442 L1080,670" fill="none" stroke="#16a34a" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#a)"/>
+  <text x="1090" y="560" font-size="10" fill="#16a34a" transform="rotate(90 1090 560)">callout + webhook</text>
+
+  <text x="40" y="920" font-size="11.5" fill="#9ca3af">Guest requests flow: Presentation → Apex (application) → Automation/AI → Data, with Stripe integration on the side. Admin uses the same data &amp; automation through the Lightning app.</text>
+</svg>
