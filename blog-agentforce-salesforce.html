@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Building and Deploying a Live Agentforce Agent on Experience Cloud — Supriya Nagesh</title>
+  <meta name="description" content="A complete walkthrough of building an Agentforce AI agent grounded in live Salesforce data — Agent Script syntax, deployment to a public site, guardrails, and the hallucination incident." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy:#0f1b2d;--accent:#3b9eff;--accent-light:#e8f3ff;--text:#1a1a2e;
+      --text-muted:#5a6a7e;--border:#e2e8f0;--surface:#f8fafc;--white:#ffffff;
+      --green:#059669;--green-light:#ecfdf5;--yellow:#d97706;--yellow-light:#fffbeb;
+      --red:#dc2626;--red-light:#fef2f2;--purple:#7c3aed;--purple-light:#f5f3ff;
+      --radius:10px;--radius-lg:16px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);font-size:16px;line-height:1.7;}
+    nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;padding:0 2.5rem;height:60px;}
+    .nav-logo{font-family:'DM Serif Display',serif;font-size:18px;color:var(--navy);text-decoration:none;}
+    .nav-back{font-size:13px;font-weight:500;color:var(--text-muted);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s;}
+    .nav-back:hover{color:var(--navy);}
+    .article-hero{background:var(--navy);padding:4rem 2.5rem 3.5rem;position:relative;overflow:hidden;}
+    .article-hero::before{content:'';position:absolute;top:-80px;right:-80px;width:400px;height:400px;background:radial-gradient(circle,rgba(124,58,237,0.15) 0%,transparent 70%);border-radius:50%;}
+    .article-hero::after{content:'';position:absolute;bottom:-60px;left:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(59,158,255,0.08) 0%,transparent 70%);border-radius:50%;}
+    .hero-inner{position:relative;z-index:1;max-width:780px;margin:0 auto;}
+    .article-meta{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap;}
+    .article-tag{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);background:rgba(59,158,255,0.12);border:1px solid rgba(59,158,255,0.25);padding:4px 10px;border-radius:20px;}
+    .article-tag-ai{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#c4b5fd;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);padding:4px 10px;border-radius:20px;}
+    .series-badge{font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#fbbf24;background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.3);padding:4px 12px;border-radius:20px;}
+    .article-date{font-size:13px;color:rgba(255,255,255,0.4);}
+    .meta-dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,0.2);}
+    .article-hero h1{font-family:'DM Serif Display',serif;font-size:clamp(22px,4vw,38px);font-weight:400;line-height:1.2;color:white;margin-bottom:1rem;}
+    .article-subtitle{font-size:16px;color:rgba(255,255,255,0.6);line-height:1.7;max-width:660px;}
+    .stack-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:1.75rem;}
+    .stack-badge{font-size:12px;padding:5px 12px;border-radius:20px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);}
+    .author-row{display:flex;align-items:center;gap:10px;margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.1);}
+    .author-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#1a5fa8);display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:14px;color:white;flex-shrink:0;}
+    .author-name{font-size:14px;font-weight:500;color:rgba(255,255,255,0.85);}
+    .author-title{font-size:12px;color:rgba(255,255,255,0.4);}
+    .part-banner{background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:2rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .part-banner p{font-size:14px;color:#92400e;margin:0;flex:1;}
+    .part-banner a{font-size:13px;font-weight:500;color:#0176d3;text-decoration:none;white-space:nowrap;}
+    .part-banner a:hover{text-decoration:underline;}
+    .article-body{max-width:780px;margin:0 auto;padding:3.5rem 2.5rem 5rem;}
+    .article-body p{font-size:16px;line-height:1.85;color:#2d3748;margin-bottom:1.5rem;}
+    .article-body h2{font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;color:var(--navy);margin:3rem 0 0.75rem;}
+    .article-body h3{font-size:16px;font-weight:500;color:var(--navy);margin:2rem 0 0.5rem;}
+    .article-body strong{color:var(--navy);font-weight:500;}
+    .article-body a{color:var(--accent);text-decoration:none;}
+    .article-body a:hover{text-decoration:underline;}
+    code{background:var(--surface);padding:2px 7px;border-radius:4px;font-size:13px;font-family:'SF Mono','Fira Code',monospace;color:#374151;}
+    .section-header{display:flex;align-items:flex-start;gap:1rem;margin:3rem 0 1rem;}
+    .section-num{width:36px;height:36px;border-radius:50%;background:var(--navy);color:white;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex-shrink:0;margin-top:4px;}
+    .section-eyebrow{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:3px;}
+    .section-title-text{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;color:var(--navy);line-height:1.3;}
+    .callout{border-radius:8px;padding:1.1rem 1.4rem;margin:1.25rem 0 1.75rem;}
+    .callout p,.callout li{font-size:14px!important;line-height:1.7!important;}
+    .callout p{margin:0!important;}
+    .callout-label{font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;}
+    .callout-blue{background:var(--accent-light);border-left:3px solid var(--accent);}
+    .callout-blue p,.callout-blue li{color:#1a3a5c!important;}
+    .callout-green{background:var(--green-light);border-left:3px solid var(--green);}
+    .callout-green p,.callout-green li{color:#064e3b!important;}
+    .callout-yellow{background:var(--yellow-light);border-left:3px solid var(--yellow);}
+    .callout-yellow p,.callout-yellow li{color:#78350f!important;}
+    .callout-red{background:var(--red-light);border-left:3px solid var(--red);}
+    .callout-red p,.callout-red li{color:#7f1d1d!important;}
+    .callout-purple{background:var(--purple-light);border-left:3px solid var(--purple);}
+    .callout-purple p,.callout-purple li{color:#4c1d95!important;}
+    .code-block{background:#1e293b;border-radius:8px;padding:1.25rem 1.5rem;margin:1rem 0 1.5rem;overflow-x:auto;}
+    .code-block code{font-family:'SF Mono','Fira Code',monospace;font-size:13px;color:#e2e8f0;line-height:1.7;white-space:pre;background:none;padding:0;}
+    .code-comment{color:#64748b;}
+    .code-keyword{color:#93c5fd;}
+    .code-string{color:#86efac;}
+    .code-annotation{color:#fca5a5;}
+    .code-purple{color:#c4b5fd;}
+    .data-table{width:100%;border-collapse:collapse;margin:1.25rem 0 1.75rem;font-size:14px;}
+    .data-table th{background:var(--navy);color:white;font-weight:500;font-size:12px;letter-spacing:0.04em;padding:10px 14px;text-align:left;}
+    .data-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:#374151;vertical-align:top;}
+    .data-table tr:last-child td{border-bottom:none;}
+    .data-table tr:nth-child(even) td{background:var(--surface);}
+    .badge-yes{font-size:11px;padding:2px 8px;background:var(--green-light);color:var(--green);border-radius:4px;font-weight:500;}
+    .badge-no{font-size:11px;padding:2px 8px;background:var(--surface);color:var(--text-muted);border-radius:4px;}
+    .steps-list{display:flex;flex-direction:column;gap:1rem;margin:1.25rem 0 1.75rem;counter-reset:steps;}
+    .step-item{display:flex;gap:14px;align-items:flex-start;padding:1rem 1.25rem;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);}
+    .step-num{width:28px;height:28px;border-radius:50%;background:var(--navy);color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;margin-top:2px;}
+    .step-title{font-size:14px;font-weight:500;color:var(--navy);margin-bottom:3px;}
+    .step-desc{font-size:13px;color:var(--text-muted);line-height:1.6;}
+    .arrow-list{margin:0.75rem 0 1.5rem 0;padding:0;list-style:none;}
+    .arrow-list li{font-size:15px;color:#374151;line-height:1.7;padding:4px 0 4px 1.25rem;position:relative;}
+    .arrow-list li::before{content:'→';position:absolute;left:0;color:var(--accent);font-size:13px;}
+    .checklist{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin:1.25rem 0 1.75rem;}
+    .checklist-title{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:1rem;text-transform:uppercase;letter-spacing:0.06em;}
+    .checklist ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px;}
+    .checklist li{font-size:14px;color:#374151;padding-left:1.5rem;position:relative;line-height:1.6;}
+    .checklist li::before{content:'✓';position:absolute;left:0;color:var(--green);font-weight:700;}
+    .screenshot-wrap{margin:1.25rem 0 1.75rem;}
+    .screenshot-img{width:100%;border-radius:var(--radius);border:1px solid var(--border);display:block;}
+    .screenshot-caption{font-size:12px;color:var(--text-muted);margin-top:6px;text-align:center;font-style:italic;}
+    .screenshot-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.25rem 0 1.75rem;}
+    .related-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1.25rem 0;}
+    .related-card{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;text-decoration:none;display:block;transition:all 0.15s;}
+    .related-card:hover{border-color:#c7d8ec;box-shadow:0 4px 16px rgba(0,0,0,0.06);}
+    .related-tag{font-size:11px;color:var(--accent);margin-bottom:0.5rem;}
+    .related-title{font-size:14px;font-weight:500;color:var(--navy);line-height:1.5;}
+    .try-it{background:var(--navy);border-radius:var(--radius-lg);padding:2rem;margin:2.5rem 0;}
+    .try-it h3{font-family:'DM Serif Display',serif;font-size:20px;color:white;font-weight:400;margin-bottom:0.75rem;}
+    .try-it p{font-size:14px!important;color:rgba(255,255,255,0.55)!important;margin:0 0 1.25rem!important;}
+    .try-links{display:flex;flex-wrap:wrap;gap:10px;}
+    .try-link{font-size:13px;font-weight:500;padding:9px 16px;border-radius:7px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);text-decoration:none;transition:all 0.15s;background:rgba(255,255,255,0.06);display:inline-flex;align-items:center;gap:6px;}
+    .try-link:hover{background:rgba(255,255,255,0.15);color:white;}
+    .try-link-primary{background:var(--accent);border-color:var(--accent);color:white;}
+    .try-link-primary:hover{background:#2a8ef0;}
+    .divider{border:none;border-top:1px solid var(--border);margin:2.5rem 0;}
+    .article-footer{max-width:780px;margin:0 auto;padding:0 2.5rem 4rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+    .back-link{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--text-muted);text-decoration:none;padding:9px 16px;border-radius:8px;border:1px solid var(--border);transition:all 0.15s;}
+    .back-link:hover{background:var(--navy);color:white;border-color:var(--navy);}
+    .share-btn{font-size:13px;font-weight:500;padding:9px 16px;border-radius:8px;border:1px solid var(--border);background:white;color:var(--text-muted);text-decoration:none;transition:all 0.15s;}
+    .share-btn:hover{background:var(--navy);color:white;border-color:var(--navy);}
+    .more-section{background:var(--surface);padding:3.5rem 2.5rem;border-top:1px solid var(--border);}
+    .more-inner{max-width:780px;margin:0 auto;}
+    .more-label{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:1.25rem;}
+    footer{background:var(--navy);color:rgba(255,255,255,0.5);padding:1.5rem 2.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+    footer small{font-size:13px;}
+    footer a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;}
+    footer a:hover{color:white;}
+    @media(max-width:640px){
+      nav,footer{padding:0 1.25rem;}
+      .article-hero{padding:3rem 1.25rem 2.5rem;}
+      .article-body{padding:2.5rem 1.25rem 3rem;}
+      .article-footer{padding:0 1.25rem 3rem;}
+      .more-section{padding:2.5rem 1.25rem;}
+      .screenshot-grid{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Supriya Nagesh</a>
+  <a class="nav-back" href="index.html#blog">← Back to blog</a>
+</nav>
+
+<header class="article-hero">
+  <div class="hero-inner">
+    <div class="article-meta">
+      <span class="series-badge">✦ Project 01 Deep-dive · Sub-post 2 of 2</span>
+      <span class="meta-dot"></span>
+      <span class="article-tag">Technical Deep-dive</span>
+      <span class="article-tag-ai">Agentforce</span>
+      <span class="meta-dot"></span>
+      <span class="article-date">June 2026</span>
+      <span class="meta-dot"></span>
+      <span class="article-date">25 min read</span>
+    </div>
+    <h1>Building and Deploying a Live Agentforce AI Agent on Experience Cloud — Grounded in Real Data, Live for Anonymous Guests</h1>
+    <p class="article-subtitle">A complete walkthrough of the new Agentforce Builder — subagent architecture, Agent Script syntax, deploying to a public site, guardrails, the hallucination incident, and every non-obvious gotcha.</p>
+    <div class="stack-badges">
+      <span class="stack-badge">Agentforce Builder</span>
+      <span class="stack-badge">Agent Script</span>
+      <span class="stack-badge">@InvocableMethod</span>
+      <span class="stack-badge">Autolaunched Flows</span>
+      <span class="stack-badge">Experience Cloud</span>
+      <span class="stack-badge">Omni-Channel</span>
+    </div>
+    <div class="author-row">
+      <div class="author-avatar">SN</div>
+      <div>
+        <div class="author-name">Supriya Nagesh</div>
+        <div class="author-title">Salesforce Professional · 7+ years</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<article class="article-body">
+
+  <div class="part-banner">
+    <p>This is Sub-post 2 of 2 for <strong>Project 01 — Sai Dance Academy</strong>. Sub-post 1 covers the Stripe payment integration.</p>
+    <a href="blog-stripe-salesforce.html">← Read Sub-post 1: Stripe integration first</a>
+  </div>
+
+  <p>This post covers the Agentforce AI agent I built for Sai Dance Academy — a 24/7 assistant deployed live on the public Experience Cloud site, grounded in real Salesforce data, available to anonymous guest visitors with no login required.</p>
+
+  <p>Agentforce is the newest piece of the Salesforce platform, and the documentation is still catching up to the builder. I'm documenting the full setup — including the syntax that actually works, the deployment chain, and the guardrail lesson I learned the hard way — so you don't have to rediscover it all from scratch.</p>
+
+  <hr class="divider" />
+
+  <!-- SECTION 1 — WHAT IT DOES -->
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div>
+      <p class="section-eyebrow">The agent's capabilities</p>
+      <p class="section-title-text">What the Agent Does — Subagent by Subagent</p>
+    </div>
+  </div>
+
+  <p>The agent is named "Sai Dance Assistant" and is organised into <strong>subagents</strong> — the new builder's term for what earlier versions called topics. Each subagent owns one capability and is independently configurable.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>Subagent</th><th>Capability</th><th>Backed by</th><th>Creates a record?</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Class Information</strong></td><td>Answers class questions and recommends classes by age, level, or interest — grounded in live data</td><td>Apex action (query)</td><td><span class="badge-no">No</span></td></tr>
+      <tr><td><strong>Event Information</strong></td><td>Answers questions about upcoming events</td><td>Apex action (query)</td><td><span class="badge-no">No</span></td></tr>
+      <tr><td><strong>Enrollment Guidance</strong></td><td>Confirms the class, hands off to the enrollment page with a direct link</td><td>Instructions only</td><td><span class="badge-no">No — hands off</span></td></tr>
+      <tr><td><strong>Event Registration</strong></td><td>Confirms the event, hands off to the events page with a direct link</td><td>Instructions only</td><td><span class="badge-no">No — hands off</span></td></tr>
+      <tr><td><strong>Enquiry Capture</strong></td><td>Collects name, email, message and logs a Lead</td><td>Flow action</td><td><span class="badge-yes">Lead</span></td></tr>
+      <tr><td><strong>Support Case</strong></td><td>Collects details, maps to a Case Reason, creates a Case with auto-priority and SLA</td><td>Flow action</td><td><span class="badge-yes">Case + SLA</span></td></tr>
+      <tr><td><strong>Off Topic / Router</strong></td><td>Standard scaffolded subagents — Off Topic enforces scope guardrail</td><td>Built-in</td><td><span class="badge-no">No</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-purple">
+    <p class="callout-label" style="color:var(--purple);">🤖 The guiding design rule</p>
+    <p><strong>The agent only creates a record when no downstream page will create one.</strong> Enquiries and support cases create records — nothing else would. Enrollment and event registration only hand off, because the website's flows create the Contact and Enrollment/RSVP records. This avoids duplicate Contacts and orphaned Leads — and it's the kind of design decision that demonstrates mature Agentforce thinking.</p>
+  </div>
+
+  <div class="screenshot-grid">
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/agentforce/agentforce-builder-overview.png" alt="Agentforce Builder showing agent overview with subagents" />
+      <p class="screenshot-caption">Agentforce Builder — agent overview, subagents listed</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/agentforce/subagent-class-information.png" alt="Class Information subagent configuration" />
+      <p class="screenshot-caption">Class Information subagent — wired to live Apex query action</p>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- SECTION 2 — ARCHITECTURE -->
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div>
+      <p class="section-eyebrow">How it fits the wider project</p>
+      <p class="section-title-text">Architecture — The Agent Reuses Everything</p>
+    </div>
+  </div>
+
+  <p>The most important architectural point: the agent doesn't have its own data layer. It queries the same custom objects the website displays, and its record-creation actions trigger the same automation the website uses.</p>
+
+  <ul class="arrow-list">
+    <li><strong>Live data grounding</strong> — the agent queries <code>Dance_Class__c</code> and <code>Event__c</code> — the same records the website catalogue displays. When a class is added or updated in the org, both the website and the agent reflect it instantly</li>
+    <li><strong>Shared automation</strong> — the agent's Case creation triggers the same record-triggered Flow that maps Case Reason to Priority and engages the existing Entitlement/Milestone SLA. The agent inherits the full Service Cloud setup for free</li>
+    <li><strong>Responsible handoff for payment</strong> — the agent links to the website's enrollment/RSVP flows (Stripe) rather than attempting payment in chat. Payment is handled on the proper paid path</li>
+  </ul>
+
+  <hr class="divider" />
+
+  <!-- SECTION 3 — BUILD ACTIONS FIRST -->
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div>
+      <p class="section-eyebrow">The reliable build pattern</p>
+      <p class="section-title-text">Actions First, Agent Second</p>
+    </div>
+  </div>
+
+  <p>The single most reliable pattern for building Agentforce: <strong>build and test every action independently before wiring it into the agent</strong>. This isolates "does the action work" from "does the agent call it correctly" — and when the agent later throws a generic runtime error, prior verification proves where the problem isn't.</p>
+
+  <h3>Apex actions — for querying and formatting data</h3>
+  <p>Two Apex <code>@InvocableMethod</code> classes were built as query actions:</p>
+  <ul class="arrow-list">
+    <li><code>GetDanceClassesAction</code> — returns active classes with an optional style filter, formatted as a readable string</li>
+    <li><code>GetUpcomingEventsAction</code> — returns active, non-past events</li>
+  </ul>
+
+  <div class="callout callout-red">
+    <p class="callout-label" style="color:var(--red);">⚠️ One @InvocableMethod per Apex class</p>
+    <p>Salesforce only allows <strong>one <code>@InvocableMethod</code> per Apex class</strong>. If you try to put two in the same class, the second one is ignored or throws a compile error. Each action must be its own class. This catches people out regularly.</p>
+  </div>
+
+  <p>Both actions were tested in <strong>Developer Console → Execute Anonymous</strong> before touching the agent. This step matters more than it sounds — when the agent later threw a generic runtime error, I could immediately rule out the Apex and focus on the agent configuration.</p>
+
+  <div class="callout callout-yellow">
+    <p class="callout-label" style="color:var(--yellow);">⚠️ Field API names lie — always verify in Object Manager</p>
+    <p><code>Dance_Class__c</code> uses <code>IsActive__c</code> (no underscore between Is and Active), while <code>Event__c</code> uses <code>Is_Active__c</code> (with underscore). They're on different objects built at different times. Field API names across objects are inconsistent — always confirm in Object Manager, never assume from the label or from another object's pattern.</p>
+  </div>
+
+  <div class="screenshot-grid">
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/agentforce/apex-action-getclasses.png" alt="GetDanceClassesAction Apex class" />
+      <p class="screenshot-caption">GetDanceClassesAction — tested in Execute Anonymous before agent wiring</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/agentforce/permission-set-agent.png" alt="Agent Apex Actions permission set" />
+      <p class="screenshot-caption">Dedicated permission set for the EinsteinServiceAgent User</p>
+    </div>
+  </div>
+
+  <h3>Flow actions — for creating records</h3>
+  <p>Two <strong>Autolaunched Flows</strong> handle record creation — not Apex:</p>
+  <ul class="arrow-list">
+    <li><code>Agent_Create_Lead</code> — creates a Lead from an enquiry; Source set to "Agentforce Assistant"</li>
+    <li><code>Agent_Create_Case</code> — creates a Case; the existing priority Flow then sets Urgent/Standard/General by Reason automatically</li>
+  </ul>
+
+  <div class="callout callout-blue">
+    <p class="callout-label" style="color:var(--accent);">💡 Why Flows for creation, Apex for queries?</p>
+    <p>Flows are declarative, need no test class, and are the recommended pattern for record creation in Agentforce. Apex is better for querying and formatting results into readable text. Using both tools deliberately — each for what it does best — is stronger than forcing everything into one tool. It's also a good talking point in an interview: <em>"query and format with Apex, create records with Flow."</em></p>
+  </div>
+
+  <div class="screenshot-grid">
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/agentforce/flow-action-create-lead.png" alt="Agent_Create_Lead Flow canvas" />
+      <p class="screenshot-caption">Agent_Create_Lead Flow — required fields set, Source = Agentforce Assistant</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/agentforce/flow-action-create-case.png" alt="Agent_Create_Case Flow canvas" />
+      <p class="screenshot-caption">Agent_Create_Case Flow — triggers existing priority and SLA automation</p>
+    </div>
+  </div>
+
+  <div class="callout callout-red">
+    <p class="callout-label" style="color:var(--red);">⚠️ Two Flow gotchas worth remembering</p>
+    <p><strong>Required fields must be set in the Flow</strong> or it throws a generic <code>UNKNOWN_EXCEPTION</code>. On Lead that meant Company, Status, and CurrencyIsoCode — fields that silently block creation without a clear error. Check every required field on the object in Setup before assuming the Flow logic is wrong.</p>
+    <p style="margin-top:8px;"><strong>API name vs label confusion on Case:</strong> the fields labeled "Name" and "Email Address" have API names <code>SuppliedName</code> and <code>SuppliedEmail</code>. The label tells you nothing about the API name — always verify in Object Manager.</p>
+  </div>
+
+  <h3>Permissions — the silent failure source</h3>
+  <p>The agent runs as a dedicated <strong>EinsteinServiceAgent User</strong>. That user must be granted explicit access to everything the actions touch, or they fail silently with a generic error. A dedicated permission set (<code>Agent Apex Actions</code>) was created and assigned, granting Apex Class Access to both action classes and object-level access (Read on <code>Dance_Class__c</code> and <code>Event__c</code>; Create on Lead and Case).</p>
+
+  <p>This is the same multi-layer access discipline that guest users need — applied to the agent's running user. Miss it and the agent returns a generic failure with no indication of what's actually missing.</p>
+
+  <hr class="divider" />
+
+  <!-- SECTION 4 — AGENT SCRIPT -->
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div>
+      <p class="section-eyebrow">The syntax that actually works</p>
+      <p class="section-title-text">Agent Script — Structure, Gotchas, and the Canvas Picker</p>
+    </div>
+  </div>
+
+  <p>The new Agentforce Builder uses <strong>Agent Script</strong> — a human-readable language edited in Canvas view (visual blocks) or Script view (raw text). Both stay in sync. The single most reliable way to wire an action is the <strong>Canvas <code>@</code> Resource Picker</strong> — type <code>@</code> and select from the list rather than hand-writing the action reference. It generates the correct syntax for your org's exact API names, which is much safer than typing from memory.</p>
+
+  <h3>The structure that works for a data-backed subagent</h3>
+  <p>A data-backed subagent needs <strong>two action blocks</strong>: a definition at the subagent level and an exposure inside <code>reasoning</code>:</p>
+
+  <div class="code-block"><code><span class="code-purple">subagent</span> Class_Information:
+    label: <span class="code-string">"Class Information"</span>
+    description: |
+        Helps visitors find and learn about dance classes.
+    reasoning:
+        instructions: ->
+            | When the user asks about classes, use the Get_Dance_Classes tool.
+              Answer strictly based on the information returned by the tool.
+              <span class="code-comment"># Never invent class details not returned by the tool</span>
+        actions:                          <span class="code-comment"># EXPOSURE — tool for the LLM</span>
+            Get_Dance_Classes: <span class="code-annotation">@actions.Get_Dance_Classes</span>
+                with style = ...          <span class="code-comment"># ... = LLM slot-fills from conversation</span>
+    actions:                              <span class="code-comment"># DEFINITION — the action itself</span>
+        Get_Dance_Classes:
+            label: <span class="code-string">"Get Dance Classes"</span>
+            description: <span class="code-string">"Call this to look up active dance classes"</span>
+            target: <span class="code-string">"apex://GetDanceClassesAction"</span>   <span class="code-comment"># apex:// for Apex</span>
+            inputs:
+                style: string
+                    is_required: False
+            outputs:
+                classInfo: string
+                    is_displayable: True</code></div>
+
+  <div class="callout callout-yellow">
+    <p class="callout-label" style="color:var(--yellow);">⚠️ Agent Script gotchas — learned the hard way</p>
+    <p><strong>Input names must exactly match the Apex <code>@InvocableVariable</code> names</strong> — <code>style</code> not <code>dance_style</code>. A mismatch causes silent failure.</p>
+    <p style="margin-top:6px;"><strong>Target format:</strong> <code>apex://DeveloperName</code> for Apex classes, <code>flow://DeveloperName</code> for Flows.</p>
+    <p style="margin-top:6px;"><strong>Indentation is significant.</strong> Booleans are capitalized: <code>True</code>/<code>False</code>.</p>
+    <p style="margin-top:6px;"><strong>Always verify the router transition</strong> to each subagent. The router auto-adds a <code>go_to_SubagentName</code> transition per subagent — if it's missing, routing silently fails and the agent never delegates to that subagent.</p>
+  </div>
+
+  <div class="screenshot-grid">
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/agentforce/canvas-view-action-wired.png" alt="Canvas view showing action wired via @ picker" />
+      <p class="screenshot-caption">Canvas view — action wired via @ Resource Picker, not hand-written</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/agentforce/script-view-subagent.png" alt="Script view showing subagent structure" />
+      <p class="screenshot-caption">Script view — definition and exposure blocks visible</p>
+    </div>
+  </div>
+
+  <div class="screenshot-grid">
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/agentforce/subagent-enquiry-capture.png" alt="Enquiry Capture subagent configuration" />
+      <p class="screenshot-caption">Enquiry Capture — Flow action creating a Lead</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/agentforce/subagent-support-case.png" alt="Support Case subagent configuration" />
+      <p class="screenshot-caption">Support Case — Flow action creating a Case with SLA</p>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- SECTION 5 — GUARDRAILS -->
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <div>
+      <p class="section-eyebrow">The most important lesson of the build</p>
+      <p class="section-title-text">Guardrails, Grounding, and the Hallucination Incident</p>
+    </div>
+  </div>
+
+  <p>Three layers keep the agent accurate and in scope:</p>
+
+  <ul class="arrow-list">
+    <li><strong>Scope:</strong> a global system instruction limits the agent to Sai Dance Academy topics; the standard Off Topic subagent politely redirects anything unrelated</li>
+    <li><strong>Grounding:</strong> every data subagent is instructed to answer strictly from the tool's results and never invent details</li>
+    <li><strong>Einstein Trust Layer:</strong> handles toxicity filtering and prompt-injection defense automatically, and masks URLs by default (more on this in section 6)</li>
+  </ul>
+
+  <div class="callout callout-red">
+    <p class="callout-label" style="color:var(--red);">🚨 The hallucination incident — the most important lesson of this build</p>
+    <p>When instructions were accidentally left unsaved after an edit, the agent ran without its grounding constraints. It immediately began <strong>confidently inventing fake "batch timings"</strong> that didn't exist anywhere in the data — specific-sounding times and schedules, completely fabricated.</p>
+    <p style="margin-top:8px;">The fix was firm instructions: <em>"Never invent class times, batch timings, or schedules. Only share information returned by the tool."</em> And confirming they actually saved — the builder doesn't always give obvious feedback that a save succeeded.</p>
+    <p style="margin-top:8px;"><strong>An unconstrained or misconfigured agent will confidently make things up.</strong> Tight, grounded instructions are not optional — they're the foundation of a trustworthy agent.</p>
+  </div>
+
+  <div class="screenshot-wrap">
+    <img class="screenshot-img" src="images/agentforce/subagent-enrollment-guidance.png" alt="Enrollment Guidance subagent showing responsible handoff instructions" />
+    <p class="screenshot-caption">Enrollment Guidance — instructions for responsible handoff, not transaction processing</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- SECTION 6 — DEPLOYMENT -->
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <div>
+      <p class="section-eyebrow">Getting it live</p>
+      <p class="section-title-text">Deploying to a Public Experience Cloud Site — The 10-Step Chain</p>
+    </div>
+  </div>
+
+  <p>Deploying the agent to a live public site is a multi-step infrastructure chain. Order matters — each step references the previous one. Missing a step means the widget loads but never responds, with no obvious error.</p>
+
+  <div class="steps-list">
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div><div class="step-title">Enable Messaging and Omni-Channel</div><div class="step-desc">Turn on Enhanced Omni-Channel routing in Setup — this is the routing infrastructure the agent runs on.</div></div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div><div class="step-title">Create a Presence Status</div><div class="step-desc">Add an "Online"-type Presence Status — this is routing plumbing required for the channel to function.</div></div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div><div class="step-title">Create a Routing Configuration</div><div class="step-desc">Set priority and capacity model. Defaults work fine for a single agent deployment.</div></div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">4</div>
+      <div><div class="step-title">Create a Queue</div><div class="step-desc">Add <strong>Messaging Session</strong> as a supported object. This is the fallback destination if the agent can't handle a conversation.</div></div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">5</div>
+      <div><div class="step-title">Create an Omni-Channel Flow</div><div class="step-desc">Add a Route Work element that routes to the <strong>Agentforce Service Agent</strong> (select your agent) with the queue as fallback. Activate the Flow.</div></div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">6</div>
+      <div><div class="step-title">Create a Messaging Channel</div><div class="step-desc">Messaging for In-App and Web → Web deployment type. Link it to the routing flow and fallback queue.</div></div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">7</div>
+      <div><div class="step-title">Enter the deployment domain — exactly</div><div class="step-desc">Enter the <strong>bare host exactly</strong> — <code>yoursite.develop.my.site.com</code>, no <code>https://</code>, no path segment. A single character mismatch means recreating the entire channel. Copy it from the browser, don't type it.</div></div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">8</div>
+      <div><div class="step-title">Add Trusted URLs</div><div class="step-desc">Add the site URL (with <code>https://</code> this time) and enable the required CSP directives so the chat widget can load on the page.</div></div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">9</div>
+      <div><div class="step-title">Add the Embedded Messaging component</div><div class="step-desc">Drop the Embedded Messaging component onto the site in Experience Builder and publish.</div></div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">10</div>
+      <div><div class="step-title">Test in incognito</div><div class="step-desc">Always verify as a true guest — open an incognito window, not the authenticated Experience Builder preview. The agent must be in <strong>Active</strong> state (not Draft) to respond.</div></div>
+    </div>
+  </div>
+
+  <div class="screenshot-grid">
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/agentforce/omnichannel-routing-flow.png" alt="Omni-Channel Flow with Route Work element pointing to agent" />
+      <p class="screenshot-caption">Omni-Channel Flow — Route Work element pointing to the Agentforce agent</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/agentforce/messaging-channel-setup.png" alt="Messaging Channel setup showing domain field" />
+      <p class="screenshot-caption">Messaging Channel — bare host domain, no https:// prefix</p>
+    </div>
+  </div>
+
+  <div class="screenshot-wrap">
+    <img class="screenshot-img" src="images/agentforce/trusted-urls-config.png" alt="Trusted URLs configuration showing site domain allowlisted" />
+    <p class="screenshot-caption">Trusted URLs — site domain allowlisted with CSP directives enabled</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- SECTION 7 — URL REDACTION -->
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <div>
+      <p class="section-eyebrow">Two findings about the chat UX</p>
+      <p class="section-title-text">URL Redaction and the Rich Button Reality</p>
+    </div>
+  </div>
+
+  <p>Two things about the chat experience are worth documenting explicitly — neither is obvious from the documentation.</p>
+
+  <h3>The Trust Layer redacts URLs by default</h3>
+  <p>The Einstein Trust Layer masks URLs the agent tries to output, replacing them with <em>"URL_Redacted"</em> — unless the URL is explicitly allowlisted in Trusted URLs. Without allowlisting, the agent can't share the enrollment link and instead says something vague like "use the menu to enroll." Allowlisting the site domain fixes this and lets the agent share a real, clickable enrollment link.</p>
+
+  <h3>Rich buttons aren't available on Experience Cloud sites</h3>
+  <div class="callout callout-yellow">
+    <p class="callout-label" style="color:var(--yellow);">💡 Worth knowing before you start</p>
+    <p><strong>Adaptive Response Formats</strong> — the easy way to get clickable button cards in the chat UI — are <strong>not supported on Experience Cloud sites</strong>. They work in Service Cloud and other surfaces, but not in the Embedded Messaging component on an LWR site. Getting true rich cards on Experience Cloud requires Custom Lightning Types (LWC + Apex + frontend), which is a significant build. For an MVP, an allowlisted clickable link is the pragmatic, high-value choice. Know this before promising rich UI in a demo.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- SECTION 8 — LIVE AGENT -->
+  <h2>The Agent Live</h2>
+
+  <div class="screenshot-grid">
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/agentforce/agent-live-chat-recommendation.png" alt="Live agent recommending a class based on visitor description" />
+      <p class="screenshot-caption">Live — agent recommending a class from real org data</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/agentforce/agent-live-chat-case-created.png" alt="Live agent creating a support case in the conversation" />
+      <p class="screenshot-caption">Live — agent creating a Case, visible in org immediately</p>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- LESSONS CHECKLIST -->
+  <h2>Lessons Checklist</h2>
+
+  <div class="checklist">
+    <div class="checklist-title">The Agentforce build checklist</div>
+    <ul>
+      <li>Test actions in isolation first — Developer Console for Apex — before blaming the agent</li>
+      <li>One <code>@InvocableMethod</code> per Apex class — no exceptions</li>
+      <li>Field API names differ across objects — always verify in Object Manager</li>
+      <li>Flows need required fields set — generic UNKNOWN_EXCEPTION usually means a missing required field</li>
+      <li>The agent user (EinsteinServiceAgent User) needs explicit permissions via a dedicated permission set</li>
+      <li>Wire actions via the Canvas @ picker — correct syntax, matches your org's exact API names</li>
+      <li>Input names in the script must exactly match Apex @InvocableVariable names</li>
+      <li>Target format: <code>apex://ClassName</code> for Apex, <code>flow://FlowDeveloperName</code> for Flows</li>
+      <li>Always verify the router transition to each subagent — missing transitions mean silent routing failure</li>
+      <li>Ground every instruction and confirm it saves — an unsaved or unconstrained agent hallucinates</li>
+      <li>Enter the deployment domain exactly — bare host, no https://, no path — copy don't type</li>
+      <li>Allowlist URLs in Trusted URLs or the Trust Layer redacts them</li>
+      <li>Rich buttons (Adaptive Response Formats) aren't available on Experience Cloud — use allowlisted links or Custom Lightning Types</li>
+      <li>Only create records where no downstream page will — avoids duplicates and orphaned records</li>
+      <li>Agent must be Active (not Draft) for the deployed widget to respond</li>
+      <li>Always test in incognito — not authenticated Experience Builder preview</li>
+    </ul>
+  </div>
+
+  <div class="try-it">
+    <h3>Try the live agent</h3>
+    <p>The agent is live on the public site — open the chat widget, ask about classes, try a recommendation, or raise a support issue. No login required.</p>
+    <div class="try-links">
+      <a class="try-link try-link-primary" href="https://saidanceacademy-dev-ed.develop.my.site.com/sda" target="_blank">Talk to the agent →</a>
+      <a class="try-link" href="blog-stripe-salesforce.html">← Sub-post 1: Stripe integration</a>
+      <a class="try-link" href="blog-sai-dance-academy-part1.html">Project overview</a>
+    </div>
+  </div>
+
+  <p style="font-size:13px;color:var(--text-muted);margin-top:2rem;">Agentforce Builder · Agent Script · @InvocableMethod · Autolaunched Flows · Omni-Channel · Experience Cloud (LWR) · Einstein Trust Layer</p>
+
+</article>
+
+<div class="article-footer">
+  <a class="back-link" href="index.html#blog">← Back to all posts</a>
+  <a class="share-btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https://supriyajnagesh.com/blog-agentforce-salesforce.html" target="_blank">Share on LinkedIn</a>
+</div>
+
+<div class="more-section">
+  <div class="more-inner">
+    <p class="more-label">Continue reading</p>
+    <div class="related-grid">
+      <a class="related-card" href="blog-stripe-salesforce.html" style="border-color:#635bff;background:#f0efff;">
+        <p class="related-tag" style="color:#635bff;">← Sub-post 1 of 2</p>
+        <p class="related-title" style="color:#1e1b4b;">Integrating Stripe Payments — webhooks, credentials, and everything that fought back</p>
+      </a>
+      <a class="related-card" href="blog-sai-dance-academy-part1.html">
+        <p class="related-tag">Project overview</p>
+        <p class="related-title">Sai Dance Academy Part 1 — Architecture, data model, and user journeys</p>
+      </a>
+      <a class="related-card" href="blog-sai-dance-academy-part2.html">
+        <p class="related-tag">Project deep-dive</p>
+        <p class="related-title">Sai Dance Academy Part 2 — 14 real issues documented</p>
+      </a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <small>© 2026 Supriya Nagesh · supriyajnagesh.com</small>
+  <a href="https://www.linkedin.com/in/supriya-nagesh" target="_blank">LinkedIn</a>
+</footer>
+
+</body>
+</html>

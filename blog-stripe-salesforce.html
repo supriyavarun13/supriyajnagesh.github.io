@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Integrating Stripe Payments with Salesforce Experience Cloud — Supriya Nagesh</title>
+  <meta name="description" content="A complete walkthrough of wiring Stripe Checkout into Salesforce Experience Cloud for guest users — webhooks, credentials, the two-call pattern, and four problems that fought back." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy:#0f1b2d;--accent:#3b9eff;--accent-light:#e8f3ff;--text:#1a1a2e;
+      --text-muted:#5a6a7e;--border:#e2e8f0;--surface:#f8fafc;--white:#ffffff;
+      --green:#059669;--green-light:#ecfdf5;--yellow:#d97706;--yellow-light:#fffbeb;
+      --red:#dc2626;--red-light:#fef2f2;--purple:#7c3aed;--purple-light:#f5f3ff;
+      --stripe:#635bff;--stripe-light:#f0efff;
+      --radius:10px;--radius-lg:16px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);font-size:16px;line-height:1.7;}
+    nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;padding:0 2.5rem;height:60px;}
+    .nav-logo{font-family:'DM Serif Display',serif;font-size:18px;color:var(--navy);text-decoration:none;}
+    .nav-back{font-size:13px;font-weight:500;color:var(--text-muted);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s;}
+    .nav-back:hover{color:var(--navy);}
+
+    /* HERO */
+    .article-hero{background:var(--navy);padding:4rem 2.5rem 3.5rem;position:relative;overflow:hidden;}
+    .article-hero::before{content:'';position:absolute;top:-80px;right:-80px;width:400px;height:400px;background:radial-gradient(circle,rgba(99,91,255,0.15) 0%,transparent 70%);border-radius:50%;}
+    .article-hero::after{content:'';position:absolute;bottom:-60px;left:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(59,158,255,0.08) 0%,transparent 70%);border-radius:50%;}
+    .hero-inner{position:relative;z-index:1;max-width:780px;margin:0 auto;}
+    .article-meta{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap;}
+    .article-tag{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);background:rgba(59,158,255,0.12);border:1px solid rgba(59,158,255,0.25);padding:4px 10px;border-radius:20px;}
+    .article-tag-stripe{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#a5b4fc;background:rgba(99,91,255,0.15);border:1px solid rgba(99,91,255,0.3);padding:4px 10px;border-radius:20px;}
+    .series-badge{font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#fbbf24;background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.3);padding:4px 12px;border-radius:20px;}
+    .article-date{font-size:13px;color:rgba(255,255,255,0.4);}
+    .meta-dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,0.2);}
+    .article-hero h1{font-family:'DM Serif Display',serif;font-size:clamp(22px,4vw,38px);font-weight:400;line-height:1.2;color:white;margin-bottom:1rem;}
+    .article-subtitle{font-size:16px;color:rgba(255,255,255,0.6);line-height:1.7;max-width:660px;}
+    .stack-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:1.75rem;}
+    .stack-badge{font-size:12px;padding:5px 12px;border-radius:20px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);}
+    .author-row{display:flex;align-items:center;gap:10px;margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.1);}
+    .author-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#1a5fa8);display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:14px;color:white;flex-shrink:0;}
+    .author-name{font-size:14px;font-weight:500;color:rgba(255,255,255,0.85);}
+    .author-title{font-size:12px;color:rgba(255,255,255,0.4);}
+
+    /* PART BANNER */
+    .part-banner{background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:2rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .part-banner p{font-size:14px;color:#92400e;margin:0;flex:1;}
+    .part-banner a{font-size:13px;font-weight:500;color:#0176d3;text-decoration:none;white-space:nowrap;}
+    .part-banner a:hover{text-decoration:underline;}
+
+    /* BODY */
+    .article-body{max-width:780px;margin:0 auto;padding:3.5rem 2.5rem 5rem;}
+    .article-body p{font-size:16px;line-height:1.85;color:#2d3748;margin-bottom:1.5rem;}
+    .article-body h2{font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;color:var(--navy);margin:3rem 0 0.75rem;}
+    .article-body h3{font-size:16px;font-weight:500;color:var(--navy);margin:2rem 0 0.5rem;}
+    .article-body strong{color:var(--navy);font-weight:500;}
+    .article-body a{color:var(--accent);text-decoration:none;}
+    .article-body a:hover{text-decoration:underline;}
+    code{background:var(--surface);padding:2px 7px;border-radius:4px;font-size:13px;font-family:'SF Mono','Fira Code',monospace;color:#374151;}
+
+    /* Section headers */
+    .section-header{display:flex;align-items:flex-start;gap:1rem;margin:3rem 0 1rem;}
+    .section-num{width:36px;height:36px;border-radius:50%;background:var(--navy);color:white;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex-shrink:0;margin-top:4px;}
+    .section-eyebrow{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:3px;}
+    .section-title-text{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;color:var(--navy);line-height:1.3;}
+
+    /* Callouts */
+    .callout{border-radius:8px;padding:1.1rem 1.4rem;margin:1.25rem 0 1.75rem;}
+    .callout p,.callout li{font-size:14px!important;line-height:1.7!important;}
+    .callout p{margin:0!important;}
+    .callout-label{font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;}
+    .callout-blue{background:var(--accent-light);border-left:3px solid var(--accent);}
+    .callout-blue p,.callout-blue li{color:#1a3a5c!important;}
+    .callout-green{background:var(--green-light);border-left:3px solid var(--green);}
+    .callout-green p,.callout-green li{color:#064e3b!important;}
+    .callout-yellow{background:var(--yellow-light);border-left:3px solid var(--yellow);}
+    .callout-yellow p,.callout-yellow li{color:#78350f!important;}
+    .callout-red{background:var(--red-light);border-left:3px solid var(--red);}
+    .callout-red p,.callout-red li{color:#7f1d1d!important;}
+    .callout-stripe{background:var(--stripe-light);border-left:3px solid var(--stripe);}
+    .callout-stripe p,.callout-stripe li{color:#1e1b4b!important;}
+
+    /* Stripe signup box */
+    .stripe-signup{background:#635bff;border-radius:var(--radius-lg);padding:1.5rem 1.75rem;margin:1.5rem 0 2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+    .stripe-signup p{font-size:14px;color:#000000;margin:0;font-weight:500;}
+    .stripe-signup-btn{font-size:13px;font-weight:600;padding:9px 18px;border-radius:6px;background:white;color:#635bff;text-decoration:none;white-space:nowrap;transition:all 0.15s;}
+    .stripe-signup-btn:hover{background:#f0efff;}
+
+    /* Code block */
+    .code-block{background:#1e293b;border-radius:8px;padding:1.25rem 1.5rem;margin:1rem 0 1.5rem;overflow-x:auto;}
+    .code-block code{font-family:'SF Mono','Fira Code',monospace;font-size:13px;color:#e2e8f0;line-height:1.7;white-space:pre;background:none;padding:0;}
+    .code-comment{color:#64748b;}
+    .code-keyword{color:#93c5fd;}
+    .code-string{color:#86efac;}
+    .code-annotation{color:#fca5a5;}
+
+    /* Architecture box */
+    .arch-box{background:#1e293b;border-radius:var(--radius);padding:1.5rem;margin:1.25rem 0 1.75rem;overflow-x:auto;}
+    .arch-box pre{font-family:'SF Mono','Fira Code',monospace;font-size:12px;color:#94a3b8;line-height:1.8;white-space:pre;}
+    .arch-highlight{color:#86efac;}
+
+    /* Issue cards */
+    .issue-grid{display:flex;flex-direction:column;gap:1.25rem;margin:1.25rem 0 1.75rem;}
+    .issue-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
+    .issue-card-header{padding:1rem 1.5rem;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px;}
+    .issue-num{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--red);background:var(--red-light);padding:3px 8px;border-radius:4px;flex-shrink:0;margin-top:2px;}
+    .issue-title{font-size:15px;font-weight:500;color:var(--navy);line-height:1.4;}
+    .issue-body{padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:0.75rem;}
+    .issue-section-label{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:2px;}
+    .issue-text{font-size:14px;color:#374151;line-height:1.7;}
+    .issue-fix{background:var(--green-light);border-radius:6px;padding:0.75rem 1rem;}
+    .issue-fix .issue-section-label{color:var(--green);}
+    .issue-fix .issue-text{color:#064e3b;}
+    .issue-lesson{background:var(--accent-light);border-radius:6px;padding:0.75rem 1rem;}
+    .issue-lesson .issue-section-label{color:#1a5fa8;}
+    .issue-lesson .issue-text{color:#1a3a5c;}
+
+    /* Checklist */
+    .checklist{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin:1.25rem 0 1.75rem;}
+    .checklist-title{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:1rem;text-transform:uppercase;letter-spacing:0.06em;}
+    .checklist ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px;}
+    .checklist li{font-size:14px;color:#374151;padding-left:1.5rem;position:relative;line-height:1.6;}
+    .checklist li::before{content:'✓';position:absolute;left:0;color:var(--green);font-weight:700;}
+
+    /* Arrow list */
+    .arrow-list{margin:0.75rem 0 1.5rem 0;padding:0;list-style:none;}
+    .arrow-list li{font-size:15px;color:#374151;line-height:1.7;padding:4px 0 4px 1.25rem;position:relative;}
+    .arrow-list li::before{content:'→';position:absolute;left:0;color:var(--accent);font-size:13px;}
+
+    /* Screenshots */
+    .screenshot-wrap{margin:1.25rem 0 1.75rem;}
+    .screenshot-img{width:100%;border-radius:var(--radius);border:1px solid var(--border);display:block;}
+    .screenshot-caption{font-size:12px;color:var(--text-muted);margin-top:6px;text-align:center;font-style:italic;}
+    .screenshot-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.25rem 0 1.75rem;}
+
+    /* Related posts */
+    .related-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1.25rem 0;}
+    .related-card{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;text-decoration:none;display:block;transition:all 0.15s;}
+    .related-card:hover{border-color:#c7d8ec;box-shadow:0 4px 16px rgba(0,0,0,0.06);}
+    .related-tag{font-size:11px;color:var(--accent);margin-bottom:0.5rem;}
+    .related-title{font-size:14px;font-weight:500;color:var(--navy);line-height:1.5;}
+
+    .try-it{background:var(--navy);border-radius:var(--radius-lg);padding:2rem;margin:2.5rem 0;}
+    .try-it h3{font-family:'DM Serif Display',serif;font-size:20px;color:white;font-weight:400;margin-bottom:0.75rem;}
+    .try-it p{font-size:14px!important;color:rgba(255,255,255,0.55)!important;margin:0 0 1.25rem!important;}
+    .try-links{display:flex;flex-wrap:wrap;gap:10px;}
+    .try-link{font-size:13px;font-weight:500;padding:9px 16px;border-radius:7px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);text-decoration:none;transition:all 0.15s;background:rgba(255,255,255,0.06);display:inline-flex;align-items:center;gap:6px;}
+    .try-link:hover{background:rgba(255,255,255,0.15);color:white;}
+    .try-link-primary{background:var(--accent);border-color:var(--accent);color:white;}
+    .try-link-primary:hover{background:#2a8ef0;}
+
+    .divider{border:none;border-top:1px solid var(--border);margin:2.5rem 0;}
+    .article-footer{max-width:780px;margin:0 auto;padding:0 2.5rem 4rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+    .back-link{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--text-muted);text-decoration:none;padding:9px 16px;border-radius:8px;border:1px solid var(--border);transition:all 0.15s;}
+    .back-link:hover{background:var(--navy);color:white;border-color:var(--navy);}
+    .share-btn{font-size:13px;font-weight:500;padding:9px 16px;border-radius:8px;border:1px solid var(--border);background:white;color:var(--text-muted);text-decoration:none;transition:all 0.15s;}
+    .share-btn:hover{background:var(--navy);color:white;border-color:var(--navy);}
+    .more-section{background:var(--surface);padding:3.5rem 2.5rem;border-top:1px solid var(--border);}
+    .more-inner{max-width:780px;margin:0 auto;}
+    .more-label{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:1.25rem;}
+    footer{background:var(--navy);color:rgba(255,255,255,0.5);padding:1.5rem 2.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+    footer small{font-size:13px;}
+    footer a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;}
+    footer a:hover{color:white;}
+    @media(max-width:640px){
+      nav,footer{padding:0 1.25rem;}
+      .article-hero{padding:3rem 1.25rem 2.5rem;}
+      .article-body{padding:2.5rem 1.25rem 3rem;}
+      .article-footer{padding:0 1.25rem 3rem;}
+      .more-section{padding:2.5rem 1.25rem;}
+      .screenshot-grid{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Supriya Nagesh</a>
+  <a class="nav-back" href="index.html#blog">← Back to blog</a>
+</nav>
+
+<header class="article-hero">
+  <div class="hero-inner">
+    <div class="article-meta">
+      <span class="series-badge">✦ Project 01 Deep-dive · Sub-post 1 of 2</span>
+      <span class="meta-dot"></span>
+      <span class="article-tag">Technical Deep-dive</span>
+      <span class="article-tag-stripe">Stripe</span>
+      <span class="meta-dot"></span>
+      <span class="article-date">June 2026</span>
+      <span class="meta-dot"></span>
+      <span class="article-date">20 min read</span>
+    </div>
+    <h1>Integrating Stripe Payments with Salesforce Experience Cloud — Webhooks, Guest Access, and Everything That Fought Back</h1>
+    <p class="article-subtitle">A complete walkthrough of wiring Stripe Checkout into a public Experience Cloud site — credential setup, the two-call pattern, a webhook that took four debugging sessions to get right, and every non-obvious gotcha along the way.</p>
+    <div class="stack-badges">
+      <span class="stack-badge">Stripe Checkout</span>
+      <span class="stack-badge">Apex REST Webhook</span>
+      <span class="stack-badge">Named Credentials</span>
+      <span class="stack-badge">Guest User Context</span>
+      <span class="stack-badge">Experience Cloud LWR</span>
+      <span class="stack-badge">Zero Paid Add-ons</span>
+    </div>
+    <div class="author-row">
+      <div class="author-avatar">SN</div>
+      <div>
+        <div class="author-name">Supriya Nagesh</div>
+        <div class="author-title">Salesforce Professional · 7+ years</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<article class="article-body">
+
+  <div class="part-banner">
+    <p>This is a deep-dive sub-post for <strong>Project 01 — Sai Dance Academy</strong>. Start with the project overview if you haven't already.</p>
+    <a href="blog-sai-dance-academy-part1.html">Read the project overview →</a>
+  </div>
+
+  <p>This post covers one specific piece of the Sai Dance Academy build in full detail: the Stripe payment integration. If you've ever tried to wire Stripe into a Salesforce Experience Cloud site for anonymous guest users, you'll know it's one of those integrations where the happy-path tutorial runs out quickly and the real work begins.</p>
+
+  <p>I'm documenting this because the issues I hit — guest Apex REST access across multiple sites, webhook payload parsing, sharing context, credential header gotchas — are exactly the things that cost hours and don't appear in the official docs. Consider this the guide I wish I'd had.</p>
+
+  <div class="stripe-signup">
+    <p>Don't have a Stripe account yet? You'll need one to follow along. Test mode is free — no payment details required to start building.</p>
+    <a class="stripe-signup-btn" href="https://dashboard.stripe.com/register" target="_blank">Create a free Stripe account →</a>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- SECTION 1 — WHAT WE BUILT -->
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div>
+      <p class="section-eyebrow">The big picture</p>
+      <p class="section-title-text">What We Built — In One Paragraph</p>
+    </div>
+  </div>
+
+  <p>A visitor picks a class on the public site and submits an enrollment form. Salesforce creates an <code>Enrollment__c</code> record with status <em>Pending Payment</em>, then calls Stripe to create a Checkout Session and redirects the visitor to Stripe's hosted payment page. The visitor pays. Stripe fires a webhook to a public Salesforce REST endpoint. The handler finds the enrollment by the record ID stored in Stripe's session metadata, flips the status to <em>Confirmed</em>, writes a <code>Payment__c</code> audit record, and a record-triggered Flow sends a confirmation email. The same pattern powers paid event RSVPs. Everything runs for <strong>anonymous guest users</strong> — no login required.</p>
+
+  <h3>The architecture</h3>
+
+  <div class="arch-box">
+    <pre><span class="arch-highlight">Visitor on /sda/enroll</span>
+      │ submits form (LWC)
+      ▼
+<span class="arch-highlight">EnrollmentController.createEnrollment</span>
+      │ DML only — Contact + Enrollment__c (Pending Payment)
+      │ returns enrollmentId
+      ▼
+<span class="arch-highlight">StripeCheckoutController.createCheckoutSession</span>
+      │ callout only — POST to Stripe, save Session Id
+      │ returns Stripe Checkout URL → Enrollment → Awaiting Payment
+      ▼
+<span class="arch-highlight">Stripe hosted Checkout page</span>
+      │ visitor pays with card
+      ▼  (server-to-server)
+<span class="arch-highlight">Stripe webhook → POST payment_intent.succeeded</span>
+      ▼
+<span class="arch-highlight">StripeWebhookHandler</span> (@RestResource, public)
+      │ find Enrollment by metadata id
+      │ set Confirmed, write Payment__c
+      ▼
+<span class="arch-highlight">Record-triggered Flow</span>
+      │ emails student + admin</pre>
+  </div>
+
+  <p>Two Apex classes, one REST endpoint, one Flow, and the credential plumbing. The responsibilities are split deliberately — and that split is forced by a hard Salesforce platform rule I'll come to in section 3.</p>
+
+  <div class="screenshot-wrap">
+    <img class="screenshot-img" src="images/stripe/stripe-checkout-page.png" alt="Stripe Checkout page showing class name and fee in USD" />
+    <p class="screenshot-caption">Stripe Checkout in test mode — class name and fee passed from Salesforce via the Checkout Session</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- SECTION 2 — CREDENTIALS -->
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div>
+      <p class="section-eyebrow">The secure foundation</p>
+      <p class="section-title-text">Credential Setup — No Secret Keys in Code</p>
+    </div>
+  </div>
+
+  <p>Before writing a line of Apex, the credentials need to be in place. Stripe's secret key never touches the codebase — it lives in Salesforce's credential framework and is referenced by name.</p>
+
+  <h3>What you need to set up</h3>
+  <ul class="arrow-list">
+    <li><strong>Remote Site Setting</strong> — add <code>https://api.stripe.com</code> so Apex is permitted to call out to Stripe's servers</li>
+    <li><strong>External Credential</strong> (<code>Stripe_API_Credential</code>) — holds the secret key as a Custom Header; the principal's parameter stores the full bearer string</li>
+    <li><strong>Named Credential</strong> (<code>Stripe_API</code>) — references the External Credential; Apex uses <code>callout:Stripe_API</code> to make authenticated calls</li>
+    <li><strong>Permission Set</strong> (<code>Stripe_API_Access</code>) — grants principal access to the External Credential; must be assigned to all running users including the guest user</li>
+    <li><strong>CSP Trusted Sites</strong> — add <code>js.stripe.com</code> and <code>api.stripe.com</code> so the Experience Cloud site can load Stripe's JavaScript assets</li>
+  </ul>
+
+  <div class="screenshot-grid">
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/stripe/external-credential-setup.png" alt="External Credential configuration in Salesforce Setup" />
+      <p class="screenshot-caption">External Credential — Stripe secret key stored securely, never in code</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/stripe/named-credential-setup.png" alt="Named Credential referencing the External Credential" />
+      <p class="screenshot-caption">Named Credential — Apex references this as callout:Stripe_API</p>
+    </div>
+  </div>
+
+  <div class="callout callout-red">
+    <p class="callout-label" style="color:var(--red);">⚠️ The single trickiest credential detail — a multi-hour gotcha</p>
+    <p>In the External Credential's Custom Header, the Authorization header must reference the <strong>inner auth-parameter name</strong>, not the principal's display label:</p>
+    <div style="margin-top:8px;">
+      <code style="display:block;padding:8px 12px;background:rgba(0,0,0,0.08);border-radius:6px;font-size:13px;">Authorization = {!$Credential.Stripe_API_Credential.Authorization}</code>
+    </div>
+    <p style="margin-top:8px;">The inner parameter is literally named <code>Authorization</code>, and its value holds the raw bearer string — so <strong>no</strong> <code>Bearer </code> prefix is needed (the value already is the full token). "Allow Formulas in HTTP Header" must also be checked, or the merge field is treated as literal text. Referencing the principal label instead of the inner parameter name silently fails authentication. This is the kind of thing no quickstart mentions.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- SECTION 3 — TWO-CALL PATTERN -->
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div>
+      <p class="section-eyebrow">A platform rule that shapes the architecture</p>
+      <p class="section-title-text">The Two-Call Pattern — Why DML and Callout Must Be Split</p>
+    </div>
+  </div>
+
+  <p>The enrollment flow makes <strong>two separate Apex calls from the LWC</strong>, not one. This isn't a design preference — it's forced by a hard Salesforce platform rule:</p>
+
+  <div class="callout callout-yellow">
+    <p class="callout-label" style="color:var(--yellow);">⚡ Platform rule</p>
+    <p><strong>You cannot make an HTTP callout after a DML operation in the same transaction.</strong> If a single method creates the Enrollment (DML) and then calls Stripe (callout), Salesforce throws <em>"You have uncommitted work pending."</em></p>
+  </div>
+
+  <p>The solution is to split the work across two transactions:</p>
+
+  <ul class="arrow-list">
+    <li><strong>Call 1 — DML only:</strong> <code>EnrollmentController.createEnrollment</code> — deduplicates the Contact by email, creates the Contact and <code>Enrollment__c</code> (status <em>Pending Payment</em>), returns the new <code>enrollmentId</code>. Commits cleanly with no callout.</li>
+    <li><strong>Call 2 — Callout first, then DML:</strong> <code>StripeCheckoutController.createCheckoutSession</code> — calls Stripe to create the Checkout Session (callout first), then updates the Enrollment with the Session ID and status <em>Awaiting Payment</em> (DML after callout — this is allowed). Returns the Stripe URL to the LWC.</li>
+    <li><strong>LWC chains them:</strong> call one, get the id, call two, redirect to the returned Stripe URL.</li>
+  </ul>
+
+  <div class="callout callout-blue">
+    <p class="callout-label" style="color:var(--accent);">💡 The rule in plain English</p>
+    <p>Callout before DML in a single transaction: allowed. DML before callout: not allowed. Callout then DML (in the same transaction): allowed. The pattern that works is either "callout first, then DML" or "split into two transactions." Here we use both — transaction one is DML-only, transaction two is callout-then-DML.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- SECTION 4 — CHECKOUT CONTROLLER -->
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div>
+      <p class="section-eyebrow">The callout design</p>
+      <p class="section-title-text">The Checkout Controller — What Goes to Stripe</p>
+    </div>
+  </div>
+
+  <p>The checkout controller (<code>StripeCheckoutController</code>) is <code>without sharing</code> — it runs in the guest context and must operate regardless of the guest's record sharing rules. Three design decisions here are worth understanding:</p>
+
+  <h3>Form-encoded, not JSON</h3>
+  <p>Stripe's Checkout Session endpoint expects <strong>form-encoded data</strong>, not JSON. The request body is built as <code>application/x-www-form-urlencoded</code> with keys like <code>line_items[0][price_data][unit_amount]</code>. This trips up developers expecting a JSON API — Stripe's payment endpoints consistently use form encoding.</p>
+
+  <h3>Amount in the smallest currency unit</h3>
+  <div class="callout callout-red">
+    <p class="callout-label" style="color:var(--red);">⚠️ Common bug</p>
+    <p><strong>Stripe amounts are in the smallest currency unit — multiply by 100.</strong> A $55.00 class fee must be sent as <code>5500</code>. Forgetting this results in charging 100× the correct amount. This is a frequent source of "why did it charge $5500?" bugs in testing.</p>
+  </div>
+
+  <h3>The metadata handshake — the most important part</h3>
+  <p>The enrollment record ID is written into Stripe's session metadata in two places:</p>
+  <div class="code-block"><code><span class="code-comment">// Both of these are needed</span>
+metadata[enrollment_id] = enrollmentId
+payment_intent_data[metadata][enrollment_id] = enrollmentId</code></div>
+  <p>Why both? The <code>checkout.session.completed</code> event carries <code>metadata</code>. But this integration uses <code>payment_intent.succeeded</code> — and that event carries <code>payment_intent_data[metadata]</code>. Writing to both covers either event type. The webhook uses the <code>enrollment_id</code> from metadata to find the exact record to confirm. Miss this and the webhook arrives but has nothing to update.</p>
+
+  <hr class="divider" />
+
+  <!-- SECTION 5 — WEBHOOK HANDLER -->
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <div>
+      <p class="section-eyebrow">The hard part</p>
+      <p class="section-title-text">The Webhook Handler — Architecture and Design</p>
+    </div>
+  </div>
+
+  <p>When Stripe finishes processing a payment, it sends a POST request to a public Salesforce REST endpoint. This is the piece that took the most work to get right — across four separate problems I'll detail in the next section. Here's how the handler is designed:</p>
+
+  <div class="code-block"><code><span class="code-annotation">@RestResource</span>(urlMapping=<span class="code-string">'/stripe/webhook/*'</span>)
+<span class="code-keyword">global without sharing class</span> StripeWebhookHandler {
+    <span class="code-annotation">@HttpPost</span>
+    <span class="code-keyword">global static void</span> handleWebhook() {
+        <span class="code-comment">// Parse → find record → update → return 200</span>
+    }
+}</code></div>
+
+  <ul class="arrow-list">
+    <li>Must be <code>global</code> — not <code>public</code>. Sites REST exposure requires global visibility</li>
+    <li>The wildcard <code>/*</code> in urlMapping is required — without it Salesforce does exact-match only and rejects Stripe's calls</li>
+    <li>The public URL is at the <strong>site root</strong>, not under the site path: <code>https://&lt;site-domain&gt;/services/apexrest/stripe/webhook</code> — there is no <code>/sda/</code> segment in the URL</li>
+    <li>Always returns <strong>HTTP 200</strong> — even on internal errors. If Stripe receives anything other than 2xx, it enters a multi-day retry storm. Internal problems are logged separately, never surfaced to Stripe as errors</li>
+    <li>Payload is parsed with <code>JSON.deserializeUntyped</code> into a <code>Map&lt;String, Object&gt;</code> — handles Stripe's evolving, deeply-nested payload without brittle typed wrappers</li>
+    <li>Branches on metadata key — <code>enrollment_id</code> for class enrollments, <code>rsvp_id</code> for event RSVPs — handles both record types from one endpoint</li>
+  </ul>
+
+  <div class="screenshot-wrap">
+    <img class="screenshot-img" src="images/stripe/webhook-endpoint-url.png" alt="Stripe dashboard showing the configured webhook endpoint URL" />
+    <p class="screenshot-caption">Stripe dashboard — webhook endpoint pointing to the Salesforce REST endpoint URL</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- SECTION 6 — THE WEBHOOK SAGA -->
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <div>
+      <p class="section-eyebrow">Where the real learning happened</p>
+      <p class="section-title-text">The Webhook Saga — Four Problems, Four Fixes</p>
+    </div>
+  </div>
+
+  <p>Getting the webhook working end-to-end took four separate debugging sessions. Each problem was independent — fixing one revealed the next. This section is the most valuable part of this article because these are the non-obvious issues that don't appear in tutorials.</p>
+
+  <div class="issue-grid">
+
+    <div class="issue-card">
+      <div class="issue-card-header">
+        <span class="issue-num">Problem 01</span>
+        <div class="issue-title">"You do not have access to the Apex class" — guest REST access across multiple sites</div>
+      </div>
+      <div class="issue-body">
+        <div>
+          <div class="issue-section-label">Symptom</div>
+          <div class="issue-text">After payment, Stripe called the webhook endpoint and got "You do not have access to the Apex class." Enrollments never got confirmed. Stalled for days — the standard fix of enabling the class on the site's guest profile wasn't working.</div>
+        </div>
+        <div>
+          <div class="issue-section-label">Root cause</div>
+          <div class="issue-text">The org had <strong>multiple sites</strong> — the main SDA site, a default help center, and an <code>esw_*</code> site auto-created by the Agentforce/Embedded Service deployment. The Apex class was enabled on the main site's guest profile, but the REST call was resolving against one of the other sites' guest context.</div>
+        </div>
+        <div class="issue-fix">
+          <div class="issue-section-label">Fix</div>
+          <div class="issue-text">Grant the Apex class on the guest profile of <strong>all sites in the org</strong> — Setup → Sites → [each site] → Public Access Settings → Apex Class Access. One site isn't enough when multiple exist.</div>
+        </div>
+        <div class="issue-lesson">
+          <div class="issue-section-label">Lesson</div>
+          <div class="issue-text">Two guest profiles exist conceptually: the <strong>Experience Cloud guest profile</strong> (controls pages and components) and the <strong>Sites guest profile</strong> (controls <code>/services/apexrest/</code> REST endpoints). The webhook uses the latter. In a multi-site org, both must be configured on every site.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="issue-card">
+      <div class="issue-card-header">
+        <span class="issue-num">Problem 02</span>
+        <div class="issue-title">"Internal error logged" on every event — typed wrapper + string replace broke on Stripe's newer payload</div>
+      </div>
+      <div class="issue-body">
+        <div>
+          <div class="issue-section-label">Symptom</div>
+          <div class="issue-text">Once reachable, the webhook returned HTTP 200 but with "Internal error logged" — hitting the catch block on every call. Nothing updated.</div>
+        </div>
+        <div>
+          <div class="issue-section-label">Root cause</div>
+          <div class="issue-text">The original handler used typed Apex wrapper classes plus a string <code>.replace('"object":', '"object_x":')</code> trick to work around Apex reserved words (<code>object</code>, <code>currency</code>). Stripe's newer API version sends a much richer, deeply-nested payload. The blunt string replacement was corrupting string <em>values</em> (like <code>"object": "event"</code>), breaking deserialization entirely.</div>
+        </div>
+        <div class="issue-fix">
+          <div class="issue-section-label">Fix</div>
+          <div class="issue-text">Rewrote the handler to parse with <code>JSON.deserializeUntyped</code> into a <code>Map&lt;String, Object&gt;</code>. Reserved words become harmless map keys. Extra fields in the payload are simply ignored. The rewrite also made the handler surface the real error text in the HTTP response — which meant the next problem became immediately visible in Stripe's dashboard.</div>
+        </div>
+        <div class="issue-lesson">
+          <div class="issue-section-label">Lesson</div>
+          <div class="issue-text">Parse evolving third-party payloads with untyped JSON, not rigid typed wrappers. Typed wrappers work until the payload evolves — then they break silently or with generic errors. Untyped is more verbose but far more resilient.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="issue-card">
+      <div class="issue-card-header">
+        <span class="issue-num">Problem 03</span>
+        <div class="issue-title">Handler returns "OK" but enrollment never updates — sharing context</div>
+      </div>
+      <div class="issue-body">
+        <div>
+          <div class="issue-section-label">Symptom</div>
+          <div class="issue-text">The rewritten handler returned HTTP 200 with "OK," but the enrollment status didn't change. The only silent path was "record not found" — the SOQL was returning zero rows even though the enrollment definitely existed.</div>
+        </div>
+        <div>
+          <div class="issue-section-label">Root cause</div>
+          <div class="issue-text">The handler was <code>with sharing</code>. It runs as the Site Guest User — a different user from the one who created the enrollment. In Salesforce's sharing model, a different user in a separate transaction can't see records created by another user unless sharing is explicitly opened. The query returned zero rows because the guest user running the webhook had no visibility of the guest-created enrollment.</div>
+        </div>
+        <div class="issue-fix">
+          <div class="issue-section-label">Fix</div>
+          <div class="issue-text">Changed the handler to <code>without sharing</code>. It now runs in system context and can find and update any record regardless of sharing rules.</div>
+        </div>
+        <div class="issue-lesson">
+          <div class="issue-section-label">Lesson</div>
+          <div class="issue-text">A webhook is a trusted server-to-server caller, not an end user. <code>without sharing</code> is the correct and appropriate choice — this isn't bypassing security for a person, it's a backend integration that needs to operate on records regardless of who created them.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="issue-card">
+      <div class="issue-card-header">
+        <span class="issue-num">Problem 04</span>
+        <div class="issue-title">Two field/config errors on the final stretch — Flow email and restricted picklist</div>
+      </div>
+      <div class="issue-body">
+        <div>
+          <div class="issue-section-label">Symptom</div>
+          <div class="issue-text">With visibility fixed, two precise errors surfaced in turn: first <code>CANNOT_EXECUTE_FLOW_TRIGGER</code> blocking the confirmation email, then <code>INVALID_OR_NULL_FOR_RESTRICTED_PICKLIST</code> on <code>Currency_Code__c</code>.</div>
+        </div>
+        <div>
+          <div class="issue-section-label">Root cause</div>
+          <div class="issue-text">The confirmation Flow's email action used a sender whose domain wasn't verified in Salesforce. Separately, <code>Currency_Code__c</code> was a restricted picklist that didn't include the currency value being written by the webhook.</div>
+        </div>
+        <div class="issue-fix">
+          <div class="issue-section-label">Fix</div>
+          <div class="issue-text">Configured and used a verified <strong>Org-Wide Email Address</strong> as the sender in the Flow. Added the correct currency value to the restricted picklist.</div>
+        </div>
+        <div class="issue-lesson">
+          <div class="issue-section-label">Lesson</div>
+          <div class="issue-text">Restricted picklists must include every value your code writes — code and metadata must agree. Automated emails need a verified sender. After fixing these two, the full chain worked end to end for the first time.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <hr class="divider" />
+
+  <!-- SECTION 7 — CURRENCY -->
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <div>
+      <p class="section-eyebrow">A latent inconsistency</p>
+      <p class="section-title-text">Currency Reconciliation — When Org, Data, and Display Drift Apart</p>
+    </div>
+  </div>
+
+  <p>During live testing a revealing problem surfaced: the org, class fees, and enrollment amounts were all in <strong>USD</strong>, but the website displayed <strong>£</strong> and Stripe was charging in <strong>GBP</strong>. The project had started with a UK-academy framing and the org was actually USD — the two had drifted without anyone noticing.</p>
+
+  <p>The fix required changes in three places: the currency value passed from the LWC (<code>'gbp'</code> → <code>'usd'</code>), the display symbol (<code>£</code> → <code>$</code>), and adding USD to the restricted picklist. But the interesting part was finding the bug — searching the LWC markup for a <code>£</code> character returned nothing, because <strong>the pound symbol was being generated by locale-based JavaScript number formatting</strong>, not written as a literal character in the HTML.</p>
+
+  <div class="callout callout-yellow">
+    <p class="callout-label" style="color:var(--yellow);">💡 Lesson</p>
+    <p>Currency must agree across four places: org settings, data values, display formatting, and payment gateway. Currency symbols in JavaScript are often produced by <code>Intl.NumberFormat</code> or equivalent locale formatters — searching markup for the symbol itself won't find them. Search for the formatter configuration instead.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- SECTION 8 — TESTING -->
+  <div class="section-header">
+    <div class="section-num">8</div>
+    <div>
+      <p class="section-eyebrow">How to validate it works</p>
+      <p class="section-title-text">Testing the Pipeline</p>
+    </div>
+  </div>
+
+  <p>Once the integration is wired up, here's how to test and debug efficiently:</p>
+
+  <ul class="arrow-list">
+    <li><strong>Stripe test card:</strong> <code>4242 4242 4242 4242</code>, any future expiry, any CVC — simulates a successful payment every time</li>
+    <li><strong>Stripe "Resend":</strong> in the Stripe dashboard, find a delivered webhook event and click Resend — this re-fires the webhook to your endpoint without making a new payment. Invaluable for iterating on the handler without running the full enrollment flow each time</li>
+    <li><strong>Guest user debug logs:</strong> the webhook runs as the Site Guest User, not your admin user. To capture its debug log, add the Site Guest User as a traced entity in Setup → Debug Logs. Remember the trace flag expires — a webhook firing after expiry leaves no log</li>
+    <li><strong>Return real error text:</strong> make the handler include the actual exception message in its HTTP response body. Stripe's dashboard shows this text — often faster than hunting the debug log for the same error</li>
+    <li><strong>Verify the records:</strong> after a test payment, always check: Enrollment status = Confirmed, a <code>Payment__c</code> row with correct amount and currency, and the confirmation email arrived</li>
+  </ul>
+
+  <div class="screenshot-wrap">
+    <img class="screenshot-img" src="images/stripe/enrollment-confirmed-record.png" alt="Enrollment record showing Confirmed status and linked Payment record" />
+    <p class="screenshot-caption">The end state — Enrollment confirmed, Payment__c audit record created, email sent</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- LESSONS CHECKLIST -->
+  <h2>Lessons Checklist</h2>
+  <p>Everything from this build distilled into a scan-able reference:</p>
+
+  <div class="checklist">
+    <div class="checklist-title">The Stripe + Salesforce integration checklist</div>
+    <ul>
+      <li>Store the secret key in an External/Named Credential — never in code</li>
+      <li>Reference the <em>inner auth-parameter name</em> (<code>Authorization</code>), not the principal label, in the Custom Header</li>
+      <li>Enable "Allow Formulas in HTTP Header" — without it the merge field is literal text</li>
+      <li>Split DML and callout across two transactions — one LWC call for DML, one for callout</li>
+      <li>Stripe Checkout uses form-encoded bodies — not JSON</li>
+      <li>Multiply currency amounts by 100 — Stripe works in the smallest unit</li>
+      <li>Write the record ID into both <code>metadata</code> and <code>payment_intent_data[metadata]</code></li>
+      <li>Webhook class must be <code>global</code> with a <code>/*</code> wildcard urlMapping</li>
+      <li>Webhook URL is at <code>/services/apexrest/</code> — no site path prefix</li>
+      <li>Always return HTTP 200 to Stripe — log errors internally, never surface them as non-200</li>
+      <li>Enable Apex class access on <em>every</em> site's guest profile in a multi-site org</li>
+      <li>Use <code>JSON.deserializeUntyped</code> — not typed wrappers — for webhook payloads</li>
+      <li>Webhook handler must be <code>without sharing</code> to find guest-created records</li>
+      <li>Restricted picklists must include every value the code writes</li>
+      <li>Use Stripe's "Resend" and surface real error text in the response to debug fast</li>
+      <li>Currency must agree across org, data, display, and gateway — symbols may come from JS formatters</li>
+    </ul>
+  </div>
+
+  <div class="try-it">
+    <h3>See it live</h3>
+    <p>The full payment pipeline is live. Use Stripe test card <strong style="color:rgba(255,255,255,0.85);">4242 4242 4242 4242</strong>, any future date, any CVC. Use a real email to receive the confirmation.</p>
+    <div class="try-links">
+      <a class="try-link try-link-primary" href="https://saidanceacademy-dev-ed.develop.my.site.com/sda" target="_blank">Visit Sai Dance Academy →</a>
+      <a class="try-link" href="blog-agentforce-salesforce.html">Read Sub-post 2: Agentforce →</a>
+      <a class="try-link" href="blog-sai-dance-academy-part1.html">← Project overview</a>
+    </div>
+  </div>
+
+  <p style="font-size:13px;color:var(--text-muted);margin-top:2rem;">Salesforce Experience Cloud (LWR) · Apex · Stripe Checkout · Named Credentials · Guest User Context · Record-Triggered Flow</p>
+
+</article>
+
+<div class="article-footer">
+  <a class="back-link" href="index.html#blog">← Back to all posts</a>
+  <a class="share-btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https://supriyajnagesh.com/blog-stripe-salesforce.html" target="_blank">Share on LinkedIn</a>
+</div>
+
+<div class="more-section">
+  <div class="more-inner">
+    <p class="more-label">Continue reading</p>
+    <div class="related-grid">
+      <a class="related-card" href="blog-agentforce-salesforce.html" style="border-color:#7c3aed;background:#f5f3ff;">
+        <p class="related-tag" style="color:#7c3aed;">✦ Sub-post 2 of 2</p>
+        <p class="related-title" style="color:#4c1d95;">Building and Deploying a Live Agentforce Agent — grounded in real data, live for guests</p>
+      </a>
+      <a class="related-card" href="blog-sai-dance-academy-part1.html">
+        <p class="related-tag">Project overview</p>
+        <p class="related-title">Sai Dance Academy Part 1 — Architecture, data model, and user journeys</p>
+      </a>
+      <a class="related-card" href="blog-sai-dance-academy-part2.html">
+        <p class="related-tag">Project deep-dive</p>
+        <p class="related-title">Sai Dance Academy Part 2 — The hard parts, 14 issues documented</p>
+      </a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <small>© 2026 Supriya Nagesh · supriyajnagesh.com</small>
+  <a href="https://www.linkedin.com/in/supriya-nagesh" target="_blank">LinkedIn</a>
+</footer>
+
+</body>
+</html>
