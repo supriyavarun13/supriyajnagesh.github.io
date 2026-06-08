@@ -52,12 +52,8 @@
     .btn-hero-ghost { background: transparent; color: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.25); }
     .btn-hero-ghost:hover { background: rgba(255,255,255,0.08); color: white; }
 
+    /* SECTION INNER */
     .section-inner { max-width: 900px; margin: 0 auto; }
-    .section-inner .section-eyebrow { margin-bottom: 0.5rem; }
-    .section-inner .about-grid { margin: 0; }
-    .section-inner .skills-wrapper { margin: 0; max-width: 100%; }
-    .section-inner .blog-wrapper { margin: 0; }
-    .section-inner .contact-wrapper { margin: 0; }
 
     /* SECTIONS */
     section { padding: 5rem 2.5rem; }
@@ -65,10 +61,9 @@
     .section-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
     .section-title { font-family: 'DM Serif Display', serif; font-size: clamp(24px, 4vw, 32px); font-weight: 400; color: var(--navy); margin-bottom: 0.5rem; }
     .section-subtitle { font-size: 15px; color: var(--text-muted); max-width: 520px; margin-bottom: 2.5rem; }
-    .section-inner { max-width: 960px; margin: 0 auto; }
 
     /* ABOUT */
-    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; max-width: 900px; margin: 0; }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
     .about-text p { font-size: 15px; color: #374151; line-height: 1.8; margin-bottom: 1rem; max-width: 420px; }
     .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
     .stat-box { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; text-align: center; }
@@ -76,63 +71,24 @@
     .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 
     /* SKILLS — Trailhead hexagon badge style */
-    .skills-wrapper { max-width: 900px; margin: 0; }
+    .skills-wrapper { max-width: 900px; }
     .skills-group { margin-bottom: 2.5rem; }
-    .skills-group-label {
-      font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
-      text-transform: uppercase; color: #0176d3;
-      margin-bottom: 1.25rem; display: flex; align-items: center; gap: 8px;
-    }
+    .skills-group-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #0176d3; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 8px; }
     .skills-group-label::after { content: ''; flex: 1; height: 1px; background: #e5e5e5; }
     .skills-pills { display: flex; flex-wrap: wrap; gap: 6px 4px; }
-
-    /* Hexagon badge */
-    .skill-pill {
-      position: relative;
-      width: 96px;
-      height: 108px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      font-size: 11px;
-      font-weight: 600;
-      color: white;
-      line-height: 1.3;
-      padding: 0 10px;
-      cursor: default;
-      transition: transform 0.18s, filter 0.18s;
-      background: transparent;
-      border: none;
-    }
-    .skill-pill::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: #e8f3ff;
-      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-      transition: background 0.18s;
-      z-index: 0;
-    }
-    .skill-pill span {
-      position: relative;
-      z-index: 1;
-      color: #0176d3;
-    }
+    .skill-pill { position: relative; width: 96px; height: 108px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 11px; font-weight: 600; line-height: 1.3; padding: 0 10px; cursor: default; transition: transform 0.18s, filter 0.18s; background: transparent; border: none; }
+    .skill-pill::before { content: ''; position: absolute; inset: 0; background: #e8f3ff; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); transition: background 0.18s; z-index: 0; }
+    .skill-pill span { position: relative; z-index: 1; color: #0176d3; }
     .skill-pill:hover span { color: white; }
     .skill-pill:hover { transform: translateY(-3px); filter: drop-shadow(0 4px 8px rgba(1,118,211,0.35)); }
     .skill-pill:hover::before { background: #0176d3; }
-
-    /* Exploring variant */
     .skill-pill.exploring::before { background: #fef3c7; }
     .skill-pill.exploring span { color: #92400e; }
     .skill-pill.exploring:hover::before { background: #f59e0b; }
     .skill-pill.exploring:hover span { color: white; }
 
     /* PROJECTS */
-    .projects-wrapper { max-width: 900px; margin: 0 auto; }
-
-    /* Salesforce Record Card */
+    .projects-wrapper { max-width: 900px; margin: 0 auto; padding: 0 2.5rem; }
     .sf-record-card { background: white; border: 1px solid #dddbda; border-radius: 8px; overflow: hidden; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: box-shadow 0.2s; }
     .sf-record-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.14); }
     .sf-record-header { background: #0176d3; padding: 0.75rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
@@ -168,11 +124,11 @@
     .sf-in-progress { background: #f3f3f3; border-top: 1px solid #e5e5e5; padding: 0.75rem 1.5rem; font-size: 13px; color: #706e6b; display: flex; align-items: center; gap: 8px; }
 
     /* BLOG */
-    .blog-wrapper { max-width: 900px; margin: 0 auto; }
+    .blog-wrapper { max-width: 900px; }
     .blog-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; }
     .blog-card { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; transition: box-shadow 0.2s, border-color 0.2s; cursor: pointer; }
     .blog-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.07); border-color: #c7d8ec; }
-    .blog-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 0.75rem; display: flex; gap: 8px; align-items: center; }
+    .blog-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 0.75rem; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
     .blog-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--border); }
     .blog-tag { font-size: 11px; padding: 2px 8px; background: var(--accent-light); color: #1a5fa8; border-radius: 4px; }
     .blog-title { font-size: 15px; font-weight: 500; color: var(--navy); line-height: 1.5; margin-bottom: 0.5rem; }
@@ -183,10 +139,10 @@
     #testimonials .section-eyebrow { color: rgba(255,255,255,0.45); }
     #testimonials .section-title { color: white; }
     #testimonials .section-subtitle { color: rgba(255,255,255,0.55); }
-    .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-top: 0; }
+    .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; }
     .testimonial-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-lg); padding: 1.75rem; display: flex; flex-direction: column; gap: 1.25rem; transition: background 0.2s; }
     .testimonial-card:hover { background: rgba(255,255,255,0.09); }
-    .testimonial-quote { font-size: 15px; line-height: 1.75; color: rgba(255,255,255,0.8); font-style: italic; flex: 1; position: relative; padding-top: 0.25rem; }
+    .testimonial-quote { font-size: 15px; line-height: 1.75; color: rgba(255,255,255,0.8); font-style: italic; flex: 1; padding-top: 0.25rem; }
     .testimonial-quote::before { content: '\201C'; font-family: 'DM Serif Display', serif; font-size: 48px; line-height: 1; color: var(--accent); display: block; margin-bottom: 0.25rem; }
     .testimonial-author { display: flex; align-items: center; gap: 12px; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
     .testimonial-avatar { width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; background: linear-gradient(135deg, var(--accent), #1a5fa8); display: flex; align-items: center; justify-content: center; font-family: 'DM Serif Display', serif; font-size: 14px; color: white; }
@@ -199,7 +155,7 @@
     .btn-testimonial:hover { background: rgba(255,255,255,0.1); color: white; border-color: rgba(255,255,255,0.4); }
 
     /* CONTACT */
-    .contact-wrapper { display: grid; grid-template-columns: 1fr 1.4fr; gap: 4rem; max-width: 860px; align-items: start; margin: 0 auto; }
+    .contact-wrapper { display: grid; grid-template-columns: 1fr 1.4fr; gap: 4rem; align-items: start; }
     .contact-info p { font-size: 15px; color: var(--text-muted); line-height: 1.8; margin-bottom: 1.5rem; }
     .contact-item { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; font-size: 14px; color: var(--text-muted); }
     .contact-item svg { width: 16px; height: 16px; flex-shrink: 0; }
@@ -232,6 +188,7 @@
       .contact-wrapper { grid-template-columns: 1fr; gap: 2rem; }
       .form-row { grid-template-columns: 1fr; }
       footer { padding: 1.5rem 1.25rem; }
+      .projects-wrapper { padding: 0 1.25rem; }
     }
   </style>
 </head>
@@ -267,100 +224,103 @@
   </div>
 </header>
 
+<!-- ABOUT -->
 <section id="about">
   <div class="section-inner">
-  <p class="section-eyebrow">About</p>
-  <h2 class="section-title">A bit about me</h2>
-  <div class="about-grid">
-    <div class="about-text">
-      <p>I'm a Salesforce professional with 7+ years of experience delivering across Sales Cloud, Service Cloud, and Experience Cloud. I've worked as a hybrid developer, administrator, and production support engineer — often across multiple client orgs simultaneously — building automation, resolving production issues, and stabilising systems under pressure.</p>
-      <p>My background spans custom Apex and Flow development, third-party integrations (DocuSign, AssureSign, Litify Inbox, Docrio, Twilio), CI/CD with Gearset, and data migration — alongside the less glamorous but equally critical work: UAT support, root cause analysis, and stepping into under-documented orgs and making them stable. I take ownership of problems, not just tasks.</p>
-      <p>I believe in making technical work visible. The portfolio projects and articles on this site are rebuilt in dev orgs to show the work, since real client orgs live behind NDAs — the patterns are drawn directly from real delivery experience. I also mentor aspiring Salesforce admins and am actively building toward Agentforce, with portfolio projects in progress.</p>
+    <p class="section-eyebrow">About</p>
+    <h2 class="section-title">A bit about me</h2>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>I'm a Salesforce professional with 7+ years of experience delivering across Sales Cloud, Service Cloud, and Experience Cloud. I've worked as a hybrid developer, administrator, and production support engineer — often across multiple client orgs simultaneously — building automation, resolving production issues, and stabilising systems under pressure.</p>
+        <p>My background spans custom Apex and Flow development, third-party integrations (DocuSign, AssureSign, Litify Inbox, Docrio, Twilio), CI/CD with Gearset, and data migration — alongside the less glamorous but equally critical work: UAT support, root cause analysis, and stepping into under-documented orgs and making them stable. I take ownership of problems, not just tasks.</p>
+        <p>I believe in making technical work visible. The portfolio projects and articles on this site are rebuilt in dev orgs to show the work, since real client orgs live behind NDAs — the patterns are drawn directly from real delivery experience. I also mentor aspiring Salesforce admins and am actively building toward Agentforce, with portfolio projects in progress.</p>
+      </div>
+      <div class="about-stats">
+        <div class="stat-box"><div class="stat-num">7+</div><div class="stat-label">Years in Salesforce</div></div>
+        <div class="stat-box"><div class="stat-num">4</div><div class="stat-label">Certifications</div></div>
+        <div class="stat-box"><div class="stat-num">10+</div><div class="stat-label">Projects delivered</div></div>
+        <div class="stat-box"><div class="stat-num">4</div><div class="stat-label">Clouds expertise</div></div>
+      </div>
     </div>
-    <div class="about-stats">
-      <div class="stat-box"><div class="stat-num">7+</div><div class="stat-label">Years in Salesforce</div></div>
-      <div class="stat-box"><div class="stat-num">4</div><div class="stat-label">Certifications</div></div>
-      <div class="stat-box"><div class="stat-num">10+</div><div class="stat-label">Projects delivered</div></div>
-      <div class="stat-box"><div class="stat-num">4</div><div class="stat-label">Clouds expertise</div></div>
-    </div>
-  </div>
   </div>
 </section>
 
+<!-- SKILLS -->
 <section id="skills">
   <div class="section-inner">
-  <p class="section-eyebrow">Expertise</p>
-  <h2 class="section-title">Skills &amp; tools</h2>
-  <p class="section-subtitle">Technologies and Salesforce features I work with regularly.</p>
-  <div class="skills-wrapper">
-    <div class="skills-group">
-      <p class="skills-group-label">Salesforce Platform</p>
-      <div class="skills-pills">
-        <span class="skill-pill"><span>Salesforce Administration</span></span>
-        <span class="skill-pill"><span>Sales Cloud</span></span>
-        <span class="skill-pill"><span>Service Cloud</span></span>
-        <span class="skill-pill"><span>Experience Cloud</span></span>
-        <span class="skill-pill"><span>Lightning Experience</span></span>
-        <span class="skill-pill"><span>Apex</span></span>
-        <span class="skill-pill"><span>SOQL</span></span>
-        <span class="skill-pill"><span>SOSL</span></span>
-        <span class="skill-pill"><span>Invocable Apex</span></span>
-        <span class="skill-pill"><span>Salesforce Flow</span></span>
-        <span class="skill-pill"><span>Screen Flow</span></span>
-        <span class="skill-pill"><span>Record-Triggered Flow</span></span>
-        <span class="skill-pill"><span>Validation Rules</span></span>
-        <span class="skill-pill"><span>Aura Components</span></span>
-        <span class="skill-pill"><span>Visualforce</span></span>
-        <span class="skill-pill"><span>Security &amp; MFA</span></span>
-        <span class="skill-pill"><span>User Access Management</span></span>
-        <span class="skill-pill"><span>Process Optimization</span></span>
+    <p class="section-eyebrow">Expertise</p>
+    <h2 class="section-title">Skills &amp; tools</h2>
+    <p class="section-subtitle">Technologies and Salesforce features I work with regularly.</p>
+    <div class="skills-wrapper">
+      <div class="skills-group">
+        <p class="skills-group-label">Salesforce Platform</p>
+        <div class="skills-pills">
+          <span class="skill-pill"><span>Salesforce Administration</span></span>
+          <span class="skill-pill"><span>Sales Cloud</span></span>
+          <span class="skill-pill"><span>Service Cloud</span></span>
+          <span class="skill-pill"><span>Experience Cloud</span></span>
+          <span class="skill-pill"><span>Lightning Experience</span></span>
+          <span class="skill-pill"><span>Apex</span></span>
+          <span class="skill-pill"><span>SOQL</span></span>
+          <span class="skill-pill"><span>SOSL</span></span>
+          <span class="skill-pill"><span>Invocable Apex</span></span>
+          <span class="skill-pill"><span>Salesforce Flow</span></span>
+          <span class="skill-pill"><span>Screen Flow</span></span>
+          <span class="skill-pill"><span>Record-Triggered Flow</span></span>
+          <span class="skill-pill"><span>Validation Rules</span></span>
+          <span class="skill-pill"><span>Aura Components</span></span>
+          <span class="skill-pill"><span>Visualforce</span></span>
+          <span class="skill-pill"><span>Security &amp; MFA</span></span>
+          <span class="skill-pill"><span>User Access Management</span></span>
+          <span class="skill-pill"><span>Process Optimization</span></span>
+        </div>
+      </div>
+      <div class="skills-group">
+        <p class="skills-group-label">Integration / DevOps</p>
+        <div class="skills-pills">
+          <span class="skill-pill"><span>REST API</span></span>
+          <span class="skill-pill"><span>Salesforce Integrations</span></span>
+          <span class="skill-pill"><span>DocuSign Integration</span></span>
+          <span class="skill-pill"><span>AssureSign</span></span>
+          <span class="skill-pill"><span>Litify Inbox</span></span>
+          <span class="skill-pill"><span>Docrio</span></span>
+          <span class="skill-pill"><span>CI/CD</span></span>
+          <span class="skill-pill"><span>Gearset</span></span>
+          <span class="skill-pill"><span>Release Management</span></span>
+        </div>
+      </div>
+      <div class="skills-group">
+        <p class="skills-group-label">Data / Delivery</p>
+        <div class="skills-pills">
+          <span class="skill-pill"><span>Data Loader</span></span>
+          <span class="skill-pill"><span>Data Migration</span></span>
+          <span class="skill-pill"><span>Data Cleanup</span></span>
+          <span class="skill-pill"><span>UAT Support</span></span>
+          <span class="skill-pill"><span>Technical Documentation</span></span>
+          <span class="skill-pill"><span>Troubleshooting</span></span>
+          <span class="skill-pill"><span>Root Cause Analysis</span></span>
+          <span class="skill-pill"><span>Solution Design</span></span>
+          <span class="skill-pill"><span>Cross-functional Collaboration</span></span>
+          <span class="skill-pill"><span>Agile / Jira</span></span>
+        </div>
+      </div>
+      <div class="skills-group">
+        <p class="skills-group-label">Currently Exploring</p>
+        <div class="skills-pills">
+          <span class="skill-pill exploring"><span>Agentforce ✦ In progress</span></span>
+          <span class="skill-pill exploring"><span>LWC ✦ In progress</span></span>
+        </div>
       </div>
     </div>
-    <div class="skills-group">
-      <p class="skills-group-label">Integration / DevOps</p>
-      <div class="skills-pills">
-        <span class="skill-pill"><span>REST API</span></span>
-        <span class="skill-pill"><span>Salesforce Integrations</span></span>
-        <span class="skill-pill"><span>DocuSign Integration</span></span>
-        <span class="skill-pill"><span>AssureSign</span></span>
-        <span class="skill-pill"><span>Litify Inbox</span></span>
-        <span class="skill-pill"><span>Docrio</span></span>
-        <span class="skill-pill"><span>CI/CD</span></span>
-        <span class="skill-pill"><span>Gearset</span></span>
-        <span class="skill-pill"><span>Release Management</span></span>
-      </div>
-    </div>
-    <div class="skills-group">
-      <p class="skills-group-label">Data / Delivery</p>
-      <div class="skills-pills">
-        <span class="skill-pill"><span>Data Loader</span></span>
-        <span class="skill-pill"><span>Data Migration</span></span>
-        <span class="skill-pill"><span>Data Cleanup</span></span>
-        <span class="skill-pill"><span>UAT Support</span></span>
-        <span class="skill-pill"><span>Technical Documentation</span></span>
-        <span class="skill-pill"><span>Troubleshooting</span></span>
-        <span class="skill-pill"><span>Root Cause Analysis</span></span>
-        <span class="skill-pill"><span>Solution Design</span></span>
-        <span class="skill-pill"><span>Cross-functional Collaboration</span></span>
-        <span class="skill-pill"><span>Agile / Jira</span></span>
-      </div>
-    </div>
-    <div class="skills-group">
-      <p class="skills-group-label">Currently Exploring</p>
-      <div class="skills-pills">
-        <span class="skill-pill exploring"><span>Agentforce ✦ In progress</span></span>
-        <span class="skill-pill exploring"><span>LWC ✦ In progress</span></span>
-      </div>
-    </div>
-  </div>
   </div>
 </section>
 
+<!-- PROJECTS -->
 <section id="projects">
   <div class="section-inner">
-  <p class="section-eyebrow">Work</p>
-  <h2 class="section-title">Project case studies</h2>
-  <p class="section-subtitle">Production-pattern Salesforce builds, documented so the thinking is visible.</p>
+    <p class="section-eyebrow">Work</p>
+    <h2 class="section-title">Project case studies</h2>
+    <p class="section-subtitle">Production-pattern Salesforce builds, documented so the thinking is visible.</p>
   </div>
   <div class="projects-wrapper">
 
@@ -390,18 +350,9 @@
       </div>
       <div class="sf-record-body">
         <div class="sf-fields">
-          <div>
-            <div class="sf-field-label">Status</div>
-            <div class="sf-field-value green">✅ Completed</div>
-          </div>
-          <div>
-            <div class="sf-field-label">Cloud</div>
-            <div class="sf-field-value blue">Experience Cloud</div>
-          </div>
-          <div>
-            <div class="sf-field-label">Type</div>
-            <div class="sf-field-value">Full-stack portal</div>
-          </div>
+          <div><div class="sf-field-label">Status</div><div class="sf-field-value green">✅ Completed</div></div>
+          <div><div class="sf-field-label">Cloud</div><div class="sf-field-value blue">Experience Cloud</div></div>
+          <div><div class="sf-field-label">Type</div><div class="sf-field-value">Full-stack portal</div></div>
         </div>
         <div class="sf-features-label">Features Used</div>
         <div class="sf-features">
@@ -428,8 +379,6 @@
             View BRD
           </a>
         </div>
-      </div>
-    </div>
       </div>
     </div>
 
@@ -459,18 +408,9 @@
       </div>
       <div class="sf-record-body">
         <div class="sf-fields">
-          <div>
-            <div class="sf-field-label">Status</div>
-            <div class="sf-field-value green">✅ Completed</div>
-          </div>
-          <div>
-            <div class="sf-field-label">Priority</div>
-            <div class="sf-field-value" style="color:#ba0517;">🔴 High</div>
-          </div>
-          <div>
-            <div class="sf-field-label">Test Cases</div>
-            <div class="sf-field-value">14 verified</div>
-          </div>
+          <div><div class="sf-field-label">Status</div><div class="sf-field-value green">✅ Completed</div></div>
+          <div><div class="sf-field-label">Priority</div><div class="sf-field-value" style="color:#ba0517;">🔴 High</div></div>
+          <div><div class="sf-field-label">Test Cases</div><div class="sf-field-value">14 verified</div></div>
         </div>
         <div class="sf-features-label">Features Used</div>
         <div class="sf-features">
@@ -520,18 +460,9 @@
       </div>
       <div class="sf-record-body">
         <div class="sf-fields">
-          <div>
-            <div class="sf-field-label">Status</div>
-            <div class="sf-field-value orange">⏳ In Progress</div>
-          </div>
-          <div>
-            <div class="sf-field-label">Cloud</div>
-            <div class="sf-field-value" style="color:#2e844a;">Nonprofit Cloud</div>
-          </div>
-          <div>
-            <div class="sf-field-label">Type</div>
-            <div class="sf-field-value">Case management</div>
-          </div>
+          <div><div class="sf-field-label">Status</div><div class="sf-field-value orange">⏳ In Progress</div></div>
+          <div><div class="sf-field-label">Cloud</div><div class="sf-field-value" style="color:#2e844a;">Nonprofit Cloud</div></div>
+          <div><div class="sf-field-label">Type</div><div class="sf-field-value">Case management</div></div>
         </div>
         <div class="sf-features-label">Planned Features</div>
         <div class="sf-features">
@@ -552,151 +483,155 @@
   </div>
 </section>
 
+<!-- BLOG -->
 <section id="blog">
   <div class="section-inner">
-  <p class="section-eyebrow">Writing</p>
-  <h2 class="section-title">Blog</h2>
-  <p class="section-subtitle">Notes, guides, and lessons from working inside the Salesforce ecosystem.</p>
-  <div class="blog-wrapper">
-    <div class="blog-grid">
-      <a class="blog-card" href="blog-sai-dance-academy-part1.html" style="text-decoration:none;color:inherit;display:block;border-color:#fbbf24;">
-        <div class="blog-meta">
-          <span style="color:#d97706;font-weight:600;">✦ 2-Part Series</span>
-          <span class="blog-dot"></span>
-          <span class="blog-tag">Project Breakdown</span>
-          <span class="blog-dot"></span>
-          <span>20 min read</span>
-        </div>
-        <p class="blog-title">Building a full-stack dance academy platform on Salesforce — architecture, data model, and the core user journeys</p>
-        <p class="blog-excerpt">Experience Cloud, Stripe, Agentforce, and Service Cloud — all in one org. Part 1 of 2...</p>
-      </a>
-        <div class="blog-meta">
-          <span>April 2026</span>
-          <span class="blog-dot"></span>
-          <span class="blog-tag">Career</span>
-          <span class="blog-dot"></span>
-          <span>5 min read</span>
-        </div>
-        <p class="blog-title">What hiring managers actually look for in a Salesforce professional</p>
-        <p class="blog-excerpt">After 7+ years of interviews and offers, here's what I wish someone had told me earlier — beyond certifications...</p>
-      </a>
-      <a class="blog-card" href="blog-docusign-salesforce-flow.html" style="text-decoration:none;color:inherit;display:block;">
-        <div class="blog-meta">
-          <span>May 2026</span>
-          <span class="blog-dot"></span>
-          <span class="blog-tag">Project Breakdown</span>
-          <span class="blog-dot"></span>
-          <span>12 min read</span>
-        </div>
-        <p class="blog-title">Automating contract sending with Salesforce Flow &amp; DocuSign — what I built, what broke, and what I learned</p>
-        <p class="blog-excerpt">Zero Apex. Zero cost. A full walkthrough of the gotchas hiding inside this integration...</p>
-      </a>
-      <a class="blog-card" href="blog-twilio-sms-integration.html" style="text-decoration:none;color:inherit;display:block;">
-        <div class="blog-meta">
-          <span>May 2026</span>
-          <span class="blog-dot"></span>
-          <span class="blog-tag">Technical Deep-dive</span>
-          <span class="blog-dot"></span>
-          <span>15 min read</span>
-        </div>
-        <p class="blog-title">Building a Twilio SMS integration in Salesforce from scratch — no package, no shortcuts</p>
-        <p class="blog-excerpt">Apex, Named Credentials, Custom Metadata, and Flow. Every gotcha documented so you don't have to find them yourself...</p>
-      </a>
-      <a class="blog-card" href="blog-jotform-salesforce.html" style="text-decoration:none;color:inherit;display:block;">
-        <div class="blog-meta">
-          <span>June 2026</span>
-          <span class="blog-dot"></span>
-          <span class="blog-tag">Project Breakdown</span>
-          <span class="blog-dot"></span>
-          <span>18 min read</span>
-        </div>
-        <p class="blog-title">Building a two-part event registration system in Salesforce with JotForm — architecture, tradeoffs, and what the docs don't cover</p>
-        <p class="blog-excerpt">Public registration + VIP invitations. Campaign hierarchy, custom objects, three Flows, zero Apex...</p>
-      </a>
+    <p class="section-eyebrow">Writing</p>
+    <h2 class="section-title">Blog</h2>
+    <p class="section-subtitle">Notes, guides, and lessons from working inside the Salesforce ecosystem.</p>
+    <div class="blog-wrapper">
+      <div class="blog-grid">
+        <a class="blog-card" href="blog-sai-dance-academy-part1.html" style="text-decoration:none;color:inherit;display:block;border-color:#fbbf24;">
+          <div class="blog-meta">
+            <span style="color:#d97706;font-weight:600;">✦ 2-Part Series</span>
+            <span class="blog-dot"></span>
+            <span class="blog-tag">Project Breakdown</span>
+            <span class="blog-dot"></span>
+            <span>20 min read</span>
+          </div>
+          <p class="blog-title">Building a full-stack dance academy platform on Salesforce — architecture, data model, and the core user journeys</p>
+          <p class="blog-excerpt">Experience Cloud, Stripe, Agentforce, and Service Cloud — all in one org. Part 1 of 2...</p>
+        </a>
+        <a class="blog-card" href="blog-what-hiring-managers-look-for.html" style="text-decoration:none;color:inherit;display:block;">
+          <div class="blog-meta">
+            <span>April 2026</span>
+            <span class="blog-dot"></span>
+            <span class="blog-tag">Career</span>
+            <span class="blog-dot"></span>
+            <span>5 min read</span>
+          </div>
+          <p class="blog-title">What hiring managers actually look for in a Salesforce professional</p>
+          <p class="blog-excerpt">After 7+ years of interviews and offers, here's what I wish someone had told me earlier — beyond certifications...</p>
+        </a>
+        <a class="blog-card" href="blog-docusign-salesforce-flow.html" style="text-decoration:none;color:inherit;display:block;">
+          <div class="blog-meta">
+            <span>May 2026</span>
+            <span class="blog-dot"></span>
+            <span class="blog-tag">Project Breakdown</span>
+            <span class="blog-dot"></span>
+            <span>12 min read</span>
+          </div>
+          <p class="blog-title">Automating contract sending with Salesforce Flow &amp; DocuSign — what I built, what broke, and what I learned</p>
+          <p class="blog-excerpt">Zero Apex. Zero cost. A full walkthrough of the gotchas hiding inside this integration...</p>
+        </a>
+        <a class="blog-card" href="blog-twilio-sms-integration.html" style="text-decoration:none;color:inherit;display:block;">
+          <div class="blog-meta">
+            <span>May 2026</span>
+            <span class="blog-dot"></span>
+            <span class="blog-tag">Technical Deep-dive</span>
+            <span class="blog-dot"></span>
+            <span>15 min read</span>
+          </div>
+          <p class="blog-title">Building a Twilio SMS integration in Salesforce from scratch — no package, no shortcuts</p>
+          <p class="blog-excerpt">Apex, Named Credentials, Custom Metadata, and Flow. Every gotcha documented so you don't have to find them yourself...</p>
+        </a>
+        <a class="blog-card" href="blog-jotform-salesforce.html" style="text-decoration:none;color:inherit;display:block;">
+          <div class="blog-meta">
+            <span>June 2026</span>
+            <span class="blog-dot"></span>
+            <span class="blog-tag">Project Breakdown</span>
+            <span class="blog-dot"></span>
+            <span>18 min read</span>
+          </div>
+          <p class="blog-title">Building a two-part event registration system in Salesforce with JotForm — architecture, tradeoffs, and what the docs don't cover</p>
+          <p class="blog-excerpt">Public registration + VIP invitations. Campaign hierarchy, custom objects, three Flows, zero Apex...</p>
+        </a>
+      </div>
     </div>
-  </div>
   </div>
 </section>
 
+<!-- TESTIMONIALS -->
 <section id="testimonials">
   <div class="section-inner">
-  <p class="section-eyebrow">What people say</p>
-  <h2 class="section-title">Testimonials</h2>
-  <p class="section-subtitle">From mentees, colleagues, managers, and clients I've worked with across the Salesforce ecosystem.</p>
-  <div class="testimonials-grid">
-    <div class="testimonial-card">
-      <div class="testimonial-quote">Supriya has a rare ability to take a complex Salesforce requirement and break it into something clean and explainable. She built our lead routing automation from scratch and walked the whole team through it — no jargon, just clarity.</div>
-      <div class="testimonial-author">
-        <div class="testimonial-avatar">JM</div>
-        <div><div class="testimonial-name">Jamie M.</div><div class="testimonial-role">Sales Operations Manager</div></div>
-        <span class="testimonial-relation">Manager</span>
+    <p class="section-eyebrow">What people say</p>
+    <h2 class="section-title">Testimonials</h2>
+    <p class="section-subtitle">From mentees, colleagues, managers, and clients I've worked with across the Salesforce ecosystem.</p>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-quote">Supriya has a rare ability to take a complex Salesforce requirement and break it into something clean and explainable. She built our lead routing automation from scratch and walked the whole team through it — no jargon, just clarity.</div>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">JM</div>
+          <div><div class="testimonial-name">Jamie M.</div><div class="testimonial-role">Sales Operations Manager</div></div>
+          <span class="testimonial-relation">Manager</span>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-quote">I was completely new to Salesforce when Supriya started mentoring me. Within three months I had my Admin cert and my first real project in a sandbox. She has a way of making even the tricky stuff feel achievable.</div>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">PK</div>
+          <div><div class="testimonial-name">Priya K.</div><div class="testimonial-role">Aspiring Salesforce Admin</div></div>
+          <span class="testimonial-relation">Mentee</span>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-quote">What sets Supriya apart is how she documents her decisions. Every build comes with clear reasoning — not just what was configured but why. That kind of thinking makes future maintenance so much easier.</div>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">RC</div>
+          <div><div class="testimonial-name">Ravi C.</div><div class="testimonial-role">Salesforce Architect</div></div>
+          <span class="testimonial-relation">Colleague</span>
+        </div>
       </div>
     </div>
-    <div class="testimonial-card">
-      <div class="testimonial-quote">I was completely new to Salesforce when Supriya started mentoring me. Within three months I had my Admin cert and my first real project in a sandbox. She has a way of making even the tricky stuff feel achievable.</div>
-      <div class="testimonial-author">
-        <div class="testimonial-avatar">PK</div>
-        <div><div class="testimonial-name">Priya K.</div><div class="testimonial-role">Aspiring Salesforce Admin</div></div>
-        <span class="testimonial-relation">Mentee</span>
-      </div>
+    <div class="testimonials-cta">
+      <p>Worked with me? I'd love to hear from you.</p>
+      <a class="btn-testimonial" href="https://docs.google.com/forms/d/e/1FAIpQLScypBuqgr2Aww5xmb7nSR3rD4Qslfj72fLYMonqmHXNQCv4FA/viewform?usp=sf_link" target="_blank">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Leave a testimonial
+      </a>
     </div>
-    <div class="testimonial-card">
-      <div class="testimonial-quote">What sets Supriya apart is how she documents her decisions. Every build comes with clear reasoning — not just what was configured but why. That kind of thinking makes future maintenance so much easier.</div>
-      <div class="testimonial-author">
-        <div class="testimonial-avatar">RC</div>
-        <div><div class="testimonial-name">Ravi C.</div><div class="testimonial-role">Salesforce Architect</div></div>
-        <span class="testimonial-relation">Colleague</span>
-      </div>
-    </div>
-  </div>
-  <div class="testimonials-cta">
-    <p>Worked with me? I'd love to hear from you.</p>
-    <a class="btn-testimonial" href="https://docs.google.com/forms/d/e/1FAIpQLScypBuqgr2Aww5xmb7nSR3rD4Qslfj72fLYMonqmHXNQCv4FA/viewform?usp=sf_link" target="_blank">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-      Leave a testimonial
-    </a>
-  </div>
   </div>
 </section>
 
+<!-- CONTACT -->
 <section id="contact">
   <div class="section-inner">
-  <p class="section-eyebrow">Get in touch</p>
-  <h2 class="section-title">Contact</h2>
-  <div class="contact-wrapper">
-    <div class="contact-info">
-      <p>Whether you're looking to collaborate, have a Salesforce question, or just want to connect — my inbox is open.</p>
-      <div class="contact-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        <a href="mailto:supriyajnagesh88@gmail.com">supriyajnagesh88@gmail.com</a>
+    <p class="section-eyebrow">Get in touch</p>
+    <h2 class="section-title">Contact</h2>
+    <div class="contact-wrapper">
+      <div class="contact-info">
+        <p>Whether you're looking to collaborate, have a Salesforce question, or just want to connect — my inbox is open.</p>
+        <div class="contact-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <a href="mailto:supriyajnagesh88@gmail.com">supriyajnagesh88@gmail.com</a>
+        </div>
+        <div class="contact-item">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          <a href="https://www.linkedin.com/in/supriya-nagesh" target="_blank">linkedin.com/in/supriya-nagesh</a>
+        </div>
       </div>
-      <div class="contact-item">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-        <a href="https://www.linkedin.com/in/supriya-nagesh" target="_blank">linkedin.com/in/supriya-nagesh</a>
-      </div>
+      <form class="contact-form" action="https://formspree.io/f/mqejrebp" method="POST">
+        <div class="form-row">
+          <div class="field-group">
+            <label for="fname">First name</label>
+            <input type="text" id="fname" name="first_name" placeholder="Jane" />
+          </div>
+          <div class="field-group">
+            <label for="lname">Last name</label>
+            <input type="text" id="lname" name="last_name" placeholder="Doe" />
+          </div>
+        </div>
+        <div class="field-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="jane@company.com" />
+        </div>
+        <div class="field-group">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" placeholder="What would you like to discuss?"></textarea>
+        </div>
+        <button type="submit" class="btn-submit">Send message</button>
+      </form>
     </div>
-    <form class="contact-form" action="https://formspree.io/f/mqejrebp" method="POST">
-      <div class="form-row">
-        <div class="field-group">
-          <label for="fname">First name</label>
-          <input type="text" id="fname" name="first_name" placeholder="Jane" />
-        </div>
-        <div class="field-group">
-          <label for="lname">Last name</label>
-          <input type="text" id="lname" name="last_name" placeholder="Doe" />
-        </div>
-      </div>
-      <div class="field-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" placeholder="jane@company.com" />
-      </div>
-      <div class="field-group">
-        <label for="message">Message</label>
-        <textarea id="message" name="message" placeholder="What would you like to discuss?"></textarea>
-      </div>
-      <button type="submit" class="btn-submit">Send message</button>
-    </form>
-  </div>
   </div>
 </section>
 
@@ -710,12 +645,10 @@
 </footer>
 
 <script>
-// Slideshow logic
 var slideshows = {
   '01': { current: 0, total: 3, timer: null },
   '02': { current: 0, total: 3, timer: null }
 };
-
 function goToSlide(id, index) {
   var s = slideshows[id];
   if (!s) return;
@@ -724,7 +657,6 @@ function goToSlide(id, index) {
   var dots = document.getElementById('dots-' + id).querySelectorAll('.sf-dot');
   dots.forEach(function(d, i){ d.classList.toggle('active', i === index); });
 }
-
 function autoPlay(id) {
   var s = slideshows[id];
   if (!s) return;
@@ -733,8 +665,6 @@ function autoPlay(id) {
     goToSlide(id, next);
   }, 3000);
 }
-
-// Start slideshows
 Object.keys(slideshows).forEach(function(id){ autoPlay(id); });
 </script>
 </body>
