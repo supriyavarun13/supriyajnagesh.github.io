@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 860" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="md" markerWidth="14" markerHeight="14" refX="11" refY="6" orient="auto">
+      <path d="M0,1 L11,6 L0,11 Z" fill="#5B2C8C"/>
+    </marker>
+    <marker id="lk" markerWidth="14" markerHeight="14" refX="11" refY="6" orient="auto">
+      <path d="M0,1 L11,6 L0,11" fill="none" stroke="#ea6c00" stroke-width="1.6"/>
+    </marker>
+  </defs>
+
+  <rect width="1180" height="860" fill="#ffffff"/>
+  <text x="40" y="46" font-size="26" font-weight="700" fill="#111827">Sai Dance Academy — Data Model (ERD)</text>
+  <text x="40" y="72" font-size="14" fill="#6b7280">5 custom objects + standard Contact / Lead / Case</text>
+
+  <!-- Legend -->
+  <g font-size="12.5" fill="#374151">
+    <line x1="760" y1="40" x2="800" y2="40" stroke="#5B2C8C" stroke-width="2.4" marker-end="url(#md)"/>
+    <text x="808" y="44">Master-detail</text>
+    <line x1="940" y1="40" x2="980" y2="40" stroke="#ea6c00" stroke-width="2.4" marker-end="url(#lk)"/>
+    <text x="988" y="44">Lookup</text>
+  </g>
+
+  <!-- ================= OBJECT BOXES ================= -->
+  <!-- DANCE_CLASS -->
+  <g>
+    <rect x="40" y="120" width="250" height="196" rx="12" fill="#fff9f0" stroke="#ea6c00" stroke-width="2"/>
+    <rect x="40" y="120" width="250" height="34" rx="12" fill="#ea6c00"/>
+    <rect x="40" y="140" width="250" height="14" fill="#ea6c00"/>
+    <text x="56" y="143" font-size="14.5" font-weight="700" fill="#fff">Dance_Class__c</text>
+    <text x="56" y="176" font-size="12" fill="#111827">Style__c, Instructor__c</text>
+    <text x="56" y="196" font-size="12" fill="#111827">Day_of_Week__c, Start_Time__c</text>
+    <text x="56" y="216" font-size="12" fill="#111827">Duration_Mins__c, Age_Group__c</text>
+    <text x="56" y="236" font-size="12" fill="#111827">Fee__c, Max_Capacity__c</text>
+    <text x="56" y="256" font-size="12" fill="#111827">Description__c</text>
+    <text x="56" y="276" font-size="12" fill="#b45309" font-weight="600">IsActive__c</text>
+    <text x="56" y="300" font-size="11" fill="#9ca3af">the class catalog</text>
+  </g>
+
+  <!-- CONTACT -->
+  <g>
+    <rect x="465" y="120" width="230" height="120" rx="12" fill="#f5f3ff" stroke="#5B2C8C" stroke-width="2"/>
+    <rect x="465" y="120" width="230" height="34" rx="12" fill="#5B2C8C"/>
+    <rect x="465" y="140" width="230" height="14" fill="#5B2C8C"/>
+    <text x="481" y="143" font-size="14.5" font-weight="700" fill="#fff">Contact</text>
+    <text x="481" y="176" font-size="12" fill="#111827">FirstName, LastName</text>
+    <text x="481" y="196" font-size="12" fill="#111827">Email, Phone</text>
+    <text x="481" y="222" font-size="11" fill="#9ca3af">standard object</text>
+  </g>
+
+  <!-- LEAD -->
+  <g>
+    <rect x="900" y="120" width="230" height="104" rx="12" fill="#f5f3ff" stroke="#5B2C8C" stroke-width="2"/>
+    <rect x="900" y="120" width="230" height="34" rx="12" fill="#5B2C8C"/>
+    <rect x="900" y="140" width="230" height="14" fill="#5B2C8C"/>
+    <text x="916" y="143" font-size="14.5" font-weight="700" fill="#fff">Lead</text>
+    <text x="916" y="176" font-size="12" fill="#111827">Name, Email</text>
+    <text x="916" y="196" font-size="12" fill="#111827">LeadSource</text>
+  </g>
+
+  <!-- ENROLLMENT -->
+  <g>
+    <rect x="250" y="390" width="270" height="210" rx="12" fill="#fff9f0" stroke="#ea6c00" stroke-width="2"/>
+    <rect x="250" y="390" width="270" height="34" rx="12" fill="#ea6c00"/>
+    <rect x="250" y="410" width="270" height="14" fill="#ea6c00"/>
+    <text x="266" y="413" font-size="14.5" font-weight="700" fill="#fff">Enrollment__c</text>
+    <text x="266" y="446" font-size="12" fill="#111827">Contact__c, Dance_Class__c</text>
+    <text x="266" y="466" font-size="12" fill="#111827">Lead__c (optional)</text>
+    <text x="266" y="486" font-size="12" fill="#111827">Status__c</text>
+    <text x="266" y="503" font-size="10.5" fill="#9ca3af">Pending / Awaiting / Confirmed / Failed</text>
+    <text x="266" y="523" font-size="12" fill="#111827">Stripe_Session_ID__c</text>
+    <text x="266" y="543" font-size="12" fill="#111827">Stripe_Payment_Intent__c</text>
+    <text x="266" y="563" font-size="12" fill="#111827">Amount_Paid__c, Enrollment_Date__c</text>
+    <text x="266" y="583" font-size="12" fill="#111827">GDPR_Consent__c</text>
+  </g>
+
+  <!-- PAYMENT -->
+  <g>
+    <rect x="250" y="660" width="270" height="160" rx="12" fill="#fff9f0" stroke="#C9A84C" stroke-width="2"/>
+    <rect x="250" y="660" width="270" height="34" rx="12" fill="#C9A84C"/>
+    <rect x="250" y="680" width="270" height="14" fill="#C9A84C"/>
+    <text x="266" y="683" font-size="14.5" font-weight="700" fill="#fff">Payment__c</text>
+    <text x="266" y="716" font-size="12" fill="#5B2C8C" font-weight="600">Enrollment__c (master-detail)</text>
+    <text x="266" y="736" font-size="12" fill="#111827">Stripe_Payment_Id__c</text>
+    <text x="266" y="756" font-size="12" fill="#111827">Stripe_Charge_Id__c, Amount__c</text>
+    <text x="266" y="776" font-size="12" fill="#111827">Currency_Code__c, Status__c</text>
+    <text x="266" y="796" font-size="12" fill="#111827">Mode__c, Payment_Date__c</text>
+    <text x="266" y="814" font-size="12" fill="#111827">Failure_Reason__c</text>
+  </g>
+
+  <!-- EVENT -->
+  <g>
+    <rect x="640" y="390" width="250" height="178" rx="12" fill="#fdf2f8" stroke="#E91E8C" stroke-width="2"/>
+    <rect x="640" y="390" width="250" height="34" rx="12" fill="#E91E8C"/>
+    <rect x="640" y="410" width="250" height="14" fill="#E91E8C"/>
+    <text x="656" y="413" font-size="14.5" font-weight="700" fill="#fff">Event__c</text>
+    <text x="656" y="446" font-size="12" fill="#111827">Event_Date__c, Event_Time__c</text>
+    <text x="656" y="466" font-size="12" fill="#111827">Venue__c, Event_Type__c</text>
+    <text x="656" y="486" font-size="12" fill="#111827">Max_Attendees__c</text>
+    <text x="656" y="506" font-size="12" fill="#111827">Current_RSVPs__c (roll-up)</text>
+    <text x="656" y="526" font-size="12" fill="#111827">Ticket_Price__c</text>
+    <text x="656" y="546" font-size="12" fill="#b45309" font-weight="600">Is_Active__c</text>
+  </g>
+
+  <!-- RSVP -->
+  <g>
+    <rect x="640" y="630" width="250" height="150" rx="12" fill="#fdf2f8" stroke="#E91E8C" stroke-width="2"/>
+    <rect x="640" y="630" width="250" height="34" rx="12" fill="#E91E8C"/>
+    <rect x="640" y="650" width="250" height="14" fill="#E91E8C"/>
+    <text x="656" y="653" font-size="14.5" font-weight="700" fill="#fff">RSVP__c</text>
+    <text x="656" y="686" font-size="12" fill="#111827">Contact__c (lookup)</text>
+    <text x="656" y="706" font-size="12" fill="#5B2C8C" font-weight="600">Event__c (master-detail)</text>
+    <text x="656" y="726" font-size="12" fill="#111827">Number_of_Guests__c</text>
+    <text x="656" y="746" font-size="12" fill="#111827">Status__c, RSVP_Date__c</text>
+    <text x="656" y="766" font-size="10.5" fill="#9ca3af">Confirmed / Waitlisted / Cancelled</text>
+  </g>
+
+  <!-- CASE -->
+  <g>
+    <rect x="960" y="630" width="180" height="150" rx="12" fill="#f5f3ff" stroke="#5B2C8C" stroke-width="2"/>
+    <rect x="960" y="630" width="180" height="34" rx="12" fill="#5B2C8C"/>
+    <rect x="960" y="650" width="180" height="14" fill="#5B2C8C"/>
+    <text x="976" y="653" font-size="14.5" font-weight="700" fill="#fff">Case</text>
+    <text x="976" y="686" font-size="12" fill="#111827">Origin = Web</text>
+    <text x="976" y="706" font-size="12" fill="#111827">Reason, Priority</text>
+    <text x="976" y="726" font-size="12" fill="#111827">Status</text>
+    <text x="976" y="752" font-size="11" fill="#9ca3af">+ Entitlement /</text>
+    <text x="976" y="768" font-size="11" fill="#9ca3af">Milestone (SLA)</text>
+  </g>
+
+  <!-- ================= RELATIONSHIPS ================= -->
+  <!-- Dance_Class -> Enrollment (lookup) -->
+  <path d="M165,316 L165,470 L250,470" fill="none" stroke="#ea6c00" stroke-width="2.2" marker-end="url(#lk)"/>
+  <!-- Contact -> Enrollment (lookup) -->
+  <path d="M520,240 L520,300 L420,300 L420,390" fill="none" stroke="#ea6c00" stroke-width="2.2" marker-end="url(#lk)"/>
+  <!-- Lead -> Enrollment (lookup, optional) -->
+  <path d="M1015,224 L1015,350 L470,350 L470,390" fill="none" stroke="#ea6c00" stroke-width="2.2" stroke-dasharray="6 4" marker-end="url(#lk)"/>
+  <!-- Enrollment -> Payment (master-detail) -->
+  <path d="M385,600 L385,660" fill="none" stroke="#5B2C8C" stroke-width="2.6" marker-end="url(#md)"/>
+  <!-- Event -> RSVP (master-detail) -->
+  <path d="M765,568 L765,630" fill="none" stroke="#5B2C8C" stroke-width="2.6" marker-end="url(#md)"/>
+  <!-- Contact -> RSVP (lookup) -->
+  <path d="M610,200 L610,690 L640,690" fill="none" stroke="#ea6c00" stroke-width="2.2" marker-end="url(#lk)"/>
+  <!-- Contact -> Case (lookup) -->
+  <path d="M695,170 L1050,170 L1050,630" fill="none" stroke="#ea6c00" stroke-width="2.2" marker-end="url(#lk)"/>
+
+  <text x="40" y="845" font-size="11.5" fill="#9ca3af">Master-detail: Payment→Enrollment, RSVP→Event (child has no meaning without parent).  Lookups elsewhere.  Note: Dance_Class uses IsActive__c; Event uses Is_Active__c.</text>
+</svg>
