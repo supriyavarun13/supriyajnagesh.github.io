@@ -4,25 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Supriya Nagesh — Salesforce Professional</title>
-  <meta name="description" content="Supriya Nagesh — Salesforce professional specializing in CRM architecture, automation, and integrations." />
+  <meta name="description" content="Supriya Nagesh — Senior Salesforce Administrator and Developer specializing in automation, integrations, and Experience Cloud." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --navy: #0f1b2d;
-      --navy-mid: #1a2e47;
-      --navy-soft: #243b55;
-      --accent: #3b9eff;
-      --accent-light: #e8f3ff;
-      --text: #1a1a2e;
-      --text-muted: #5a6a7e;
-      --border: #e2e8f0;
-      --surface: #f8fafc;
-      --white: #ffffff;
-      --radius: 10px;
-      --radius-lg: 16px;
+      --navy: #0f1b2d; --navy-mid: #1a2e47; --navy-soft: #243b55;
+      --accent: #3b9eff; --accent-light: #e8f3ff;
+      --text: #1a1a2e; --text-muted: #5a6a7e;
+      --border: #e2e8f0; --surface: #f8fafc; --white: #ffffff;
+      --radius: 10px; --radius-lg: 16px;
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(--white); font-size: 16px; line-height: 1.7; }
@@ -52,6 +44,19 @@
     .btn-hero-ghost { background: transparent; color: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.25); }
     .btn-hero-ghost:hover { background: rgba(255,255,255,0.08); color: white; }
 
+    /* AGENTFORCE CALLOUT */
+    .agent-callout { background: linear-gradient(135deg, #1a1a3e 0%, #0f1b2d 100%); border-top: 1px solid rgba(124,58,237,0.3); border-bottom: 1px solid rgba(124,58,237,0.3); padding: 2.5rem 2.5rem; }
+    .agent-callout-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 2rem; flex-wrap: wrap; }
+    .agent-callout-left { flex: 1; min-width: 280px; }
+    .agent-callout-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #c4b5fd; background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.3); padding: 4px 12px; border-radius: 20px; margin-bottom: 0.75rem; }
+    .agent-callout h2 { font-family: 'DM Serif Display', serif; font-size: clamp(20px,3vw,26px); font-weight: 400; color: white; margin-bottom: 0.75rem; line-height: 1.3; }
+    .agent-callout p { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.7; max-width: 540px; margin-bottom: 0; }
+    .agent-callout-links { display: flex; flex-wrap: wrap; gap: 10px; flex-shrink: 0; }
+    .agent-btn-primary { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; padding: 10px 18px; border-radius: 7px; background: #7c3aed; color: white; text-decoration: none; border: 1px solid #7c3aed; transition: all 0.15s; }
+    .agent-btn-primary:hover { background: #6d28d9; border-color: #6d28d9; }
+    .agent-btn-outline { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; padding: 10px 18px; border-radius: 7px; background: transparent; color: rgba(255,255,255,0.8); text-decoration: none; border: 1px solid rgba(255,255,255,0.2); transition: all 0.15s; }
+    .agent-btn-outline:hover { background: rgba(255,255,255,0.08); color: white; border-color: rgba(255,255,255,0.4); }
+
     /* SECTION INNER */
     .section-inner { max-width: 900px; margin: 0 auto; }
 
@@ -70,7 +75,7 @@
     .stat-num { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--navy); }
     .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 
-    /* SKILLS — Trailhead hexagon badge style */
+    /* SKILLS */
     .skills-wrapper { max-width: 900px; }
     .skills-group { margin-bottom: 2.5rem; }
     .skills-group-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #0176d3; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 8px; }
@@ -82,6 +87,10 @@
     .skill-pill:hover span { color: white; }
     .skill-pill:hover { transform: translateY(-3px); filter: drop-shadow(0 4px 8px rgba(1,118,211,0.35)); }
     .skill-pill:hover::before { background: #0176d3; }
+    .skill-pill.agent::before { background: #ede9fe; }
+    .skill-pill.agent span { color: #7c3aed; }
+    .skill-pill.agent:hover::before { background: #7c3aed; }
+    .skill-pill.agent:hover span { color: white; }
     .skill-pill.exploring::before { background: #fef3c7; }
     .skill-pill.exploring span { color: #92400e; }
     .skill-pill.exploring:hover::before { background: #f59e0b; }
@@ -105,6 +114,7 @@
     .sf-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(0,0,0,0.25); transition: background 0.3s; cursor: pointer; }
     .sf-dot.active { background: #0176d3; }
     .sf-record-body { padding: 1.25rem 1.5rem; }
+    .sf-project-desc { font-size: 14px; color: #374151; line-height: 1.7; margin-bottom: 1.25rem; padding-bottom: 1.25rem; border-bottom: 1px solid #e5e5e5; }
     .sf-fields { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem 1.5rem; margin-bottom: 1.25rem; padding-bottom: 1.25rem; border-bottom: 1px solid #e5e5e5; }
     .sf-field-label { font-size: 11px; font-weight: 500; color: #706e6b; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 3px; }
     .sf-field-value { font-size: 13px; color: #080707; font-weight: 500; }
@@ -177,7 +187,6 @@
     .footer-links { display: flex; gap: 1.5rem; }
     footer small { font-size: 13px; }
 
-    /* RESPONSIVE */
     @media (max-width: 700px) {
       nav { padding: 0 1.25rem; }
       .nav-links { display: none; }
@@ -189,6 +198,8 @@
       .form-row { grid-template-columns: 1fr; }
       footer { padding: 1.5rem 1.25rem; }
       .projects-wrapper { padding: 0 1.25rem; }
+      .agent-callout { padding: 2rem 1.25rem; }
+      .agent-callout-inner { flex-direction: column; }
     }
   </style>
 </head>
@@ -213,16 +224,39 @@
     <img class="hero-photo" src="My_photo.jpg" alt="Supriya Nagesh" />
     <div class="hero-badge">
       <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="5"/></svg>
-      Salesforce Professional
+      Senior Salesforce Administrator | Apex &amp; Flow Automation
     </div>
     <h1>Supriya Nagesh</h1>
-    <p class="hero-sub">Salesforce professional with 7+ years across Sales Cloud, Service Cloud, and Experience Cloud — specialising in automation, integrations, and end-to-end delivery across multi-org environments. I build things that work and document them so others can too.</p>
+    <p class="hero-sub">7+ years administering and developing across Sales Cloud, Service Cloud, and Experience Cloud. I take ownership of orgs — stabilising them, automating them with Flow and Apex, and integrating them with the systems around them. Currently building with Agentforce, including a live deployed agent you can try on this site.</p>
     <div class="hero-actions">
       <a class="btn-hero btn-hero-primary" href="#projects">View my work</a>
       <a class="btn-hero btn-hero-ghost" href="#contact">Get in touch</a>
     </div>
   </div>
 </header>
+
+<!-- AGENTFORCE CALLOUT -->
+<div class="agent-callout">
+  <div class="agent-callout-inner">
+    <div class="agent-callout-left">
+      <div class="agent-callout-badge">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="5"/></svg>
+        ✦ Live Agentforce Agent — Deployed &amp; Running
+      </div>
+      <h2>I built and deployed a production-pattern Agentforce agent on Experience Cloud</h2>
+      <p>Available to guest users, grounded in real org data, with guardrails I designed and tested. I documented the full build — including the deployment chain, Agent Script syntax, and a hallucination incident I caught and fixed.</p>
+    </div>
+    <div class="agent-callout-links">
+      <a class="agent-btn-primary" href="https://saidanceacademy-dev-ed.develop.my.site.com/sda" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+        Try the live agent →
+      </a>
+      <a class="agent-btn-outline" href="blog-agentforce-salesforce.html">
+        Read the build breakdown →
+      </a>
+    </div>
+  </div>
+</div>
 
 <!-- ABOUT -->
 <section id="about">
@@ -231,9 +265,9 @@
     <h2 class="section-title">A bit about me</h2>
     <div class="about-grid">
       <div class="about-text">
-        <p>I'm a Salesforce professional with 7+ years of experience delivering across Sales Cloud, Service Cloud, and Experience Cloud. I've worked as a hybrid developer, administrator, and production support engineer — often across multiple client orgs simultaneously — building automation, resolving production issues, and stabilising systems under pressure.</p>
+        <p>I'm an administrator at my core, with the Apex and integration skills to build what configuration can't reach. I've owned up to 5 client orgs simultaneously — from automation builds to production incident resolution — which taught me to deliver under pressure without dropping quality anywhere.</p>
         <p>My background spans custom Apex and Flow development, third-party integrations (DocuSign, AssureSign, Litify Inbox, Docrio, Twilio), CI/CD with Gearset, and data migration — alongside the less glamorous but equally critical work: UAT support, root cause analysis, and stepping into under-documented orgs and making them stable. I take ownership of problems, not just tasks.</p>
-        <p>I believe in making technical work visible. The portfolio projects and articles on this site are rebuilt in dev orgs to show the work, since real client orgs live behind NDAs — the patterns are drawn directly from real delivery experience. I also mentor aspiring Salesforce admins and am actively building toward Agentforce, with portfolio projects in progress.</p>
+        <p>I believe in making technical work visible. The portfolio projects and articles on this site are rebuilt in dev orgs to show the work, since real client orgs live behind NDAs — the patterns are drawn directly from real delivery experience. I also mentor aspiring Salesforce admins and am actively building with Agentforce.</p>
       </div>
       <div class="about-stats">
         <div class="stat-box"><div class="stat-num">7+</div><div class="stat-label">Years in Salesforce</div></div>
@@ -256,23 +290,25 @@
         <p class="skills-group-label">Salesforce Platform</p>
         <div class="skills-pills">
           <span class="skill-pill"><span>Salesforce Administration</span></span>
-          <span class="skill-pill"><span>Sales Cloud</span></span>
-          <span class="skill-pill"><span>Service Cloud</span></span>
-          <span class="skill-pill"><span>Experience Cloud</span></span>
-          <span class="skill-pill"><span>Lightning Experience</span></span>
+          <span class="skill-pill"><span>Salesforce Flow</span></span>
           <span class="skill-pill"><span>Apex</span></span>
           <span class="skill-pill"><span>SOQL</span></span>
           <span class="skill-pill"><span>SOSL</span></span>
           <span class="skill-pill"><span>Invocable Apex</span></span>
-          <span class="skill-pill"><span>Salesforce Flow</span></span>
           <span class="skill-pill"><span>Screen Flow</span></span>
           <span class="skill-pill"><span>Record-Triggered Flow</span></span>
+          <span class="skill-pill"><span>Sales Cloud</span></span>
+          <span class="skill-pill"><span>Service Cloud</span></span>
+          <span class="skill-pill"><span>Experience Cloud</span></span>
+          <span class="skill-pill"><span>Lightning Experience</span></span>
           <span class="skill-pill"><span>Validation Rules</span></span>
-          <span class="skill-pill"><span>Aura Components</span></span>
-          <span class="skill-pill"><span>Visualforce</span></span>
           <span class="skill-pill"><span>Security &amp; MFA</span></span>
           <span class="skill-pill"><span>User Access Management</span></span>
           <span class="skill-pill"><span>Process Optimization</span></span>
+          <span class="skill-pill"><span>Aura Components</span></span>
+          <span class="skill-pill"><span>Visualforce</span></span>
+          <span class="skill-pill agent"><span>Agentforce — live agent deployed</span></span>
+          <span class="skill-pill exploring"><span>LWC — portfolio build, deepening</span></span>
         </div>
       </div>
       <div class="skills-group">
@@ -307,8 +343,7 @@
       <div class="skills-group">
         <p class="skills-group-label">Currently Exploring</p>
         <div class="skills-pills">
-          <span class="skill-pill exploring"><span>Agentforce ✦ In progress</span></span>
-          <span class="skill-pill exploring"><span>LWC ✦ In progress</span></span>
+          <span class="skill-pill exploring"><span>Agentforce Specialist Cert — in progress</span></span>
         </div>
       </div>
     </div>
@@ -349,6 +384,7 @@
         </div>
       </div>
       <div class="sf-record-body">
+        <p class="sf-project-desc">A full-stack customer portal on Experience Cloud: public class catalogue with live availability, Stripe payments via Apex REST webhooks, guest-accessible Agentforce agent, and Service Cloud case handling — all in one org, built from a BRD I wrote first. Designed the data model and architecture before writing a line of code.</p>
         <div class="sf-fields">
           <div><div class="sf-field-label">Status</div><div class="sf-field-value green">✅ Completed</div></div>
           <div><div class="sf-field-label">Cloud</div><div class="sf-field-value blue">Experience Cloud</div></div>
@@ -411,6 +447,7 @@
         </div>
       </div>
       <div class="sf-record-body">
+        <p class="sf-project-desc">A Service Cloud SLA enforcement system built on Entitlements and Milestones: automated warning emails before breach, escalation rules, and a command dashboard giving managers real-time case health. Verified against 14 documented test cases before sign-off.</p>
         <div class="sf-fields">
           <div><div class="sf-field-label">Status</div><div class="sf-field-value green">✅ Completed</div></div>
           <div><div class="sf-field-label">Priority</div><div class="sf-field-value" style="color:#ba0517;">🔴 High</div></div>
@@ -442,7 +479,7 @@
       </div>
     </div>
 
-    <!-- PROJECT 03 -->
+    <!-- PROJECT 03 — hidden until ready -->
     <div class="sf-record-card" style="opacity:0.88;display:none;">
       <div class="sf-record-header" style="background:#2e844a;">
         <div class="sf-record-header-left">
@@ -496,79 +533,37 @@
     <div class="blog-wrapper">
       <div class="blog-grid">
         <a class="blog-card" href="blog-sai-dance-academy-part1.html" style="text-decoration:none;color:inherit;display:block;border-color:#fbbf24;">
-          <div class="blog-meta">
-            <span style="color:#d97706;font-weight:600;">✦ 2-Part Series</span>
-            <span class="blog-dot"></span>
-            <span class="blog-tag">Project Breakdown</span>
-            <span class="blog-dot"></span>
-            <span>20 min read</span>
-          </div>
+          <div class="blog-meta"><span style="color:#d97706;font-weight:600;">✦ 2-Part Series</span><span class="blog-dot"></span><span class="blog-tag">Project Breakdown</span><span class="blog-dot"></span><span>20 min read</span></div>
           <p class="blog-title">Building a full-stack dance academy platform on Salesforce — architecture, data model, and the core user journeys</p>
           <p class="blog-excerpt">Experience Cloud, Stripe, Agentforce, and Service Cloud — all in one org. Part 1 of 2...</p>
         </a>
         <a class="blog-card" href="blog-what-hiring-managers-look-for.html" style="text-decoration:none;color:inherit;display:block;">
-          <div class="blog-meta">
-            <span>April 2026</span>
-            <span class="blog-dot"></span>
-            <span class="blog-tag">Career</span>
-            <span class="blog-dot"></span>
-            <span>5 min read</span>
-          </div>
+          <div class="blog-meta"><span>April 2026</span><span class="blog-dot"></span><span class="blog-tag">Career</span><span class="blog-dot"></span><span>5 min read</span></div>
           <p class="blog-title">What hiring managers actually look for in a Salesforce professional</p>
           <p class="blog-excerpt">After 7+ years of interviews and offers, here's what I wish someone had told me earlier — beyond certifications...</p>
         </a>
         <a class="blog-card" href="blog-docusign-salesforce-flow.html" style="text-decoration:none;color:inherit;display:block;">
-          <div class="blog-meta">
-            <span>May 2026</span>
-            <span class="blog-dot"></span>
-            <span class="blog-tag">Project Breakdown</span>
-            <span class="blog-dot"></span>
-            <span>12 min read</span>
-          </div>
+          <div class="blog-meta"><span>May 2026</span><span class="blog-dot"></span><span class="blog-tag">Project Breakdown</span><span class="blog-dot"></span><span>12 min read</span></div>
           <p class="blog-title">Automating contract sending with Salesforce Flow &amp; DocuSign — what I built, what broke, and what I learned</p>
           <p class="blog-excerpt">Zero Apex. Zero cost. A full walkthrough of the gotchas hiding inside this integration...</p>
         </a>
         <a class="blog-card" href="blog-twilio-sms-integration.html" style="text-decoration:none;color:inherit;display:block;">
-          <div class="blog-meta">
-            <span>May 2026</span>
-            <span class="blog-dot"></span>
-            <span class="blog-tag">Technical Deep-dive</span>
-            <span class="blog-dot"></span>
-            <span>15 min read</span>
-          </div>
+          <div class="blog-meta"><span>May 2026</span><span class="blog-dot"></span><span class="blog-tag">Technical Deep-dive</span><span class="blog-dot"></span><span>15 min read</span></div>
           <p class="blog-title">Building a Twilio SMS integration in Salesforce from scratch — no package, no shortcuts</p>
           <p class="blog-excerpt">Apex, Named Credentials, Custom Metadata, and Flow. Every gotcha documented so you don't have to find them yourself...</p>
         </a>
         <a class="blog-card" href="blog-jotform-salesforce.html" style="text-decoration:none;color:inherit;display:block;">
-          <div class="blog-meta">
-            <span>June 2026</span>
-            <span class="blog-dot"></span>
-            <span class="blog-tag">Project Breakdown</span>
-            <span class="blog-dot"></span>
-            <span>18 min read</span>
-          </div>
+          <div class="blog-meta"><span>June 2026</span><span class="blog-dot"></span><span class="blog-tag">Project Breakdown</span><span class="blog-dot"></span><span>18 min read</span></div>
           <p class="blog-title">Building a two-part event registration system in Salesforce with JotForm — architecture, tradeoffs, and what the docs don't cover</p>
           <p class="blog-excerpt">Public registration + VIP invitations. Campaign hierarchy, custom objects, three Flows, zero Apex...</p>
         </a>
         <a class="blog-card" href="blog-stripe-salesforce.html" style="text-decoration:none;color:inherit;display:block;">
-          <div class="blog-meta">
-            <span style="color:#635bff;font-weight:600;">✦ Project 01 Sub-post</span>
-            <span class="blog-dot"></span>
-            <span class="blog-tag">Technical Deep-dive</span>
-            <span class="blog-dot"></span>
-            <span>20 min read</span>
-          </div>
+          <div class="blog-meta"><span style="color:#635bff;font-weight:600;">✦ Project 01 Sub-post</span><span class="blog-dot"></span><span class="blog-tag">Technical Deep-dive</span><span class="blog-dot"></span><span>20 min read</span></div>
           <p class="blog-title">Integrating Stripe payments with Salesforce Experience Cloud — webhooks, guest access, and everything that fought back</p>
           <p class="blog-excerpt">Credential setup, the two-call pattern, and four webhook problems documented with root causes and fixes...</p>
         </a>
         <a class="blog-card" href="blog-agentforce-salesforce.html" style="text-decoration:none;color:inherit;display:block;">
-          <div class="blog-meta">
-            <span style="color:#7c3aed;font-weight:600;">✦ Project 01 Sub-post</span>
-            <span class="blog-dot"></span>
-            <span class="blog-tag">Agentforce</span>
-            <span class="blog-dot"></span>
-            <span>25 min read</span>
-          </div>
+          <div class="blog-meta"><span style="color:#7c3aed;font-weight:600;">✦ Project 01 Sub-post</span><span class="blog-dot"></span><span class="blog-tag">Agentforce</span><span class="blog-dot"></span><span>25 min read</span></div>
           <p class="blog-title">Building and deploying a live Agentforce agent on Experience Cloud — grounded in real data, live for guests</p>
           <p class="blog-excerpt">Agent Script syntax, deployment chain, guardrails, and the hallucination incident...</p>
         </a>
@@ -576,37 +571,13 @@
     </div>
   </div>
 </section>
+
+<!-- TESTIMONIALS — hidden until real testimonials arrive -->
 <section id="testimonials" style="display:none;">
   <div class="section-inner">
     <p class="section-eyebrow">What people say</p>
     <h2 class="section-title">Testimonials</h2>
     <p class="section-subtitle">From mentees, colleagues, managers, and clients I've worked with across the Salesforce ecosystem.</p>
-  <!--  <div class="testimonials-grid">
-      <div class="testimonial-card">
-        <div class="testimonial-quote">Supriya has a rare ability to take a complex Salesforce requirement and break it into something clean and explainable. She built our lead routing automation from scratch and walked the whole team through it — no jargon, just clarity.</div>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">JM</div>
-          <div><div class="testimonial-name">Jamie M.</div><div class="testimonial-role">Sales Operations Manager</div></div>
-          <span class="testimonial-relation">Manager</span>
-        </div>
-      </div>
-      <div class="testimonial-card">
-        <div class="testimonial-quote">I was completely new to Salesforce when Supriya started mentoring me. Within three months I had my Admin cert and my first real project in a sandbox. She has a way of making even the tricky stuff feel achievable.</div>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">PK</div>
-          <div><div class="testimonial-name">Priya K.</div><div class="testimonial-role">Aspiring Salesforce Admin</div></div>
-          <span class="testimonial-relation">Mentee</span>
-        </div>
-      </div>
-      <div class="testimonial-card">
-        <div class="testimonial-quote">What sets Supriya apart is how she documents her decisions. Every build comes with clear reasoning — not just what was configured but why. That kind of thinking makes future maintenance so much easier.</div>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">RC</div>
-          <div><div class="testimonial-name">Ravi C.</div><div class="testimonial-role">Salesforce Architect</div></div>
-          <span class="testimonial-relation">Colleague</span>
-        </div>
-      </div>
-    </div>-->
     <div class="testimonials-cta">
       <p>Worked with me? I'd love to hear from you.</p>
       <a class="btn-testimonial" href="https://docs.google.com/forms/d/e/1FAIpQLScypBuqgr2Aww5xmb7nSR3rD4Qslfj72fLYMonqmHXNQCv4FA/viewform?usp=sf_link" target="_blank">
@@ -636,23 +607,11 @@
       </div>
       <form class="contact-form" action="https://formspree.io/f/mqejrebp" method="POST">
         <div class="form-row">
-          <div class="field-group">
-            <label for="fname">First name</label>
-            <input type="text" id="fname" name="first_name" placeholder="Jane" />
-          </div>
-          <div class="field-group">
-            <label for="lname">Last name</label>
-            <input type="text" id="lname" name="last_name" placeholder="Doe" />
-          </div>
+          <div class="field-group"><label for="fname">First name</label><input type="text" id="fname" name="first_name" placeholder="Jane" /></div>
+          <div class="field-group"><label for="lname">Last name</label><input type="text" id="lname" name="last_name" placeholder="Doe" /></div>
         </div>
-        <div class="field-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" placeholder="jane@company.com" />
-        </div>
-        <div class="field-group">
-          <label for="message">Message</label>
-          <textarea id="message" name="message" placeholder="What would you like to discuss?"></textarea>
-        </div>
+        <div class="field-group"><label for="email">Email</label><input type="email" id="email" name="email" placeholder="jane@company.com" /></div>
+        <div class="field-group"><label for="message">Message</label><textarea id="message" name="message" placeholder="What would you like to discuss?"></textarea></div>
         <button type="submit" class="btn-submit">Send message</button>
       </form>
     </div>
