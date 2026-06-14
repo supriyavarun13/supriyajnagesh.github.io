@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Why I Started a Salesforce Project With Wireframes, Not With Salesforce — Supriya Nagesh</title>
+  <meta name="description" content="A walkthrough of the Sai Dance Academy enrollment build — and what wireframes reveal about how I approach a Salesforce project before touching Setup." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy:#0f1b2d;--accent:#3b9eff;--accent-light:#e8f3ff;--text:#1a1a2e;
+      --text-muted:#5a6a7e;--border:#e2e8f0;--surface:#f8fafc;--white:#ffffff;
+      --green:#059669;--green-light:#ecfdf5;--yellow:#d97706;--yellow-light:#fffbeb;
+      --purple:#7c3aed;--purple-light:#f5f3ff;
+      --radius:10px;--radius-lg:16px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);font-size:16px;line-height:1.7;}
+    nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;padding:0 2.5rem;height:60px;}
+    .nav-logo{font-family:'DM Serif Display',serif;font-size:18px;color:var(--navy);text-decoration:none;}
+    .nav-back{font-size:13px;font-weight:500;color:var(--text-muted);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s;}
+    .nav-back:hover{color:var(--navy);}
+
+    /* HERO */
+    .article-hero{background:var(--navy);padding:4rem 2.5rem 3.5rem;position:relative;overflow:hidden;}
+    .article-hero::before{content:'';position:absolute;top:-80px;right:-80px;width:400px;height:400px;background:radial-gradient(circle,rgba(59,158,255,0.1) 0%,transparent 70%);border-radius:50%;}
+    .article-hero::after{content:'';position:absolute;bottom:-60px;left:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(124,58,237,0.08) 0%,transparent 70%);border-radius:50%;}
+    .hero-inner{position:relative;z-index:1;max-width:780px;margin:0 auto;}
+    .article-meta{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap;}
+    .article-tag{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);background:rgba(59,158,255,0.12);border:1px solid rgba(59,158,255,0.25);padding:4px 10px;border-radius:20px;}
+    .article-tag-process{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#c4b5fd;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);padding:4px 10px;border-radius:20px;}
+    .series-badge{font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#fbbf24;background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.3);padding:4px 12px;border-radius:20px;}
+    .article-date{font-size:13px;color:rgba(255,255,255,0.4);}
+    .meta-dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,0.2);}
+    .article-hero h1{font-family:'DM Serif Display',serif;font-size:clamp(22px,4vw,40px);font-weight:400;line-height:1.2;color:white;margin-bottom:1rem;}
+    .article-subtitle{font-size:16px;color:rgba(255,255,255,0.6);line-height:1.7;max-width:660px;}
+    .stack-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:1.75rem;}
+    .stack-badge{font-size:12px;padding:5px 12px;border-radius:20px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);}
+    .author-row{display:flex;align-items:center;gap:10px;margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.1);}
+    .author-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#1a5fa8);display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:14px;color:white;flex-shrink:0;}
+    .author-name{font-size:14px;font-weight:500;color:rgba(255,255,255,0.85);}
+    .author-title{font-size:12px;color:rgba(255,255,255,0.4);}
+
+    /* PART BANNER */
+    .part-banner{background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:2rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .part-banner p{font-size:14px;color:#92400e;margin:0;flex:1;}
+    .part-banner a{font-size:13px;font-weight:500;color:#0176d3;text-decoration:none;white-space:nowrap;}
+    .part-banner a:hover{text-decoration:underline;}
+
+    /* BODY */
+    .article-body{max-width:780px;margin:0 auto;padding:3.5rem 2.5rem 5rem;}
+    .article-body p{font-size:16px;line-height:1.85;color:#2d3748;margin-bottom:1.5rem;}
+    .article-body h2{font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;color:var(--navy);margin:3rem 0 0.75rem;}
+    .article-body h3{font-size:16px;font-weight:500;color:var(--navy);margin:2rem 0 0.5rem;}
+    .article-body strong{color:var(--navy);font-weight:500;}
+    .article-body em{color:#4a5568;}
+    .article-body a{color:var(--accent);text-decoration:none;}
+    .article-body a:hover{text-decoration:underline;}
+
+    /* CALLOUTS */
+    .callout{border-radius:8px;padding:1.1rem 1.4rem;margin:1.25rem 0 1.75rem;}
+    .callout p{font-size:14px!important;margin:0!important;line-height:1.7!important;}
+    .callout-label{font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;}
+    .callout-blue{background:var(--accent-light);border-left:3px solid var(--accent);}
+    .callout-blue p{color:#1a3a5c!important;}
+    .callout-purple{background:var(--purple-light);border-left:3px solid var(--purple);}
+    .callout-purple p{color:#4c1d95!important;}
+    .callout-green{background:var(--green-light);border-left:3px solid var(--green);}
+    .callout-green p{color:#064e3b!important;}
+
+    /* WIREFRAME EMBED */
+    .wireframe-section{margin:2rem 0 2.5rem;}
+    .wireframe-label{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:0.75rem;display:flex;align-items:center;gap:8px;}
+    .wireframe-label::after{content:'LIVE INTERACTIVE';font-size:9px;padding:2px 7px;background:var(--green-light);color:var(--green);border-radius:20px;border:1px solid #a7f3d0;}
+    .wireframe-container{border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);}
+    .wireframe-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0.6rem 1rem;display:flex;align-items:center;gap:8px;}
+    .wireframe-dots{display:flex;gap:5px;}
+    .wireframe-dot{width:10px;height:10px;border-radius:50%;}
+    .wireframe-url{flex:1;background:white;border:1px solid var(--border);border-radius:4px;padding:4px 10px;font-size:11px;color:var(--text-muted);font-family:'SF Mono','Fira Code',monospace;}
+    .wireframe-open{font-size:11px;font-weight:500;color:var(--accent);text-decoration:none;white-space:nowrap;}
+    .wireframe-open:hover{text-decoration:underline;}
+    .wireframe-frame{width:100%;height:600px;border:none;display:block;}
+
+    .divider{border:none;border-top:1px solid var(--border);margin:2.5rem 0;}
+
+    /* DECISION LIST */
+    .decision-list{display:flex;flex-direction:column;gap:1rem;margin:1.25rem 0 1.75rem;}
+    .decision-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;border-left:3px solid var(--accent);}
+    .decision-label{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:5px;}
+    .decision-title{font-size:15px;font-weight:500;color:var(--navy);margin-bottom:5px;}
+    .decision-body{font-size:14px;color:#4a5568;line-height:1.7;}
+
+    /* TRY IT */
+    .try-it{background:var(--navy);border-radius:var(--radius-lg);padding:2rem;margin:2.5rem 0;}
+    .try-it h3{font-family:'DM Serif Display',serif;font-size:20px;color:white;font-weight:400;margin-bottom:0.75rem;}
+    .try-it p{font-size:14px!important;color:rgba(255,255,255,0.55)!important;margin:0 0 1.25rem!important;}
+    .try-links{display:flex;flex-wrap:wrap;gap:10px;}
+    .try-link{font-size:13px;font-weight:500;padding:9px 16px;border-radius:7px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);text-decoration:none;transition:all 0.15s;background:rgba(255,255,255,0.06);display:inline-flex;align-items:center;gap:6px;}
+    .try-link:hover{background:rgba(255,255,255,0.15);color:white;}
+    .try-link-primary{background:var(--accent);border-color:var(--accent);color:white;}
+    .try-link-primary:hover{background:#2a8ef0;}
+
+    .article-footer{max-width:780px;margin:0 auto;padding:0 2.5rem 4rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+    .back-link{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--text-muted);text-decoration:none;padding:9px 16px;border-radius:8px;border:1px solid var(--border);transition:all 0.15s;}
+    .back-link:hover{background:var(--navy);color:white;border-color:var(--navy);}
+    .share-btn{font-size:13px;font-weight:500;padding:9px 16px;border-radius:8px;border:1px solid var(--border);background:white;color:var(--text-muted);text-decoration:none;transition:all 0.15s;}
+    .share-btn:hover{background:var(--navy);color:white;border-color:var(--navy);}
+
+    .more-section{background:var(--surface);padding:3.5rem 2.5rem;border-top:1px solid var(--border);}
+    .more-inner{max-width:780px;margin:0 auto;}
+    .more-label{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:1.25rem;}
+    .more-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;}
+    .more-card{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;text-decoration:none;transition:all 0.15s;display:block;}
+    .more-card:hover{border-color:#c7d8ec;box-shadow:0 4px 16px rgba(0,0,0,0.06);}
+    .more-card-tag{font-size:11px;color:var(--accent);margin-bottom:0.5rem;}
+    .more-card-title{font-size:14px;font-weight:500;color:var(--navy);line-height:1.5;}
+
+    footer{background:var(--navy);color:rgba(255,255,255,0.5);padding:1.5rem 2.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+    footer small{font-size:13px;}
+    footer a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;}
+    footer a:hover{color:white;}
+
+    @media(max-width:640px){
+      nav,footer{padding:0 1.25rem;}
+      .article-hero{padding:3rem 1.25rem 2.5rem;}
+      .article-body{padding:2.5rem 1.25rem 3rem;}
+      .article-footer{padding:0 1.25rem 3rem;}
+      .more-section{padding:2.5rem 1.25rem;}
+      .wireframe-frame{height:400px;}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Supriya Nagesh</a>
+  <a class="nav-back" href="index.html#blog">← Back to blog</a>
+</nav>
+
+<header class="article-hero">
+  <div class="hero-inner">
+    <div class="article-meta">
+      <span class="series-badge">✦ Project 01 — Process &amp; Design</span>
+      <span class="meta-dot"></span>
+      <span class="article-tag-process">How I Work</span>
+      <span class="article-tag">Process &amp; Design</span>
+      <span class="meta-dot"></span>
+      <span class="article-date">June 2026</span>
+      <span class="meta-dot"></span>
+      <span class="article-date">8 min read</span>
+    </div>
+    <h1>Why I Started a Salesforce Project With Wireframes, Not With Salesforce</h1>
+    <p class="article-subtitle">A walkthrough of the Sai Dance Academy enrollment build — and what it says about how I approach a project before touching Setup. The wireframes below are live and interactive.</p>
+    <div class="stack-badges">
+      <span class="stack-badge">UX-first thinking</span>
+      <span class="stack-badge">Data model design</span>
+      <span class="stack-badge">Compliance by design</span>
+      <span class="stack-badge">Admin process</span>
+    </div>
+    <div class="author-row">
+      <div class="author-avatar">SN</div>
+      <div>
+        <div class="author-name">Supriya Nagesh</div>
+        <div class="author-title">Salesforce Professional · 7+ years</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<article class="article-body">
+
+  <div class="part-banner">
+    <p>This is a process post for <strong>Project 01 — Sai Dance Academy</strong>. For the full technical build, see the project overview.</p>
+    <a href="blog-sai-dance-academy-part1.html">Read the project overview →</a>
+  </div>
+
+  <p>Most Salesforce projects I've seen go wrong don't fail because of a bad Flow or a broken trigger. They fail earlier than that — at the moment someone opens Setup and starts building before anyone has agreed on what the experience should actually feel like for the person on the other end.</p>
+
+  <p>So when I started building a public enrollment and payment system for a dance academy, I didn't open Salesforce first. I opened a blank canvas and drew three wireframes. This article walks through those wireframes and the reasoning behind them — because the wireframes are where the admin work really begins, long before a single field gets created.</p>
+
+  <p>If you're hiring, this is the part of my thinking I'd want you to see.</p>
+
+  <hr class="divider" />
+
+  <h2>The project in one paragraph</h2>
+
+  <p>The academy needed a way for parents and adult students to enroll in dance classes online and pay in the same sitting. The requirements were ordinary on the surface: a public homepage, an enrollment form, online payment, and an automatic confirmation. Underneath, it's a fairly complete Salesforce build — a public-facing Experience Cloud site backed by Lightning Web Components, Apex handling the server-side logic, a Stripe integration for payments, webhooks writing back to Salesforce, and a Flow firing the confirmation email. The wireframes were how I made sure all of that machinery stayed in service of a clean experience.</p>
+
+  <div class="callout callout-blue">
+    <p class="callout-label" style="color:var(--accent);">💡 The wireframes below are live</p>
+    <p>The frames are rendered in full — you can interact with them, scroll through the layouts, and see every design decision in context. Built in HTML before a single Salesforce object was created.</p>
+  </div>
+
+  <!-- WIREFRAME EMBED -->
+  <div class="wireframe-section">
+    <div class="wireframe-label">Sai Dance Academy — Full wireframe set</div>
+    <div class="wireframe-container">
+      <div class="wireframe-bar">
+        <div class="wireframe-dots">
+          <div class="wireframe-dot" style="background:#ff5f57;"></div>
+          <div class="wireframe-dot" style="background:#febc2e;"></div>
+          <div class="wireframe-dot" style="background:#28c840;"></div>
+        </div>
+        <div class="wireframe-url">sai-dance-wireframes.html</div>
+        <a class="wireframe-open" href="sai-dance-wireframes.html" target="_blank">Open full screen ↗</a>
+      </div>
+      <iframe class="wireframe-frame" src="sai-dance-wireframes.html" title="Sai Dance Academy wireframes — homepage, enrollment flow, confirmation"></iframe>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <h2>Wireframe 1 — The homepage</h2>
+
+  <p>The homepage wireframe looks deceptively simple: a nav bar, a hero with two calls to action, a row of featured classes, an events-and-gallery split, a footer, and a persistent AI agent bubble in the bottom-right corner.</p>
+
+  <p>What matters here isn't the layout — it's the decisions baked into it.</p>
+
+  <div class="decision-list">
+    <div class="decision-card">
+      <div class="decision-label">Decision 01</div>
+      <div class="decision-title">Two hero CTAs — "View Classes" and "Enroll Now"</div>
+      <div class="decision-body">The visitor who's still browsing needs a different path than the one who already knows what they want. A single CTA serves neither well. Two CTAs cost nothing in the wireframe and save a bounce in production.</div>
+    </div>
+    <div class="decision-card">
+      <div class="decision-label">Decision 02</div>
+      <div class="decision-title">Featured classes row implies a data model decision</div>
+      <div class="decision-body">The featured-classes row isn't decoration — it implies a <code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">Dance_Class__c</code> object with a boolean flag for what's promoted. Drawing the homepage forced me to define that field before I built the object, not discover it was missing halfway through.</div>
+    </div>
+    <div class="decision-card">
+      <div class="decision-label">Decision 03</div>
+      <div class="decision-title">Persistent AI agent bubble</div>
+      <div class="decision-body">Deliberately always visible so a parent with a quick question ("Is there a beginner class for a 7-year-old?") never has to hunt for help. This also meant defining the agent's knowledge source and guardrails before deployment — decisions that appear in the Agentforce post.</div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <h2>Wireframe 2 — The enrollment-to-payment flow</h2>
+
+  <p>This is the heart of the build, and I wireframed it as three connected screens rather than one — because the user is really moving through three distinct moments: giving their details, paying, and being reassured it worked. A three-step progress indicator runs across all of them so the user always knows where they are and how much is left.</p>
+
+  <h3>Step 1 — The enrollment form</h3>
+  <p>First name, last name, email, phone, a class-selection dropdown, an age-group dropdown, and a GDPR consent checkbox — with a live order summary sitting alongside the form. This screen is a Lightning Web Component. When the user submits, the LWC calls Apex, Apex creates a Stripe Checkout session, and the user is redirected to pay.</p>
+
+  <div class="callout callout-purple">
+    <p class="callout-label" style="color:var(--purple);">🧠 Why the order summary is on the same screen</p>
+    <p>People abandon forms when they can't see what they're committing to before they hand over a card. The order summary on the enrollment screen is a conversion decision, not a design flourish. It reduces abandonment by giving the visitor certainty before they leave for Stripe.</p>
+  </div>
+
+  <div class="callout callout-green">
+    <p class="callout-label" style="color:var(--green);">✅ GDPR by design, not by afterthought</p>
+    <p>The consent checkbox is in the wireframe — not bolted on after a legal review flagged the form. Building compliance into the wireframe is the difference between a form that's launch-ready and one that gets sent back. This is a habit, not a one-off.</p>
+  </div>
+
+  <h3>Step 2 — Stripe hosted checkout</h3>
+  <p>This screen is fully hosted by Stripe. I deliberately kept payment off our own infrastructure. Letting Stripe own the card-entry screen means the academy never touches raw card data — which collapses the PCI compliance burden dramatically. That's a security and risk decision expressed as a wireframe choice. When payment succeeds, a Stripe webhook fires back to Salesforce Apex.</p>
+
+  <h3>Step 3 — The confirmation page</h3>
+  <p>A success checkmark, the enrollment reference number, the class details, and two CTAs: "View all classes" and "Back to home." By this point the webhook has updated Salesforce and a Flow has already sent the confirmation email. The on-screen confirmation and the emailed one are doing different jobs — one gives immediate closure, the other gives a permanent record. The wireframe is where I made sure both existed.</p>
+
+  <hr class="divider" />
+
+  <h2>Why this matters for an admin role specifically</h2>
+
+  <p>It would have been faster to skip the wireframes and start clicking. But the wireframes are where I made the decisions that are expensive to change later: which objects exist, where compliance lives, how the integration hands control back and forth between Salesforce and Stripe, and where automation fires.</p>
+
+  <p>By the time I opened Setup, the build was almost mechanical. The LWC knew what fields it needed because the form was already drawn. The Apex knew its job because the redirect-and-webhook handshake was already mapped. The Flow knew its trigger because the confirmation step was already defined. The architecture diagram and the user experience were the same document.</p>
+
+  <div class="callout callout-blue">
+    <p class="callout-label" style="color:var(--accent);">💡 The habit this represents</p>
+    <p>Treating the admin's job as designing a system end to end — data model, automation, integration, and compliance — in service of an experience a real person can move through without friction. The platform is the tool. The wireframe is where the thinking happens.</p>
+  </div>
+
+  <div class="try-it">
+    <h3>See the full build</h3>
+    <p>The platform built from these wireframes is live — you can enroll, pay with a test card, and receive a confirmation email. The technical build is documented across two posts and two sub-posts.</p>
+    <div class="try-links">
+      <a class="try-link try-link-primary" href="https://saidanceacademy-dev-ed.develop.my.site.com/sda" target="_blank">Visit the live site →</a>
+      <a class="try-link" href="blog-sai-dance-academy-part1.html">Project overview</a>
+      <a class="try-link" href="blog-stripe-salesforce.html">Stripe deep-dive</a>
+      <a class="try-link" href="blog-agentforce-salesforce.html">Agentforce deep-dive</a>
+    </div>
+  </div>
+
+  <p style="font-size:13px;color:var(--text-muted);margin-top:2rem;">Built with Salesforce (LWC, Apex, Flow), Stripe Checkout, and a healthy respect for the person filling out the form.</p>
+
+</article>
+
+<div class="article-footer">
+  <a class="back-link" href="index.html#blog">← Back to all posts</a>
+  <a class="share-btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https://supriyajnagesh.com/blog-wireframes-sai-dance.html" target="_blank">Share on LinkedIn</a>
+</div>
+
+<div class="more-section">
+  <div class="more-inner">
+    <p class="more-label">Continue reading</p>
+    <div class="more-grid">
+      <a class="more-card" href="blog-sai-dance-academy-part1.html" style="border-color:#fbbf24;background:#fffbeb;">
+        <p class="more-card-tag" style="color:#d97706;">✦ Project 01 overview</p>
+        <p class="more-card-title" style="color:#92400e;">Architecture, data model, and the six core user journeys</p>
+      </a>
+      <a class="more-card" href="blog-stripe-salesforce.html">
+        <p class="more-card-tag">Project 01 Sub-post</p>
+        <p class="more-card-title">Integrating Stripe payments — webhooks, credentials, and everything that fought back</p>
+      </a>
+      <a class="more-card" href="blog-agentforce-salesforce.html">
+        <p class="more-card-tag">Project 01 Sub-post</p>
+        <p class="more-card-title">Building and deploying a live Agentforce agent on Experience Cloud</p>
+      </a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <small>© 2026 Supriya Nagesh · supriyajnagesh.com</small>
+  <a href="https://www.linkedin.com/in/supriya-nagesh" target="_blank">LinkedIn</a>
+</footer>
+
+</body>
+</html>

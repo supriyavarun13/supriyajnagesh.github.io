@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sai Dance Academy — Wireframes</title>
+<style>
+
+:root{
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --border-radius-lg: 12px;
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f4f5f7;
+  --color-border-secondary: #c4c8cf;
+  --color-border-tertiary: #e2e5ea;
+  --color-text-primary: #1f2328;
+  --color-text-secondary: #57606a;
+  --color-text-tertiary: #8c959f;
+}
+body{
+  margin:0;
+  padding:32px 20px 48px;
+  background:#fbfbfc;
+  color:var(--color-text-primary);
+  font-family:var(--font-sans);
+}
+.wf-wrap{max-width:760px;margin:0 auto;}
+.wf-page-head{margin:0 0 28px;}
+.wf-page-head h1{font-size:22px;font-weight:600;margin:0 0 6px;letter-spacing:-.01em;}
+.wf-page-head p{font-size:13px;color:var(--color-text-secondary);margin:0;line-height:1.5;}
+.wf-divider{height:1px;background:var(--color-border-tertiary);margin:36px 0;border:0;}
+
+</style>
+</head>
+<body>
+<div class="wf-wrap">
+  <div class="wf-page-head">
+    <h1>Sai Dance Academy — Enrollment &amp; Payment Wireframes</h1>
+    <p>Low-fidelity wireframes mapping the public homepage and the three-step enrollment-to-payment flow, built to define the Salesforce data model, integration handshake, and compliance touchpoints before development.</p>
+  </div>
+
+
+<style>
+  .wf { font-family: var(--font-sans); padding-bottom: 1.5rem; }
+  .wf-label { font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--color-text-secondary); margin: 0 0 6px; }
+  .wf-frame { border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-lg); overflow: hidden; }
+  .wf-nav { background: var(--color-background-secondary); border-bottom: 0.5px solid var(--color-border-tertiary); padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .wf-logo { width: 80px; height: 18px; background: var(--color-border-secondary); border-radius: 4px; }
+  .wf-nav-links { display: flex; gap: 12px; }
+  .wf-nav-link { width: 48px; height: 10px; background: var(--color-border-tertiary); border-radius: 3px; }
+  .wf-nav-cta { width: 72px; height: 26px; background: var(--color-border-secondary); border-radius: 6px; border: 0.5px solid var(--color-border-secondary); }
+  .wf-hero { background: var(--color-background-secondary); padding: 28px 24px; text-align: center; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .wf-hero-h { width: 55%; height: 20px; background: var(--color-border-secondary); border-radius: 4px; margin: 0 auto 10px; }
+  .wf-hero-sub { width: 70%; height: 10px; background: var(--color-border-tertiary); border-radius: 3px; margin: 0 auto 6px; }
+  .wf-hero-btns { display: flex; justify-content: center; gap: 10px; margin-top: 14px; }
+  .wf-btn-primary { width: 100px; height: 30px; background: var(--color-border-secondary); border-radius: 6px; border: 0.5px solid var(--color-border-secondary); }
+  .wf-btn-outline { width: 100px; height: 30px; border: 0.5px solid var(--color-border-secondary); border-radius: 6px; }
+  .wf-section { padding: 16px 20px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .wf-section-title { width: 140px; height: 13px; background: var(--color-border-secondary); border-radius: 3px; margin-bottom: 12px; }
+  .wf-card-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .wf-card { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: 8px; padding: 10px; }
+  .wf-card-img { width: 100%; height: 52px; background: var(--color-border-tertiary); border-radius: 5px; margin-bottom: 8px; }
+  .wf-card-line { height: 8px; background: var(--color-border-tertiary); border-radius: 3px; margin-bottom: 5px; }
+  .wf-card-line.short { width: 60%; }
+  .wf-card-line.med { width: 80%; }
+  .wf-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .wf-event { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: 8px; padding: 10px; display: flex; gap: 10px; align-items: flex-start; }
+  .wf-date-box { min-width: 36px; height: 36px; background: var(--color-border-secondary); border-radius: 6px; }
+  .wf-event-lines { flex: 1; }
+  .wf-gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .wf-gallery-thumb { height: 44px; background: var(--color-border-tertiary); border-radius: 5px; }
+  .wf-footer { background: var(--color-background-secondary); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
+  .wf-footer-line { width: 80px; height: 8px; background: var(--color-border-tertiary); border-radius: 3px; }
+  .wf-agent { position: relative; }
+  .wf-agent-bubble { position: absolute; bottom: 8px; right: 12px; width: 40px; height: 40px; border-radius: 50%; background: var(--color-border-secondary); border: 0.5px solid var(--color-border-secondary); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; color: var(--color-text-secondary); }
+  .annotation { font-size: 11px; color: var(--color-text-secondary); font-style: italic; margin-top: 4px; }
+  .section-badge { display: inline-block; font-size: 10px; font-weight: 500; padding: 1px 7px; border-radius: 20px; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); color: var(--color-text-secondary); margin-bottom: 8px; }
+</style>
+<div class="wf">
+  <p class="wf-label">Wireframe 1 — Homepage</p>
+  <div class="wf-frame wf-agent">
+
+    <!-- Nav -->
+    <div class="wf-nav">
+      <div class="wf-logo"></div>
+      <div class="wf-nav-links">
+        <div class="wf-nav-link"></div>
+        <div class="wf-nav-link"></div>
+        <div class="wf-nav-link"></div>
+        <div class="wf-nav-link"></div>
+        <div class="wf-nav-link"></div>
+      </div>
+      <div class="wf-nav-cta"></div>
+    </div>
+
+    <!-- Hero -->
+    <div class="wf-hero">
+      <div class="section-badge">Hero banner</div>
+      <div class="wf-hero-h"></div>
+      <div class="wf-hero-sub"></div>
+      <div class="wf-hero-sub" style="width:50%"></div>
+      <div class="wf-hero-btns">
+        <div class="wf-btn-primary"></div>
+        <div class="wf-btn-outline"></div>
+      </div>
+    </div>
+
+    <!-- Classes highlight -->
+    <div class="wf-section">
+      <div class="section-badge">Featured classes</div>
+      <div class="wf-section-title"></div>
+      <div class="wf-card-row">
+        <div class="wf-card"><div class="wf-card-img"></div><div class="wf-card-line med"></div><div class="wf-card-line short"></div></div>
+        <div class="wf-card"><div class="wf-card-img"></div><div class="wf-card-line med"></div><div class="wf-card-line short"></div></div>
+        <div class="wf-card"><div class="wf-card-img"></div><div class="wf-card-line med"></div><div class="wf-card-line short"></div></div>
+      </div>
+    </div>
+
+    <!-- Upcoming events + gallery split -->
+    <div class="wf-section">
+      <div class="wf-2col">
+        <div>
+          <div class="section-badge">Upcoming events</div>
+          <div class="wf-event" style="margin-bottom:8px"><div class="wf-date-box"></div><div class="wf-event-lines"><div class="wf-card-line med"></div><div class="wf-card-line short"></div></div></div>
+          <div class="wf-event"><div class="wf-date-box"></div><div class="wf-event-lines"><div class="wf-card-line med"></div><div class="wf-card-line short"></div></div></div>
+        </div>
+        <div>
+          <div class="section-badge">Gallery preview</div>
+          <div class="wf-gallery-grid">
+            <div class="wf-gallery-thumb"></div>
+            <div class="wf-gallery-thumb"></div>
+            <div class="wf-gallery-thumb"></div>
+            <div class="wf-gallery-thumb"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="wf-footer">
+      <div class="wf-footer-line"></div>
+      <div class="wf-footer-line"></div>
+      <div class="wf-footer-line"></div>
+    </div>
+
+    <!-- AI Agent bubble -->
+    <div class="wf-agent-bubble">AI</div>
+  </div>
+  <p class="annotation">Nav: Logo · Classes · Enroll · Events · Gallery · Contact · Enroll CTA button. Hero has two CTAs: "View Classes" and "Enroll Now". AI Agent bubble persistent bottom-right.</p>
+</div>
+
+
+  <hr class="wf-divider">
+
+
+<style>
+  .wf2 { font-family: var(--font-sans); padding-bottom: 1.5rem; }
+  .wf-label2 { font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--color-text-secondary); margin: 0 0 6px; }
+  .wf-frame2 { border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-lg); overflow: hidden; margin-bottom: 14px; }
+  .wf-nav2 { background: var(--color-background-secondary); border-bottom: 0.5px solid var(--color-border-tertiary); padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .wf-logo2 { width: 80px; height: 18px; background: var(--color-border-secondary); border-radius: 4px; }
+  .wf-nav-links2 { display: flex; gap: 12px; }
+  .wf-nav-link2 { width: 48px; height: 10px; background: var(--color-border-tertiary); border-radius: 3px; }
+  .wf-body { padding: 16px 20px; }
+  .wf-pg-title { width: 180px; height: 16px; background: var(--color-border-secondary); border-radius: 4px; margin-bottom: 16px; }
+  .wf-2col { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; }
+  .wf-form-group { margin-bottom: 10px; }
+  .wf-form-label { width: 80px; height: 8px; background: var(--color-border-tertiary); border-radius: 3px; margin-bottom: 5px; }
+  .wf-input { height: 28px; width: 100%; background: var(--color-background-primary); border: 0.5px solid var(--color-border-secondary); border-radius: 6px; }
+  .wf-select { height: 28px; width: 100%; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-secondary); border-radius: 6px; }
+  .wf-checkbox-row { display: flex; align-items: center; gap: 8px; margin: 10px 0; }
+  .wf-checkbox { width: 14px; height: 14px; border: 0.5px solid var(--color-border-secondary); border-radius: 3px; flex-shrink: 0; }
+  .wf-check-label { height: 8px; width: 200px; background: var(--color-border-tertiary); border-radius: 3px; }
+  .wf-submit { height: 36px; width: 100%; background: var(--color-border-secondary); border-radius: 8px; margin-top: 10px; }
+  .wf-summary { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: 8px; padding: 12px; }
+  .wf-sum-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .wf-sum-key { width: 80px; height: 8px; background: var(--color-border-tertiary); border-radius: 3px; }
+  .wf-sum-val { width: 50px; height: 8px; background: var(--color-border-tertiary); border-radius: 3px; }
+  .wf-sum-divider { border: none; border-top: 0.5px solid var(--color-border-tertiary); margin: 10px 0; }
+  .wf-sum-total { height: 12px; background: var(--color-border-secondary); border-radius: 3px; }
+  .step-bar { display: flex; gap: 6px; align-items: center; margin-bottom: 16px; }
+  .step-dot { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; flex-shrink: 0; }
+  .step-dot.active { background: var(--color-border-secondary); color: var(--color-text-primary); }
+  .step-dot.done { background: var(--color-border-tertiary); color: var(--color-text-secondary); }
+  .step-dot.inactive { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); color: var(--color-text-tertiary); }
+  .step-line { flex: 1; height: 1px; background: var(--color-border-tertiary); }
+  .step-label { font-size: 11px; color: var(--color-text-secondary); }
+  .wf-stripe-box { border: 0.5px dashed var(--color-border-secondary); border-radius: 8px; padding: 14px 16px; background: var(--color-background-secondary); }
+  .wf-stripe-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .wf-stripe-brand { width: 60px; height: 14px; background: var(--color-border-secondary); border-radius: 3px; }
+  .wf-lock { width: 14px; height: 14px; border: 0.5px solid var(--color-border-secondary); border-radius: 3px; }
+  .annotation2 { font-size: 11px; color: var(--color-text-secondary); font-style: italic; margin-top: 4px; }
+  .section-badge2 { display: inline-block; font-size: 10px; font-weight: 500; padding: 1px 7px; border-radius: 20px; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); color: var(--color-text-secondary); margin-bottom: 8px; }
+  .arrow-between { text-align: center; font-size: 18px; color: var(--color-text-tertiary); margin: 4px 0 8px; line-height: 1; }
+</style>
+<div class="wf2">
+
+  <!-- ENROLLMENT FORM PAGE -->
+  <p class="wf-label2">Wireframe 2a — Enrollment form page (Step 1 of 3)</p>
+  <div class="wf-frame2">
+    <div class="wf-nav2">
+      <div class="wf-logo2"></div>
+      <div class="wf-nav-links2"><div class="wf-nav-link2"></div><div class="wf-nav-link2"></div><div class="wf-nav-link2"></div></div>
+    </div>
+    <div class="wf-body">
+      <!-- Step indicator -->
+      <div class="step-bar">
+        <div class="step-dot active">1</div><span class="step-label">Your details</span>
+        <div class="step-line"></div>
+        <div class="step-dot inactive">2</div><span class="step-label">Payment</span>
+        <div class="step-line"></div>
+        <div class="step-dot inactive">3</div><span class="step-label">Confirmation</span>
+      </div>
+      <div class="wf-2col">
+        <!-- Form left -->
+        <div>
+          <div class="section-badge2">LWC enrollment form</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div class="wf-form-group"><div class="wf-form-label"></div><div class="wf-input"></div></div>
+            <div class="wf-form-group"><div class="wf-form-label"></div><div class="wf-input"></div></div>
+          </div>
+          <div class="wf-form-group"><div class="wf-form-label"></div><div class="wf-input"></div></div>
+          <div class="wf-form-group"><div class="wf-form-label"></div><div class="wf-input"></div></div>
+          <div class="wf-form-group"><div class="wf-form-label"></div><div class="wf-select"></div></div>
+          <div class="wf-form-group"><div class="wf-form-label"></div><div class="wf-select"></div></div>
+          <div class="wf-checkbox-row"><div class="wf-checkbox"></div><div class="wf-check-label"></div></div>
+          <div class="wf-submit"></div>
+        </div>
+        <!-- Order summary right -->
+        <div>
+          <div class="section-badge2">Order summary</div>
+          <div class="wf-summary">
+            <div class="wf-sum-row"><div class="wf-sum-key"></div><div class="wf-sum-val"></div></div>
+            <div class="wf-sum-row"><div class="wf-sum-key"></div><div class="wf-sum-val"></div></div>
+            <div class="wf-sum-row"><div class="wf-sum-key"></div><div class="wf-sum-val"></div></div>
+            <hr class="wf-sum-divider"/>
+            <div class="wf-sum-total"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="annotation2">Fields: First name, Last name, Email, Phone, Class selection (dropdown), Age group (dropdown), GDPR consent checkbox. Submit fires LWC → Apex → Stripe session creation → redirect.</p>
+
+  <div class="arrow-between">↓ redirects to Stripe</div>
+
+  <!-- STRIPE CHECKOUT PAGE -->
+  <p class="wf-label2">Wireframe 2b — Stripe hosted checkout (Step 2 of 3)</p>
+  <div class="wf-frame2">
+    <div class="wf-body">
+      <div class="step-bar">
+        <div class="step-dot done">✓</div><span class="step-label">Your details</span>
+        <div class="step-line"></div>
+        <div class="step-dot active">2</div><span class="step-label">Payment</span>
+        <div class="step-line"></div>
+        <div class="step-dot inactive">3</div><span class="step-label">Confirmation</span>
+      </div>
+      <div class="wf-stripe-box">
+        <div class="wf-stripe-header">
+          <div class="wf-stripe-brand"></div>
+          <div style="display:flex;align-items:center;gap:6px"><div class="wf-lock"></div><div style="width:80px;height:8px;background:var(--color-border-tertiary);border-radius:3px"></div></div>
+        </div>
+        <div class="wf-form-group"><div class="wf-form-label"></div><div class="wf-input"></div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="wf-form-group"><div class="wf-form-label"></div><div class="wf-input"></div></div>
+          <div class="wf-form-group"><div class="wf-form-label"></div><div class="wf-input"></div></div>
+        </div>
+        <div class="wf-submit" style="margin-top:6px"></div>
+        <div style="text-align:center;margin-top:8px;display:flex;justify-content:center;gap:6px">
+          <div style="width:30px;height:12px;background:var(--color-border-tertiary);border-radius:2px"></div>
+          <div style="width:30px;height:12px;background:var(--color-border-tertiary);border-radius:2px"></div>
+          <div style="width:30px;height:12px;background:var(--color-border-tertiary);border-radius:2px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="annotation2">Fully hosted by Stripe. Card number, expiry, CVC. Pay button triggers charge. On success → Stripe webhook fires to Salesforce Apex. Test card: 4242 4242 4242 4242.</p>
+
+  <div class="arrow-between">↓ webhook updates Salesforce, Flow sends email</div>
+
+  <!-- CONFIRMATION PAGE -->
+  <p class="wf-label2">Wireframe 2c — Payment success page (Step 3 of 3)</p>
+  <div class="wf-frame2">
+    <div class="wf-body" style="text-align:center;padding:28px 20px">
+      <div class="step-bar">
+        <div class="step-dot done">✓</div><span class="step-label">Your details</span>
+        <div class="step-line"></div>
+        <div class="step-dot done">✓</div><span class="step-label">Payment</span>
+        <div class="step-line"></div>
+        <div class="step-dot active">3</div><span class="step-label">Confirmation</span>
+      </div>
+      <div style="width:48px;height:48px;border-radius:50%;background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--color-text-secondary)">✓</div>
+      <div style="width:200px;height:16px;background:var(--color-border-secondary);border-radius:4px;margin:0 auto 8px"></div>
+      <div style="width:280px;height:8px;background:var(--color-border-tertiary);border-radius:3px;margin:0 auto 5px"></div>
+      <div style="width:240px;height:8px;background:var(--color-border-tertiary);border-radius:3px;margin:0 auto 16px"></div>
+      <div style="display:flex;justify-content:center;gap:10px">
+        <div style="width:110px;height:30px;background:var(--color-border-secondary);border-radius:6px"></div>
+        <div style="width:110px;height:30px;border:0.5px solid var(--color-border-secondary);border-radius:6px"></div>
+      </div>
+    </div>
+  </div>
+  <p class="annotation2">Shows enrollment reference number and class details. Confirmation email already sent by Flow. CTAs: "View all classes" and "Back to home".</p>
+</div>
+
+</div>
+</body>
+</html>
