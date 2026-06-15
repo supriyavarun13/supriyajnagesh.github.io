@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Why I Started a Salesforce Project With Wireframes, Not With Salesforce — Supriya Nagesh</title>
-  <meta name="description" content="A walkthrough of the Sai Dance Academy enrollment build — and what wireframes reveal about how I approach a Salesforce project before touching Setup." />
+  <meta name="description" content="Before opening Setup, I mapped the screens. A walkthrough of how wireframes shaped the Sai Dance Academy build — and why design thinking is part of the admin job." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
@@ -23,7 +23,6 @@
     .nav-back{font-size:13px;font-weight:500;color:var(--text-muted);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s;}
     .nav-back:hover{color:var(--navy);}
 
-    /* HERO */
     .article-hero{background:var(--navy);padding:4rem 2.5rem 3.5rem;position:relative;overflow:hidden;}
     .article-hero::before{content:'';position:absolute;top:-80px;right:-80px;width:400px;height:400px;background:radial-gradient(circle,rgba(59,158,255,0.1) 0%,transparent 70%);border-radius:50%;}
     .article-hero::after{content:'';position:absolute;bottom:-60px;left:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(124,58,237,0.08) 0%,transparent 70%);border-radius:50%;}
@@ -43,56 +42,51 @@
     .author-name{font-size:14px;font-weight:500;color:rgba(255,255,255,0.85);}
     .author-title{font-size:12px;color:rgba(255,255,255,0.4);}
 
-    /* PART BANNER */
     .part-banner{background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:2rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
     .part-banner p{font-size:14px;color:#92400e;margin:0;flex:1;}
     .part-banner a{font-size:13px;font-weight:500;color:#0176d3;text-decoration:none;white-space:nowrap;}
     .part-banner a:hover{text-decoration:underline;}
 
-    /* BODY */
     .article-body{max-width:780px;margin:0 auto;padding:3.5rem 2.5rem 5rem;}
     .article-body p{font-size:16px;line-height:1.85;color:#2d3748;margin-bottom:1.5rem;}
     .article-body h2{font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;color:var(--navy);margin:3rem 0 0.75rem;}
     .article-body h3{font-size:16px;font-weight:500;color:var(--navy);margin:2rem 0 0.5rem;}
     .article-body strong{color:var(--navy);font-weight:500;}
-    .article-body em{color:#4a5568;}
+    .article-body em{color:#4a5568;font-style:italic;}
     .article-body a{color:var(--accent);text-decoration:none;}
     .article-body a:hover{text-decoration:underline;}
 
-    /* CALLOUTS */
     .callout{border-radius:8px;padding:1.1rem 1.4rem;margin:1.25rem 0 1.75rem;}
     .callout p{font-size:14px!important;margin:0!important;line-height:1.7!important;}
     .callout-label{font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;}
     .callout-blue{background:var(--accent-light);border-left:3px solid var(--accent);}
     .callout-blue p{color:#1a3a5c!important;}
-    .callout-purple{background:var(--purple-light);border-left:3px solid var(--purple);}
-    .callout-purple p{color:#4c1d95!important;}
+    .callout-yellow{background:var(--yellow-light);border-left:3px solid var(--yellow);}
+    .callout-yellow p{color:#78350f!important;}
     .callout-green{background:var(--green-light);border-left:3px solid var(--green);}
     .callout-green p{color:#064e3b!important;}
+    .callout-purple{background:var(--purple-light);border-left:3px solid var(--purple);}
+    .callout-purple p{color:#4c1d95!important;}
 
-    /* WIREFRAME EMBED */
+    /* Drift note — inline callout for "where the build drifted" */
+    .drift-note{background:#f0f9ff;border:1px solid #bae6fd;border-left:3px solid #0284c7;border-radius:6px;padding:0.9rem 1.1rem;margin:1.25rem 0 1.75rem;}
+    .drift-note-label{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#0284c7;margin-bottom:4px;}
+    .drift-note p{font-size:14px!important;color:#374151!important;margin:0!important;line-height:1.7!important;}
+
+    /* Wireframe image */
     .wireframe-section{margin:2rem 0 2.5rem;}
-    .wireframe-label{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:0.75rem;display:flex;align-items:center;gap:8px;}
-    .wireframe-label::after{content:'LIVE INTERACTIVE';font-size:9px;padding:2px 7px;background:var(--green-light);color:var(--green);border-radius:20px;border:1px solid #a7f3d0;}
-    .wireframe-container{border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);}
-    .wireframe-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0.6rem 1rem;display:flex;align-items:center;gap:8px;}
-    .wireframe-dots{display:flex;gap:5px;}
-    .wireframe-dot{width:10px;height:10px;border-radius:50%;}
-    .wireframe-url{flex:1;background:white;border:1px solid var(--border);border-radius:4px;padding:4px 10px;font-size:11px;color:var(--text-muted);font-family:'SF Mono','Fira Code',monospace;}
-    .wireframe-open{font-size:11px;font-weight:500;color:var(--accent);text-decoration:none;white-space:nowrap;}
-    .wireframe-open:hover{text-decoration:underline;}
-    .wireframe-frame{width:100%;height:600px;border:none;display:block;}
+    .wireframe-label{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:0.75rem;}
+    .wireframe-img{width:100%;border-radius:var(--radius-lg);border:1px solid var(--border);box-shadow:0 4px 24px rgba(0,0,0,0.08);display:block;}
+    .wireframe-caption{font-size:12px;color:var(--text-muted);margin-top:8px;text-align:center;font-style:italic;}
 
-    .divider{border:none;border-top:1px solid var(--border);margin:2.5rem 0;}
-
-    /* DECISION LIST */
     .decision-list{display:flex;flex-direction:column;gap:1rem;margin:1.25rem 0 1.75rem;}
     .decision-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;border-left:3px solid var(--accent);}
     .decision-label{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:5px;}
     .decision-title{font-size:15px;font-weight:500;color:var(--navy);margin-bottom:5px;}
     .decision-body{font-size:14px;color:#4a5568;line-height:1.7;}
 
-    /* TRY IT */
+    .divider{border:none;border-top:1px solid var(--border);margin:2.5rem 0;}
+
     .try-it{background:var(--navy);border-radius:var(--radius-lg);padding:2rem;margin:2.5rem 0;}
     .try-it h3{font-family:'DM Serif Display',serif;font-size:20px;color:white;font-weight:400;margin-bottom:0.75rem;}
     .try-it p{font-size:14px!important;color:rgba(255,255,255,0.55)!important;margin:0 0 1.25rem!important;}
@@ -128,7 +122,6 @@
       .article-body{padding:2.5rem 1.25rem 3rem;}
       .article-footer{padding:0 1.25rem 3rem;}
       .more-section{padding:2.5rem 1.25rem;}
-      .wireframe-frame{height:400px;}
     }
   </style>
 </head>
@@ -152,12 +145,12 @@
       <span class="article-date">8 min read</span>
     </div>
     <h1>Why I Started a Salesforce Project With Wireframes, Not With Salesforce</h1>
-    <p class="article-subtitle">A walkthrough of the Sai Dance Academy enrollment build — and what it says about how I approach a project before touching Setup. The wireframes below are live and interactive.</p>
+    <p class="article-subtitle">Before opening Setup, I mapped the screens. A walkthrough of how wireframes shaped the Sai Dance Academy build — what they clarified, what they got wrong, and why I think the design step is part of the admin job.</p>
     <div class="stack-badges">
-      <span class="stack-badge">UX-first thinking</span>
-      <span class="stack-badge">Data model design</span>
+      <span class="stack-badge">Design thinking</span>
+      <span class="stack-badge">Data model planning</span>
       <span class="stack-badge">Compliance by design</span>
-      <span class="stack-badge">Admin process</span>
+      <span class="stack-badge">Build vs wireframe drift</span>
     </div>
     <div class="author-row">
       <div class="author-avatar">SN</div>
@@ -176,107 +169,121 @@
     <a href="blog-sai-dance-academy-part1.html">Read the project overview →</a>
   </div>
 
-  <p>Most Salesforce projects I've seen go wrong don't fail because of a bad Flow or a broken trigger. They fail earlier than that — at the moment someone opens Setup and starts building before anyone has agreed on what the experience should actually feel like for the person on the other end.</p>
+  <p>Before I touch Setup on any project, I want to know what the experience is supposed to feel like for the person on the other end. Not in the abstract — concretely: what pages exist, what each page asks the user to do, and how they move from one to the next. For the Sai Dance Academy build, that meant mapping the screens before creating a single object.</p>
 
-  <p>So when I started building a public enrollment and payment system for a dance academy, I didn't open Salesforce first. I opened a blank canvas and drew three wireframes. This article walks through those wireframes and the reasoning behind them — because the wireframes are where the admin work really begins, long before a single field gets created.</p>
+  <p>I used AI to generate the wireframes so I could spend my time where it mattered most — on the data model, the Stripe integration, and the Agentforce setup. The wireframes were a thinking tool, not the deliverable. Their job was to make sure I knew what should go on each page, what should happen at each step, and how the payment handoff should work — before any of that was built and therefore expensive to change.</p>
 
-  <p>If you're hiring, this is the part of my thinking I'd want you to see.</p>
+  <p>I'll also be honest about something most case studies hide: the build drifted from the wireframes. That's not a failure. It's the point. Below I've noted where the live implementation ended up different and why.</p>
 
   <hr class="divider" />
 
   <h2>The project in one paragraph</h2>
 
-  <p>The academy needed a way for parents and adult students to enroll in dance classes online and pay in the same sitting. The requirements were ordinary on the surface: a public homepage, an enrollment form, online payment, and an automatic confirmation. Underneath, it's a fairly complete Salesforce build — a public-facing Experience Cloud site backed by Lightning Web Components, Apex handling the server-side logic, a Stripe integration for payments, webhooks writing back to Salesforce, and a Flow firing the confirmation email. The wireframes were how I made sure all of that machinery stayed in service of a clean experience.</p>
-
-  <div class="callout callout-blue">
-    <p class="callout-label" style="color:var(--accent);">💡 The wireframes below are live</p>
-    <p>The frames are rendered in full — you can interact with them, scroll through the layouts, and see every design decision in context. Built in HTML before a single Salesforce object was created.</p>
-  </div>
-
-  <!-- WIREFRAME EMBED -->
-  <div class="wireframe-section">
-    <div class="wireframe-label">Sai Dance Academy — Full wireframe set</div>
-    <div class="wireframe-container">
-      <div class="wireframe-bar">
-        <div class="wireframe-dots">
-          <div class="wireframe-dot" style="background:#ff5f57;"></div>
-          <div class="wireframe-dot" style="background:#febc2e;"></div>
-          <div class="wireframe-dot" style="background:#28c840;"></div>
-        </div>
-        <div class="wireframe-url">sai-dance-wireframes.html</div>
-        <a class="wireframe-open" href="sai-dance-wireframes.html" target="_blank">Open full screen ↗</a>
-      </div>
-      <iframe class="wireframe-frame" src="sai-dance-wireframes.html" title="Sai Dance Academy wireframes — homepage, enrollment flow, confirmation"></iframe>
-    </div>
-  </div>
+  <p>The academy needed a way for parents and adult students to enroll in dance classes online and pay in the same sitting, plus a low-commitment way for newcomers to try a class first. On the surface: a public homepage, a trial booking path, an enrollment form, online payment, and automatic confirmation. Underneath: a public-facing Experience Cloud site, Lightning Web Components, Apex, Stripe Checkout, webhooks, and Flow. The wireframes were how I made sure all of that stayed in service of a clear, navigable experience.</p>
 
   <hr class="divider" />
 
   <h2>Wireframe 1 — The homepage</h2>
 
-  <p>The homepage wireframe looks deceptively simple: a nav bar, a hero with two calls to action, a row of featured classes, an events-and-gallery split, a footer, and a persistent AI agent bubble in the bottom-right corner.</p>
+  <p>The homepage carries a nav bar, a hero with two calls to action, a row of featured classes, a <strong>Book a Trial</strong> band, a footer, and a persistent AI agent bubble in the bottom-right corner.</p>
 
-  <p>What matters here isn't the layout — it's the decisions baked into it.</p>
+  <div class="wireframe-section">
+    <div class="wireframe-label">Homepage wireframe</div>
+    <img class="wireframe-img" src="images/sai-dance/wireframe-homepage.png" alt="Sai Dance Academy homepage wireframe showing hero, featured classes, trial band, and agent bubble" />
+    <p class="wireframe-caption">Homepage layout — two hero CTAs, featured classes, Book a Trial band, persistent agent</p>
+  </div>
+
+  <p>The decisions baked into this layout:</p>
 
   <div class="decision-list">
     <div class="decision-card">
       <div class="decision-label">Decision 01</div>
       <div class="decision-title">Two hero CTAs — "View Classes" and "Enroll Now"</div>
-      <div class="decision-body">The visitor who's still browsing needs a different path than the one who already knows what they want. A single CTA serves neither well. Two CTAs cost nothing in the wireframe and save a bounce in production.</div>
+      <div class="decision-body">The visitor who's still browsing needs a different path than the one who already knows what they want. A single CTA serves neither well. Mapping this on a wireframe is where I decided the site needed two distinct journeys from the start.</div>
     </div>
     <div class="decision-card">
       <div class="decision-label">Decision 02</div>
-      <div class="decision-title">Featured classes row implies a data model decision</div>
-      <div class="decision-body">The featured-classes row isn't decoration — it implies a <code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">Dance_Class__c</code> object with a boolean flag for what's promoted. Drawing the homepage forced me to define that field before I built the object, not discover it was missing halfway through.</div>
+      <div class="decision-title">Featured classes implies a data model field</div>
+      <div class="decision-body">The featured-classes row isn't decoration. It implies a <code style="background:var(--surface);padding:2px 6px;border-radius:4px;font-size:13px;">Dance_Class__c</code> object with a boolean flag for what's promoted. Drawing the homepage forced me to define that field before I built the object — not discover it was missing halfway through.</div>
     </div>
     <div class="decision-card">
       <div class="decision-label">Decision 03</div>
       <div class="decision-title">Persistent AI agent bubble</div>
-      <div class="decision-body">Deliberately always visible so a parent with a quick question ("Is there a beginner class for a 7-year-old?") never has to hunt for help. This also meant defining the agent's knowledge source and guardrails before deployment — decisions that appear in the Agentforce post.</div>
+      <div class="decision-body">Always visible, so a parent with a quick question never has to hunt for help. Placing it in the wireframe also meant deciding early what the agent needed to know — which shaped the Agentforce knowledge source and guardrail design before deployment.</div>
     </div>
   </div>
 
-  <hr class="divider" />
-
-  <h2>Wireframe 2 — The enrollment-to-payment flow</h2>
-
-  <p>This is the heart of the build, and I wireframed it as three connected screens rather than one — because the user is really moving through three distinct moments: giving their details, paying, and being reassured it worked. A three-step progress indicator runs across all of them so the user always knows where they are and how much is left.</p>
-
-  <h3>Step 1 — The enrollment form</h3>
-  <p>First name, last name, email, phone, a class-selection dropdown, an age-group dropdown, and a GDPR consent checkbox — with a live order summary sitting alongside the form. This screen is a Lightning Web Component. When the user submits, the LWC calls Apex, Apex creates a Stripe Checkout session, and the user is redirected to pay.</p>
-
-  <div class="callout callout-purple">
-    <p class="callout-label" style="color:var(--purple);">🧠 Why the order summary is on the same screen</p>
-    <p>People abandon forms when they can't see what they're committing to before they hand over a card. The order summary on the enrollment screen is a conversion decision, not a design flourish. It reduces abandonment by giving the visitor certainty before they leave for Stripe.</p>
+  <div class="drift-note">
+    <div class="drift-note-label">🧠 Design decision</div>
+    <p>An early version put an events listing and a gallery preview directly on the homepage. I moved both to their own dedicated pages and replaced that space with a <strong>Book a Trial</strong> band instead. A homepage should drive one primary action — for a dance academy chasing new students, "try a class" converts better than "scroll our gallery." Events and gallery are still one nav click away for the people who want them; they just no longer compete with the main conversion path.</p>
   </div>
 
+  <hr class="divider" />
+
+  <h2>Wireframe 2 — Book a Trial</h2>
+
+  <p>Book a Trial is its own page with a short form: name, contact details, which class they'd like to try, a preferred date, and a consent checkbox. Free — no payment step — because the entire purpose is to lower the barrier for a first-time visitor.</p>
+
+  <div class="wireframe-section">
+    <div class="wireframe-label">Trial booking wireframe</div>
+    <img class="wireframe-img" src="images/sai-dance/wireframe-trial.png" alt="Book a Trial page wireframe showing short intake form" />
+    <p class="wireframe-caption">Trial booking — short form, no payment, immediate confirmation</p>
+  </div>
+
+  <p>This is a deliberate split from enrollment. A trial booking and a paid enrollment are different commitments — and in Salesforce terms, different records at different lifecycle stages. Separating them keeps the trial fast and frictionless while letting enrollment carry the heavier, payment-bearing flow. Mapping both on a wireframe before building either made that separation explicit from day one.</p>
+
+  <div class="callout callout-blue">
+    <p class="callout-label" style="color:var(--accent);">💡 Downstream data question</p>
+    <p>The trial path implies its own intake record — a distinct object or status from a paid enrollment. Deciding that at the wireframe stage meant I wasn't retrofitting it into a data model already in production.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <h2>Wireframe 3 — The enrollment-to-payment flow</h2>
+
+  <p>This is the heart of the build — wireframed as three connected screens, because the user moves through three distinct moments: giving their details, paying, and being reassured it worked. A three-step progress indicator runs across all of them so the user always knows where they are.</p>
+
+  <div class="wireframe-section">
+    <div class="wireframe-label">Enrollment flow wireframe</div>
+    <img class="wireframe-img" src="images/sai-dance/wireframe-enrollment.png" alt="Three-step enrollment flow: form, Stripe checkout, confirmation" />
+    <p class="wireframe-caption">Enrollment flow — three screens, one clear path from form to confirmation</p>
+  </div>
+
+  <h3>Step 1 — The enrollment form</h3>
+  <p>Name, email, phone, class selection, age group, and a GDPR consent checkbox. This screen is a Lightning Web Component. On submit, the LWC calls Apex, Apex creates a Stripe Checkout session, and the user is redirected to pay.</p>
+
   <div class="callout callout-green">
-    <p class="callout-label" style="color:var(--green);">✅ GDPR by design, not by afterthought</p>
-    <p>The consent checkbox is in the wireframe — not bolted on after a legal review flagged the form. Building compliance into the wireframe is the difference between a form that's launch-ready and one that gets sent back. This is a habit, not a one-off.</p>
+    <p class="callout-label" style="color:var(--green);">✅ Compliance built in, not bolted on</p>
+    <p>The GDPR consent checkbox is in the wireframe — not added after the fact when someone asks why we're collecting data without consent. Building it into the design step is the difference between a form that's launch-ready and one that needs rework.</p>
+  </div>
+
+  <div class="drift-note">
+    <div class="drift-note-label">🧠 Design decision</div>
+    <p>An early version placed an order summary alongside the enrollment form. I decided against it — the form redirects straight to Stripe, and Stripe's own checkout already shows the class name and amount on the right-hand side. One less thing to build and keep in sync, and no risk of an on-site summary disagreeing with what Stripe actually charges. Single source of truth for price, in one place.</p>
   </div>
 
   <h3>Step 2 — Stripe hosted checkout</h3>
-  <p>This screen is fully hosted by Stripe. I deliberately kept payment off our own infrastructure. Letting Stripe own the card-entry screen means the academy never touches raw card data — which collapses the PCI compliance burden dramatically. That's a security and risk decision expressed as a wireframe choice. When payment succeeds, a Stripe webhook fires back to Salesforce Apex.</p>
+  <p>Fully hosted by Stripe: payment fields on the left, the selected class and amount on the right. I deliberately kept payment off our own infrastructure. Letting Stripe own the card-entry screen means the academy never touches raw card data — which collapses the PCI compliance burden dramatically. That's a security and risk decision expressed as a wireframe choice. When payment succeeds, Stripe fires a webhook back to a public Salesforce REST endpoint.</p>
 
   <h3>Step 3 — The confirmation page</h3>
-  <p>A success checkmark, the enrollment reference number, the class details, and two CTAs: "View all classes" and "Back to home." By this point the webhook has updated Salesforce and a Flow has already sent the confirmation email. The on-screen confirmation and the emailed one are doing different jobs — one gives immediate closure, the other gives a permanent record. The wireframe is where I made sure both existed.</p>
+  <p>A success checkmark, the enrollment reference number, the class details, and two CTAs: "View all classes" and "Back to home." By this point the webhook has updated Salesforce and a Flow has already sent the confirmation email. The on-screen confirmation and the emailed one do different jobs — one gives immediate closure, the other a permanent record. The wireframe is where I made sure both existed from the start.</p>
 
   <hr class="divider" />
 
-  <h2>Why this matters for an admin role specifically</h2>
+  <h2>What the wireframes actually gave me</h2>
 
-  <p>It would have been faster to skip the wireframes and start clicking. But the wireframes are where I made the decisions that are expensive to change later: which objects exist, where compliance lives, how the integration hands control back and forth between Salesforce and Stripe, and where automation fires.</p>
+  <p>By the time I opened Setup, I had a clear blueprint — the wireframe told me what fields the form needed, how the form should hand off to Stripe, and where the confirmation should fire. That made the starting point obvious. But the build was still iterative. Wiring up the Apex-to-Stripe session and getting the webhook to reliably call back into Salesforce took real troubleshooting — handling the redirect, verifying the webhook, and making sure the right record updated on success. The wireframe didn't remove those problems; it meant I was solving integration bugs against a known target, instead of discovering what I was building at the same time.</p>
 
-  <p>By the time I opened Setup, the build was almost mechanical. The LWC knew what fields it needed because the form was already drawn. The Apex knew its job because the redirect-and-webhook handshake was already mapped. The Flow knew its trigger because the confirmation step was already defined. The architecture diagram and the user experience were the same document.</p>
+  <p>And when decisions changed during the wireframe process — events and gallery moving off the homepage, the order summary giving way to Stripe's own — having a wireframe made those changes deliberate rather than reactive. Knowing why each element existed meant I could remove or move it with confidence, not guesswork.</p>
 
-  <div class="callout callout-blue">
-    <p class="callout-label" style="color:var(--accent);">💡 The habit this represents</p>
-    <p>Treating the admin's job as designing a system end to end — data model, automation, integration, and compliance — in service of an experience a real person can move through without friction. The platform is the tool. The wireframe is where the thinking happens.</p>
+  <div class="callout callout-purple">
+    <p class="callout-label" style="color:var(--purple);">The habit this represents</p>
+    <p>Thinking about what each page should do, who it's for, and how data flows through it — before creating a single object. The platform is the tool. The thinking before it is what makes the build coherent.</p>
   </div>
 
   <div class="try-it">
     <h3>See the full build</h3>
-    <p>The platform built from these wireframes is live — you can enroll, pay with a test card, and receive a confirmation email. The technical build is documented across two posts and two sub-posts.</p>
+    <p>The platform built from these wireframes is live — enroll with a test card, talk to the agent, or raise a support case. The full technical build is documented across the project overview and two deep-dive posts.</p>
     <div class="try-links">
       <a class="try-link try-link-primary" href="https://saidanceacademy-dev-ed.develop.my.site.com/sda" target="_blank">Visit the live site →</a>
       <a class="try-link" href="blog-sai-dance-academy-part1.html">Project overview</a>
