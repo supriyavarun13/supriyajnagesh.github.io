@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Salesforce Cancelled the Profile Retirement. Here's What Every Admin Should Still Know — Supriya Nagesh</title>
+  <meta name="description" content="Salesforce reversed the Profile retirement plan — but the Permission Set model is still worth understanding. A hands-on practice walkthrough of what transfers cleanly and what still needs a Profile." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy:#0f1b2d;--accent:#3b9eff;--accent-light:#e8f3ff;--text:#1a1a2e;
+      --text-muted:#5a6a7e;--border:#e2e8f0;--surface:#f8fafc;--white:#ffffff;
+      --green:#059669;--green-light:#ecfdf5;--yellow:#d97706;--yellow-light:#fffbeb;
+      --red:#dc2626;--red-light:#fef2f2;--purple:#7c3aed;--purple-light:#f5f3ff;
+      --teal:#0d9488;--teal-light:#f0fdfa;
+      --radius:10px;--radius-lg:16px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);font-size:16px;line-height:1.7;}
+    nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;padding:0 2.5rem;height:60px;}
+    .nav-logo{font-family:'DM Serif Display',serif;font-size:18px;color:var(--navy);text-decoration:none;}
+    .nav-back{font-size:13px;font-weight:500;color:var(--text-muted);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s;}
+    .nav-back:hover{color:var(--navy);}
+
+    .article-hero{background:var(--navy);padding:4rem 2.5rem 3.5rem;position:relative;overflow:hidden;}
+    .article-hero::before{content:'';position:absolute;top:-80px;right:-80px;width:400px;height:400px;background:radial-gradient(circle,rgba(13,148,136,0.15) 0%,transparent 70%);border-radius:50%;}
+    .article-hero::after{content:'';position:absolute;bottom:-60px;left:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(59,158,255,0.08) 0%,transparent 70%);border-radius:50%;}
+    .hero-inner{position:relative;z-index:1;max-width:780px;margin:0 auto;}
+    .article-meta{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap;}
+    .article-tag-news{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#5eead4;background:rgba(13,148,136,0.18);border:1px solid rgba(13,148,136,0.35);padding:4px 10px;border-radius:20px;}
+    .article-tag{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);background:rgba(59,158,255,0.12);border:1px solid rgba(59,158,255,0.25);padding:4px 10px;border-radius:20px;}
+    .article-date{font-size:13px;color:rgba(255,255,255,0.4);}
+    .meta-dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,0.2);}
+    .article-hero h1{font-family:'DM Serif Display',serif;font-size:clamp(22px,4vw,38px);font-weight:400;line-height:1.2;color:white;margin-bottom:1rem;}
+    .article-subtitle{font-size:16px;color:rgba(255,255,255,0.6);line-height:1.7;max-width:660px;}
+    .stack-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:1.75rem;}
+    .stack-badge{font-size:12px;padding:5px 12px;border-radius:20px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);}
+    .author-row{display:flex;align-items:center;gap:10px;margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.1);}
+    .author-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#1a5fa8);display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:14px;color:white;flex-shrink:0;}
+    .author-name{font-size:14px;font-weight:500;color:rgba(255,255,255,0.85);}
+    .author-title{font-size:12px;color:rgba(255,255,255,0.4);}
+
+    .part-banner{background:rgba(13,148,136,0.08);border:1px solid rgba(13,148,136,0.25);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:2rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .part-banner p{font-size:14px;color:#0f766e;margin:0;flex:1;}
+    .part-banner a{font-size:13px;font-weight:500;color:#0176d3;text-decoration:none;white-space:nowrap;}
+    .part-banner a:hover{text-decoration:underline;}
+
+    .article-body{max-width:780px;margin:0 auto;padding:3.5rem 2.5rem 5rem;}
+    .article-body p{font-size:16px;line-height:1.85;color:#2d3748;margin-bottom:1.5rem;}
+    .article-body h2{font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;color:var(--navy);margin:3rem 0 0.75rem;}
+    .article-body h3{font-size:16px;font-weight:500;color:var(--navy);margin:2rem 0 0.5rem;}
+    .article-body strong{color:var(--navy);font-weight:500;}
+    .article-body a{color:var(--accent);text-decoration:none;}
+    .article-body a:hover{text-decoration:underline;}
+    code{background:var(--surface);padding:2px 7px;border-radius:4px;font-size:13px;font-family:'SF Mono','Fira Code',monospace;color:#374151;}
+
+    .section-header{display:flex;align-items:flex-start;gap:1rem;margin:3rem 0 1rem;}
+    .section-num{width:36px;height:36px;border-radius:50%;background:var(--navy);color:white;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex-shrink:0;margin-top:4px;}
+    .section-eyebrow{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal);margin-bottom:3px;}
+    .section-title-text{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;color:var(--navy);line-height:1.3;}
+
+    .callout{border-radius:8px;padding:1.1rem 1.4rem;margin:1.25rem 0 1.75rem;}
+    .callout p,.callout li{font-size:14px!important;line-height:1.7!important;}
+    .callout p{margin:0!important;}
+    .callout-label{font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;}
+    .callout-blue{background:var(--accent-light);border-left:3px solid var(--accent);}
+    .callout-blue p,.callout-blue li{color:#1a3a5c!important;}
+    .callout-green{background:var(--green-light);border-left:3px solid var(--green);}
+    .callout-green p,.callout-green li{color:#064e3b!important;}
+    .callout-yellow{background:var(--yellow-light);border-left:3px solid var(--yellow);}
+    .callout-yellow p,.callout-yellow li{color:#78350f!important;}
+    .callout-red{background:var(--red-light);border-left:3px solid var(--red);}
+    .callout-red p,.callout-red li{color:#7f1d1d!important;}
+    .callout-teal{background:var(--teal-light);border-left:3px solid var(--teal);}
+    .callout-teal p,.callout-teal li{color:#134e4a!important;}
+
+    .arrow-list{margin:0.75rem 0 1.5rem 0;padding:0;list-style:none;}
+    .arrow-list li{font-size:15px;color:#374151;line-height:1.7;padding:4px 0 4px 1.25rem;position:relative;}
+    .arrow-list li::before{content:'→';position:absolute;left:0;color:var(--accent);font-size:13px;}
+
+    .screenshot-wrap{margin:1.25rem 0 1.75rem;}
+    .screenshot-img{width:100%;border-radius:var(--radius);border:1px solid var(--border);display:block;}
+    .screenshot-caption{font-size:12px;color:var(--text-muted);margin-top:6px;text-align:center;font-style:italic;}
+    .screenshot-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.25rem 0 1.75rem;}
+
+    .data-table{width:100%;border-collapse:collapse;margin:1.25rem 0 1.75rem;font-size:14px;}
+    .data-table th{background:var(--navy);color:white;font-weight:500;font-size:12px;letter-spacing:0.04em;padding:10px 14px;text-align:left;}
+    .data-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:#374151;vertical-align:top;}
+    .data-table tr:last-child td{border-bottom:none;}
+    .data-table tr:nth-child(even) td{background:var(--surface);}
+    .badge-yes{font-size:11px;padding:2px 8px;background:var(--green-light);color:var(--green);border-radius:4px;font-weight:500;}
+    .badge-no{font-size:11px;padding:2px 8px;background:var(--red-light);color:var(--red);border-radius:4px;font-weight:500;}
+    .badge-partial{font-size:11px;padding:2px 8px;background:var(--yellow-light);color:var(--yellow);border-radius:4px;font-weight:500;}
+
+    .checklist{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin:1.25rem 0 1.75rem;}
+    .checklist-title{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:1rem;text-transform:uppercase;letter-spacing:0.06em;}
+    .checklist ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px;}
+    .checklist li{font-size:14px;color:#374151;padding-left:1.5rem;position:relative;line-height:1.6;}
+    .checklist li::before{content:'✓';position:absolute;left:0;color:var(--green);font-weight:700;}
+
+    .divider{border:none;border-top:1px solid var(--border);margin:2.5rem 0;}
+
+    .try-it{background:var(--navy);border-radius:var(--radius-lg);padding:2rem;margin:2.5rem 0;}
+    .try-it h3{font-family:'DM Serif Display',serif;font-size:20px;color:white;font-weight:400;margin-bottom:0.75rem;}
+    .try-it p{font-size:14px!important;color:rgba(255,255,255,0.55)!important;margin:0 0 1.25rem!important;}
+    .try-links{display:flex;flex-wrap:wrap;gap:10px;}
+    .try-link{font-size:13px;font-weight:500;padding:9px 16px;border-radius:7px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);text-decoration:none;transition:all 0.15s;background:rgba(255,255,255,0.06);display:inline-flex;align-items:center;gap:6px;}
+    .try-link:hover{background:rgba(255,255,255,0.15);color:white;}
+    .try-link-primary{background:var(--teal);border-color:var(--teal);color:white;}
+    .try-link-primary:hover{background:#0f766e;}
+
+    .article-footer{max-width:780px;margin:0 auto;padding:0 2.5rem 4rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+    .back-link{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--text-muted);text-decoration:none;padding:9px 16px;border-radius:8px;border:1px solid var(--border);transition:all 0.15s;}
+    .back-link:hover{background:var(--navy);color:white;border-color:var(--navy);}
+    .share-btn{font-size:13px;font-weight:500;padding:9px 16px;border-radius:8px;border:1px solid var(--border);background:white;color:var(--text-muted);text-decoration:none;transition:all 0.15s;}
+    .share-btn:hover{background:var(--navy);color:white;border-color:var(--navy);}
+
+    .more-section{background:var(--surface);padding:3.5rem 2.5rem;border-top:1px solid var(--border);}
+    .more-inner{max-width:780px;margin:0 auto;}
+    .more-label{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal);margin-bottom:1.25rem;}
+    .related-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;}
+    .related-card{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;text-decoration:none;display:block;transition:all 0.15s;}
+    .related-card:hover{border-color:#c7d8ec;box-shadow:0 4px 16px rgba(0,0,0,0.06);}
+    .related-tag{font-size:11px;color:var(--teal);margin-bottom:0.5rem;}
+    .related-title{font-size:14px;font-weight:500;color:var(--navy);line-height:1.5;}
+
+    .source-note{font-size:12px;color:var(--text-muted);margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);}
+    .source-note a{color:var(--text-muted);text-decoration:underline;}
+
+    footer{background:var(--navy);color:rgba(255,255,255,0.5);padding:1.5rem 2.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+    footer small{font-size:13px;}
+    footer a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;}
+    footer a:hover{color:white;}
+    @media(max-width:640px){
+      nav,footer{padding:0 1.25rem;}
+      .article-hero{padding:3rem 1.25rem 2.5rem;}
+      .article-body{padding:2.5rem 1.25rem 3rem;}
+      .article-footer{padding:0 1.25rem 3rem;}
+      .more-section{padding:2.5rem 1.25rem;}
+      .screenshot-grid{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Supriya Nagesh</a>
+  <a class="nav-back" href="index.html#blog">← Back to blog</a>
+</nav>
+
+<header class="article-hero">
+  <div class="hero-inner">
+    <div class="article-meta">
+      <span class="article-tag-news">✦ Platform News</span>
+      <span class="article-tag">Hands-on Practice</span>
+      <span class="meta-dot"></span>
+      <span class="article-date">June 2026</span>
+      <span class="meta-dot"></span>
+      <span class="article-date">14 min read</span>
+    </div>
+    <h1>Salesforce Cancelled the Profile Retirement. Here's What Every Admin Should Still Know</h1>
+    <p class="article-subtitle">Salesforce reversed course on retiring Profiles — but the Permission Set model behind that plan isn't going away, and understanding it is still worth an admin's time. A hands-on walkthrough of what transfers cleanly, what doesn't, and why.</p>
+    <div class="stack-badges">
+      <span class="stack-badge">Profiles</span>
+      <span class="stack-badge">Permission Sets</span>
+      <span class="stack-badge">Permission Set Groups</span>
+      <span class="stack-badge">Page Layout Assignment</span>
+      <span class="stack-badge">Record Types</span>
+      <span class="stack-badge">MFA</span>
+    </div>
+    <div class="author-row">
+      <div class="author-avatar">SN</div>
+      <div>
+        <div class="author-name">Supriya Nagesh</div>
+        <div class="author-title">Salesforce Professional · 7+ years</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<article class="article-body">
+
+  <div class="part-banner">
+    <p>This article covers <strong>what to practice and why</strong>. A companion piece covers the exact tool I used to validate the build — including an OAuth error that stops most people cold.</p>
+    <a href="blog-uapa-tool-install.html">Read the tool walkthrough →</a>
+  </div>
+
+  <p>Salesforce recently backtracked on a plan to retire Profiles in favour of Permission Sets and Permission Set Groups. If you'd started migrating access models in anticipation of that deadline, you can exhale — Profiles aren't going anywhere for the foreseeable future.</p>
+
+  <p>But here's the thing I keep coming back to: the reversal doesn't make the underlying model worth ignoring. Permission Set Groups are still the direction the platform is heading, they're still the cleaner way to manage access for anyone administering a non-trivial org, and understanding exactly where they succeed and where they still need a Profile underneath them is a genuinely useful thing to know — deadline or no deadline.</p>
+
+  <p>So I built the migration anyway, in a dev org, treating it as practice rather than a compliance deadline. This is what I found.</p>
+
+  <div class="callout callout-teal">
+    <p class="callout-label" style="color:var(--teal);">📰 What actually changed</p>
+    <p>Salesforce announced Profiles would be retired in favour of Permission Sets and Permission Set Groups, then reversed that decision. Profiles remain fully supported with no forced migration deadline. The reversal was <a href="https://www.salesforceben.com/salesforce-backtracks-on-permission-retirement-in-profiles/" target="_blank">first reported by Salesforce Ben</a> — worth a read if you want the full context on the announcement itself.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- SECTION 1 -->
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div>
+      <p class="section-eyebrow">Why bother, then?</p>
+      <p class="section-title-text">Practice Without a Deadline</p>
+    </div>
+  </div>
+
+  <p>No forced deadline doesn't mean no value. Permission Set Groups solve a real problem: Profiles conflate "who a user is" with "what a user can do," and untangling those two concepts is genuinely cleaner architecture. A lot of orgs will migrate voluntarily over the next few years simply because it's better practice — just without Salesforce forcing anyone's hand.</p>
+
+  <p>For an admin, that makes this a good moment to build the skill deliberately, in a dev org, without production pressure. So I picked one persona, built the same access model two ways — Profile-first and Permission-Set-first — and compared what actually happened.</p>
+
+  <hr class="divider" />
+
+  <!-- SECTION 2 -->
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div>
+      <p class="section-eyebrow">The setup</p>
+      <p class="section-title-text">One Persona, Two Models</p>
+    </div>
+  </div>
+
+  <p>I used a simple Sales Rep persona — object access to Accounts and Opportunities, a couple of custom tabs, one Record Type. Built it once the old way (a cloned Profile carrying everything), then rebuilt the same access using a <strong>Permission Set Group</strong> bundling several individual Permission Sets — one for object/field access, one for tab visibility, one for app access.</p>
+
+  <div class="screenshot-wrap">
+    <img class="screenshot-img" src="images/profile-permission-practice/profile-vs-permission-set-model.png" alt="Side-by-side comparison of the Profile-based and Permission-Set-based access models in Setup" />
+    <p class="screenshot-caption">The same Sales Rep access, built two ways — Profile-first (left) vs. Permission-Set-first (right)</p>
+  </div>
+
+  <div class="screenshot-wrap">
+    <img class="screenshot-img" src="images/profile-permission-practice/permission-set-group-bundle.png" alt="Permission Set Group named Sales Rep Bundle showing its component Permission Sets" />
+    <p class="screenshot-caption">The "Sales Rep Bundle" Permission Set Group — three component Permission Sets combined into one assignable unit</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- SECTION 3 -->
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div>
+      <p class="section-eyebrow">The good news first</p>
+      <p class="section-title-text">What Transfers Cleanly</p>
+    </div>
+  </div>
+
+  <p>Most of what a Profile does, a Permission Set does just as well — sometimes better, because it's additive and composable rather than monolithic.</p>
+
+  <ul class="arrow-list">
+    <li><strong>Object and field-level permissions</strong> — CRUD access on Accounts and Opportunities, field-level security, all replicate exactly through Permission Sets. No surprises here.</li>
+    <li><strong>App visibility</strong> — which Lightning apps a user can see and access maps directly onto Permission Sets.</li>
+    <li><strong>Tab settings — with a nuance worth knowing</strong> — Permission Sets distinguish between <em>Available</em> and <em>Visible</em> in a way Profiles historically blur. Worth understanding the distinction directly rather than assuming behavioural parity.</li>
+  </ul>
+
+  <div class="screenshot-grid">
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/profile-permission-practice/permission-set-object-settings.png" alt="Permission Set Object Settings screen showing CRUD access on Account" />
+      <p class="screenshot-caption">Object Settings on the Permission Set — full CRUD parity with the original Profile</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/profile-permission-practice/permission-set-tab-settings.png" alt="Permission Set Tab Settings screen showing Available vs Visible distinction" />
+      <p class="screenshot-caption">Tab Settings — Available vs. Visible is a real distinction, not just semantics</p>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- SECTION 4 -->
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div>
+      <p class="section-eyebrow">Where it gets interesting</p>
+      <p class="section-title-text">Two Things That Always Need a Profile</p>
+    </div>
+  </div>
+
+  <p>This is the part worth actually remembering. Two pieces of the access model never moved to Permission Sets — not because Salesforce hasn't gotten around to it, but because they're architecturally tied to Profile in a way that doesn't map onto a composable, additive permission model.</p>
+
+  <h3>1. Page Layout Assignment</h3>
+  <p>Which page layout a user sees for a given object and Record Type combination is assigned <strong>per Profile</strong> — full stop. There's no Permission Set equivalent. I proved this the direct way: tried to find a page layout assignment setting anywhere in a Permission Set, and it doesn't exist.</p>
+
+  <div class="callout callout-red">
+    <p class="callout-label" style="color:var(--red);">⚠️ Confirmed by testing, not assumption</p>
+    <p>I didn't just take this on faith — I went looking for the setting and it genuinely isn't there. Page Layout Assignment lives exclusively under Profile in Setup. Any access model that removes Profile from the picture entirely still needs it for this one purpose.</p>
+  </div>
+
+  <div class="screenshot-wrap">
+    <img class="screenshot-img" src="images/profile-permission-practice/page-layout-assignment-grid.png" alt="Page Layout Assignment grid in Setup, showing assignment by Profile and Record Type" />
+    <p class="screenshot-caption">Page Layout Assignment — the grid only exists at the Profile level, with no Permission Set equivalent</p>
+  </div>
+
+  <h3>2. Record Type Defaults</h3>
+  <p>Same story. Which Record Type is <em>default</em> for a user creating a new record — and which Record Types are even available to pick from — is a Profile-level setting. I tested this directly: a user with a Permission Set granting Record Type access, but no Profile-level default, sees the Record Type picker but has to actively choose every time. No default gets pre-selected.</p>
+
+  <table class="data-table">
+    <thead><tr><th>Capability</th><th>Profile</th><th>Permission Set</th></tr></thead>
+    <tbody>
+      <tr><td>Object CRUD permissions</td><td><span class="badge-yes">Yes</span></td><td><span class="badge-yes">Yes</span></td></tr>
+      <tr><td>Field-level security</td><td><span class="badge-yes">Yes</span></td><td><span class="badge-yes">Yes</span></td></tr>
+      <tr><td>App visibility</td><td><span class="badge-yes">Yes</span></td><td><span class="badge-yes">Yes</span></td></tr>
+      <tr><td>Tab settings</td><td><span class="badge-yes">Yes</span></td><td><span class="badge-yes">Yes (with Available/Visible nuance)</span></td></tr>
+      <tr><td>Record Type access (which types are available)</td><td><span class="badge-yes">Yes</span></td><td><span class="badge-yes">Yes</span></td></tr>
+      <tr><td>Record Type <em>default</em></td><td><span class="badge-yes">Yes</span></td><td><span class="badge-no">No</span></td></tr>
+      <tr><td>Page Layout Assignment</td><td><span class="badge-yes">Yes</span></td><td><span class="badge-no">No</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="screenshot-grid">
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/profile-permission-practice/record-type-picker-before-rename.png" alt="Record Type picker showing both Enterprise and SMB record types, no default pre-selected" />
+      <p class="screenshot-caption">Record Type picker — access granted via Permission Set, but no default pre-selected</p>
+    </div>
+    <div class="screenshot-wrap" style="margin:0;">
+      <img class="screenshot-img" src="images/profile-permission-practice/record-type-picker-after-rename.png" alt="Record Type picker after renaming, confirming the default still depends on Profile" />
+      <p class="screenshot-caption">Same picker after a naming change — confirming the default still traces back to the Profile</p>
+    </div>
+  </div>
+
+  <div class="callout callout-yellow">
+    <p class="callout-label" style="color:var(--yellow);">💡 The practical implication</p>
+    <p>Even in a fully Permission-Set-driven access model, Profile doesn't disappear — it shrinks down to exactly two jobs: Page Layout Assignment and Record Type Defaults. Every admin planning a migration (voluntary or otherwise) needs to budget for this, not assume Profile becomes irrelevant.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- SECTION 5 -->
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <div>
+      <p class="section-eyebrow">Before you call it done</p>
+      <p class="section-title-text">A Readiness Checklist</p>
+    </div>
+  </div>
+
+  <div class="checklist">
+    <div class="checklist-title">If you're practicing (or planning) a Profile → Permission Set migration</div>
+    <ul>
+      <li>Object and field-level permissions replicated via Permission Set</li>
+      <li>App visibility replicated via Permission Set</li>
+      <li>Tab settings replicated — checked Available vs. Visible explicitly, not assumed</li>
+      <li>Record Type access granted via Permission Set where needed</li>
+      <li><strong>Page Layout Assignment confirmed still working via a minimal Profile</strong></li>
+      <li><strong>Record Type default confirmed still working via a minimal Profile</strong></li>
+      <li>Tested as the actual user, not just reviewed as admin</li>
+      <li>Validated independently with Salesforce's own tooling (see below)</li>
+    </ul>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- SECTION 6 -->
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <div>
+      <p class="section-eyebrow">Don't just trust your own build</p>
+      <p class="section-title-text">Validating With Salesforce's Own Tooling</p>
+    </div>
+  </div>
+
+  <p>Once I'd built the Permission-Set-first model by hand, I wanted a second, independent check — not just my own read of what transferred. Salesforce publishes a free tool for exactly this: the <strong>User Access and Permissions Assistant</strong>, an AppExchange app with a Converter that auto-generates a Permission Set from an existing Profile, so you can compare its output against your manual build.</p>
+
+  <p>Getting it installed involves a genuine chunk of OAuth setup — a Connected App, an Authentication Provider, a Named Credential — and there's a specific propagation-delay error that stops most people on the first attempt. I documented the full install separately, since it's substantial enough to deserve its own walkthrough.</p>
+
+  <div class="try-it">
+    <h3>The companion piece</h3>
+    <p>Every setup step for the User Access and Permissions Assistant, in order — including the OAuth callback URL error that looks like a configuration mistake but is actually just a 10-minute propagation delay.</p>
+    <div class="try-links">
+      <a class="try-link try-link-primary" href="blog-uapa-tool-install.html">Read the tool walkthrough →</a>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- SECTION 7 -->
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <div>
+      <p class="section-eyebrow">While we're on platform changes</p>
+      <p class="section-title-text">The Next Deadline Is Real: MFA</p>
+    </div>
+  </div>
+
+  <p>Worth flagging while this is fresh: unlike Profile retirement, <strong>Multi-Factor Authentication enforcement is not being reversed.</strong> If your org — or a client org you administer — hasn't already enforced MFA for every user on every login, that's the platform change actually worth prioritising right now. It's a genuinely different situation from the Profile reversal: one deadline evaporated, the other is live and enforced.</p>
+
+  <div class="callout callout-blue">
+    <p class="callout-label" style="color:var(--accent);">💡 Don't let one reversal create false confidence</p>
+    <p>It's tempting to read "Salesforce backtracked on Profile retirement" as "platform deadlines aren't real." MFA enforcement is the counter-example. Two different platform changes, two different outcomes — worth tracking each on its own merits rather than by pattern-matching to the other.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- FINDINGS SUMMARY -->
+  <h2>Summary of Findings</h2>
+  <p>Distilled down to what actually matters if you're evaluating this for your own org:</p>
+
+  <div class="checklist">
+    <div class="checklist-title">What I found, building it hands-on</div>
+    <ul>
+      <li>Object/field permissions, app visibility, and tab settings all transfer cleanly to Permission Sets</li>
+      <li>Tab settings have a real Available-vs-Visible distinction worth understanding explicitly</li>
+      <li>Page Layout Assignment has no Permission Set equivalent — confirmed by testing, not documentation alone</li>
+      <li>Record Type <em>defaults</em> (not access — defaults specifically) also stay Profile-only</li>
+      <li>A minimal Profile is still required in any Permission-Set-first model, for exactly these two jobs</li>
+      <li>Salesforce's own free Converter tool is a genuinely useful second validation pass</li>
+      <li>The Profile retirement reversed — MFA enforcement did not</li>
+    </ul>
+  </div>
+
+  <p>None of this required the retirement deadline to be worth knowing. If anything, building it without deadline pressure was the better way to actually understand where the model's edges are — rather than rushing a migration against a clock that, as it turned out, didn't end up mattering.</p>
+
+  <div class="source-note">
+    Original reporting on the Profile retirement reversal: <a href="https://www.salesforceben.com/salesforce-backtracks-on-permission-retirement-in-profiles/" target="_blank">Salesforce Backtracks on Permission Retirement in Profiles</a>, Tim Combridge &amp; Mariel Domingo, Salesforce Ben.
+  </div>
+
+</article>
+
+<div class="article-footer">
+  <a class="back-link" href="index.html#blog">← Back to all posts</a>
+  <a class="share-btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https://supriyajnagesh.com/blog-profile-permission-set-practice.html" target="_blank">Share on LinkedIn</a>
+</div>
+
+<div class="more-section">
+  <div class="more-inner">
+    <p class="more-label">Continue reading</p>
+    <div class="related-grid">
+      <a class="related-card" href="blog-uapa-tool-install.html" style="border-color:#5eead4;background:#f0fdfa;">
+        <p class="related-tag" style="color:#0d9488;">✦ Companion piece</p>
+        <p class="related-title" style="color:#134e4a;">Installing Salesforce's User Access and Permissions Assistant — and the error nobody warns you about</p>
+      </a>
+      <a class="related-card" href="blog-stripe-salesforce.html">
+        <p class="related-tag">Technical Deep-dive</p>
+        <p class="related-title">Integrating Stripe payments with Salesforce Experience Cloud</p>
+      </a>
+      <a class="related-card" href="blog-twilio-sms-integration.html">
+        <p class="related-tag">Technical Deep-dive</p>
+        <p class="related-title">Building a Twilio SMS integration in Salesforce from scratch</p>
+      </a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <small>© 2026 Supriya Nagesh · supriyajnagesh.com</small>
+  <a href="https://www.linkedin.com/in/supriya-nagesh" target="_blank">LinkedIn</a>
+</footer>
+
+</body>
+</html>
