@@ -232,7 +232,7 @@
     </div>
   </div>
 
-  <p>I used a simple Sales Rep persona — object access to Accounts and Opportunities, a couple of custom tabs, one Record Type. Built it once the old way (a cloned Profile carrying everything), then rebuilt the same access using a <strong>Permission Set Group</strong> bundling several individual Permission Sets — one for object/field access, one for tab visibility, one for app access.</p>
+  <p>I used a simple Sales Rep persona — object access to Accounts and Opportunities, a couple of custom tabs, two Record Type. Built it once the old way (a cloned Profile carrying everything), then rebuilt the same access using a <strong>Permission Set Group</strong> bundling several individual Permission Sets — one for object/field access, one for tab visibility, one for app access.</p>
 
   <div class="screenshot-wrap">
     <img class="screenshot-img" src="images/profile-permission-practice/profile-vs-permission-set-model.png" alt="Side-by-side comparison of the Profile-based and Permission-Set-based access models in Setup" />
@@ -241,7 +241,7 @@
 
   <div class="screenshot-wrap">
     <img class="screenshot-img" src="images/profile-permission-practice/permission-set-group-bundle.png" alt="Permission Set Group named Sales Rep Bundle showing its component Permission Sets" />
-    <p class="screenshot-caption">The "Sales Rep Bundle" Permission Set Group — three component Permission Sets combined into one assignable unit</p>
+    <p class="screenshot-caption">The "Sales Rep Bundle" Permission Set Group — two component Permission Sets combined into one assignable unit</p>
   </div>
 
   <hr class="divider" />
@@ -305,7 +305,7 @@
   </div>
 
   <h3>2. Record Type Defaults</h3>
-  <p>Same story. Which Record Type is <em>default</em> for a user creating a new record — and which Record Types are even available to pick from — is a Profile-level setting. I tested this directly: a user with a Permission Set granting Record Type access, but no Profile-level default, sees the Record Type picker but has to actively choose every time. No default gets pre-selected.</p>
+  <p>Same story. Which Record Type is <em>default</em> for a user creating a new record — is a Profile-level setting. I tested this directly: a user with a Permission Set granting Record Type access, but no Profile-level default, sees the Record Type picker but has a defaulter set by record type name's alphabetic order.</p>
 
   <table class="data-table">
     <thead><tr><th>Capability</th><th>Profile</th><th>Permission Set</th></tr></thead>
