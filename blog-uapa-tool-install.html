@@ -154,6 +154,14 @@
       .more-section{padding:2.5rem 1.25rem;}
       .screenshot-grid{grid-template-columns:1fr;}
     }
+    /* LIGHTBOX */
+.screenshot-img { cursor: zoom-in; transition: opacity 0.15s; }
+.screenshot-img:hover { opacity: 0.88; }
+.lightbox-overlay { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.92); align-items: center; justify-content: center; padding: 1.5rem; }
+.lightbox-overlay.active { display: flex; }
+.lightbox-overlay img { max-width: 100%; max-height: 90vh; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+.lightbox-close { position: fixed; top: 1.25rem; right: 1.25rem; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.15); border: none; cursor: pointer; color: white; font-size: 20px; display: flex; align-items: center; justify-content: center; }
+.lightbox-close:hover { background: rgba(255,255,255,0.25); }
   </style>
 </head>
 <body>
@@ -198,7 +206,10 @@
     <p>This is a companion piece covering <strong>the tool I used to validate the build</strong>. The main article covers what to practice and why.</p>
     <a href="blog-profile-permission-set-practice.html">← Read the main article first</a>
   </div>
-
+  <div class="part-banner" style="background:rgba(59,158,255,0.06);border-color:rgba(59,158,255,0.2);">
+  <p>This walkthrough follows Salesforce's own setup documentation for the Tooling API authentication step.</p>
+  <a href="https://help.salesforce.com/s/articleView?id=platform.perm_uapa_set_user_auth.htm&type=5" target="_blank">View Salesforce's official docs →</a>
+</div>
   <p>The <strong>User Access and Permissions Assistant</strong> is a free, Salesforce Labs-published AppExchange app that auto-generates a Permission Set from an existing Profile — genuinely useful for validating a Profile-to-Permission-Set migration independently of your own manual build. But installing it is not a two-click AppExchange affair. It requires a real chunk of OAuth plumbing, and one specific error stalls most people at the first authentication attempt with no obvious next move.</p>
 
   <p>This is the full sequence, in order, including the error and its actual fix — which has nothing to do with the values you typed.</p>
@@ -230,8 +241,12 @@
     <p class="callout-label" style="color:var(--yellow);">💡 Worth knowing before you start</p>
     <p><strong>Analyze does not accept a Profile as a target</strong> — only Users, Permission Sets, and Permission Set Groups. If you're trying to audit a Profile directly, you want <strong>Converter</strong>, not Analyze. Easy to assume otherwise going in.</p>
   </div>
-
+  <div class="screenshot-wrap">
+  <img class="screenshot-img" src="images/uapa-tool-install/UAPA_App.png" alt="UAPA Application from App launcher" />
+  <p class="screenshot-caption">User Access and Permission Assistant from App launcher</p>
+  </div>
   <p>It's also not in Setup. Searching Setup Quick Find for "User Access and Permissions Assistant" comes up empty — it's an installed package, and once installed, it lives in the <strong>App Launcher</strong>, not Setup.</p>
+  
 
   <hr class="divider" />
 
@@ -261,6 +276,19 @@
           </ul>
         </div>
       </div>
+      <div class="screenshot-wrap">
+  <img class="screenshot-img" src="images/uapa-tool-install/Connected_App_001.png" alt="Create a Connected App for the Tooling API" />
+  <p class="screenshot-caption">Create a Connected App for the Tooling API</p>
+  </div>
+      <div class="screenshot-wrap">
+  <img class="screenshot-img" src="images/uapa-tool-install/Connected_App_002.png" alt="Create a Connected App for the Tooling API" />
+  <p class="screenshot-caption">Create a Connected App for the Tooling API</p>
+  </div>
+      <div class="screenshot-wrap">
+  <img class="screenshot-img" src="images/uapa-tool-install/Connected_App_003.png" alt="Create a Connected App for the Tooling API" />
+  <p class="screenshot-caption">Create a Connected App for the Tooling API</p>
+  </div>
+      
     </div>
     <div class="step-item">
       <div class="step-num">2</div>
@@ -276,6 +304,18 @@
           </ul>
         </div>
       </div>
+      <div class="screenshot-wrap">
+  <img class="screenshot-img" src="images/uapa-tool-install/Authentication_Provider_001.png" alt="Create an Authentication Provider for the Tooling API" />
+  <p class="screenshot-caption">Create an Authentication Provider for the Tooling API</p>
+  </div>
+      <div class="screenshot-wrap">
+  <img class="screenshot-img" src="images/uapa-tool-install/Authentication_Provider_002.png" alt="Create an Authentication Provider for the Tooling API" />
+  <p class="screenshot-caption">Create an Authentication Provider for the Tooling API</p>
+  </div>
+      <div class="screenshot-wrap">
+  <img class="screenshot-img" src="images/uapa-tool-install/Authentication_Provider_003.png" alt="Create an Authentication Provider for the Tooling API" />
+  <p class="screenshot-caption">Create an Authentication Provider for the Tooling API</p>
+  </div>
     </div>
     <div class="step-item">
       <div class="step-num">3</div>
@@ -300,6 +340,14 @@
           </ul>
         </div>
       </div>
+      <div class="screenshot-wrap">
+  <img class="screenshot-img" src="images/uapa-tool-install/Named_Credential_001.png" alt="Create a Named Credential for the Tooling API" />
+  <p class="screenshot-caption">Create a Named Credential for the Tooling API</p>
+  </div>
+      <div class="screenshot-wrap">
+  <img class="screenshot-img" src="images/uapa-tool-install/Named_Credential_002.png" alt="Create a Named Credential for the Tooling API" />
+  <p class="screenshot-caption">Create a Named Credential for the Tooling API</p>
+  </div>
     </div>
     <div class="step-item">
       <div class="step-num">5</div>
@@ -315,6 +363,22 @@
         </div>
       </div>
     </div>
+     <div class="screenshot-wrap">
+  <img class="screenshot-img" src="images/uapa-tool-install/Permission_Set_001.png" alt="Create a Permission Set to use the Named Credential" />
+  <p class="screenshot-caption">Create a Permission Set to use the Named Credential</p>
+  </div>
+     <div class="screenshot-wrap">
+  <img class="screenshot-img" src="images/uapa-tool-install/Permission_Set_002.png" alt="Create a Permission Set to use the Named Credential" />
+  <p class="screenshot-caption">Create a Permission Set to use the Named Credential</p>
+  </div>
+     <div class="screenshot-wrap">
+  <img class="screenshot-img" src="images/uapa-tool-install/Permission_Set_003.png" alt="Create a Permission Set to use the Named Credential" />
+  <p class="screenshot-caption">Create a Permission Set to use the Named Credential</p>
+  </div>
+     <div class="screenshot-wrap">
+  <img class="screenshot-img" src="images/uapa-tool-install/Permission_Set_004.png" alt="Create a Permission Set to use the Named Credential" />
+  <p class="screenshot-caption">Create a Permission Set to use the Named Credential</p>
+  </div>
   </div>
 
   <div class="callout callout-blue">
@@ -376,6 +440,19 @@
         <div class="step-title">Download the package from AppExchange</div>
         <div class="step-desc">Go to the <a href="https://appexchange.salesforce.com/appxListingDetail?listingId=a0N3A00000FeF99UAF" target="_blank">AppExchange listing</a> → Get It Now → select your org → agree to terms → log in when redirected → choose which profiles get access (Admins Only is the sensible default for a dev org).</div>
       </div>
+      <div class="screenshot-wrap">
+  <img class="screenshot-img" src="images/uapa-tool-install/AppExchange_001.png" alt="Download the package from AppExchange" />
+  <p class="screenshot-caption">Download the package from AppExchange</p>
+  </div>
+      <div class="screenshot-wrap">
+  <img class="screenshot-img" src="images/uapa-tool-install/AppExchange_002.png" alt="Download the package from AppExchange" />
+  <p class="screenshot-caption">Download the package from AppExchange</p>
+  </div>
+      <div class="screenshot-wrap">
+  <img class="screenshot-img" src="images/uapa-tool-install/AppExchange_003.png" alt="Download the package from AppExchange" />
+  <p class="screenshot-caption">Download the package from AppExchange</p>
+  </div>
+      
     </div>
     <div class="step-item">
       <div class="step-num">7</div>
@@ -383,6 +460,10 @@
         <div class="step-title">Assign the Helper App Access Permission Set</div>
         <div class="step-desc">Setup → Users → your user → Permission Set Assignments → Edit Assignments → add <strong>User Access &amp; Permissions Assistant Access</strong> (packaged with the app) → Save.</div>
       </div>
+       <div class="screenshot-wrap">
+  <img class="screenshot-img" src="images/uapa-tool-install/Helper_App.png" alt="Assign the Helper App Access Permission Set" />
+  <p class="screenshot-caption">Assign the Helper App Access Permission Set</p>
+  </div>
     </div>
     <div class="step-item">
       <div class="step-num">8</div>
@@ -398,6 +479,10 @@
         </div>
       </div>
     </div>
+    <div class="screenshot-wrap">
+  <img class="screenshot-img" src="images/uapa-tool-install/SystemPermissions.png" alt="Verify required System Permissions" />
+  <p class="screenshot-caption">Verify required System Permissions</p>
+  </div>
   </div>
 
   <div class="callout callout-red">
@@ -411,6 +496,10 @@
       <div class="step-title">Set User Authentication for the Tooling API Credential</div>
       <div class="step-desc">Click your profile image → Quick Find → <strong>Authentication Settings for External Systems</strong> → New. External System Definition: <strong>Named Credential</strong> → Named Credential: <strong>Tooling API Credential</strong> → User: your username → Authentication Protocol: <strong>OAuth 2.0</strong> → check <strong>Start Authentication Flow on Save</strong> → Save. By this point the Step 3 callback URL change should be fully propagated, so it should complete cleanly.</div>
     </div>
+    <div class="screenshot-wrap">
+  <img class="screenshot-img" src="images/uapa-tool-install/UserAuthentication.png" alt="Set User Authentication for the Tooling API Credential" />
+  <p class="screenshot-caption">Set User Authentication for the Tooling API Credential</p>
+  </div>
   </div>
 
   <hr class="divider" />
@@ -440,10 +529,24 @@
     <li><strong>Unexpected System/App permissions</strong> — if your source Profile was cloned from Standard User (or any Profile with a long history), expect the generated Permission Set to carry over defaults nobody explicitly reviewed. The tool converts what's <em>present</em>, not what's <em>needed</em>. That audit is still a manual step</li>
   </ul>
 
+  <div class="screenshot-wrap">
+  <img class="screenshot-img" src="images/uapa-tool-install/App_001.png" alt="Verify required System Permissions" />
+  <p class="screenshot-caption">Verify required System Permissions</p>
+  </div>
+   <div class="screenshot-wrap">
+  <img class="screenshot-img" src="images/uapa-tool-install/App_002.png" alt="Verify required System Permissions" />
+  <p class="screenshot-caption">Verify required System Permissions</p>
+  </div>
+   <div class="screenshot-wrap">
+  <img class="screenshot-img" src="images/uapa-tool-install/App_003.png" alt="Verify required System Permissions" />
+  <p class="screenshot-caption">Verify required System Permissions</p>
+  </div>
+
   <div class="callout callout-teal">
     <p class="callout-label" style="color:var(--teal);">💡 Ties back to the main finding</p>
     <p>The Converter independently confirms exactly what I found building the migration by hand: Tab Settings and Record Type access come through, but the things that never had a Permission Set home — Page Layout Assignment, Record Type defaults — simply don't appear in the output. Two different methods, same conclusion.</p>
   </div>
+  
 
   <hr class="divider" />
 
@@ -524,6 +627,25 @@
   <small>© 2026 Supriya Nagesh · supriyajnagesh.com</small>
   <a href="https://www.linkedin.com/in/supriya-nagesh" target="_blank">LinkedIn</a>
 </footer>
-
+<div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="" />
+</div>
+<script>
+function openLightbox(src, alt) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox-img').alt = alt;
+  document.getElementById('lightbox').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeLightbox(); });
+document.querySelectorAll('.screenshot-img').forEach(function(img){
+  img.addEventListener('click', function(){ openLightbox(this.src, this.alt); });
+});
+</script>
 </body>
 </html>
